@@ -1,0 +1,500 @@
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-1. Hi 흘려보내기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-2. 그림 보여 주고 기다리기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-3. 하트 깜빡이기 — while True: (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-5. A 는 하트, B 는 웃는 얼굴 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-6. 누르고 있는 동안만 하트 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-7. 얼마나 세게 움직이나? (맛보기) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-8. 내 이름 + 버튼 그림 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 1-9. 로고를 만지면 이름 다시 보기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-10. 변수와 계산 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-12. 걷기 · 뛰기 나누기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-13. 1초마다 세기 — while True: + print() (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-14. 함수 만들고 쓰기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-15. 넣는 것이 없는 함수 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-16. 1단계 — A 버튼으로 세기만 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 1-17. 2단계 — 함수로 나누고 화면에 보이기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 1-18. 문제 찾기 — is_pressed() 로 바꾸면? (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 1-19. 로고를 만지면 지금 수를 흘려 보기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-1. x · y · z 값 찍어 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-3. 세 값을 한 번에 받기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-4. 준비된 함수 strength() 써 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-5. 흔들림 세기를 별 막대로 찍기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-6. 1초 동안 가장 큰 값 찾기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-7. 흔들림 미터 (★ 그대로 실행) (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 2-8. 기준값 바꾸기 (★★) (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 2-9. 가장 큰 값 기억해서 B 버튼으로 보기 (★★★) (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-10. 보정하고 방위각 찍기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-12. 8방향 글자로 보이기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-13. 내가 보는 방향을 화살표로 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-14. 걸으며 방향 바꾸기 관찰 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-15. 자석 세기 살펴보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 2-16. 화살표 나침반 (기본) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 2-17. 8방향 글자 표시 추가 (★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 2-18. 지금 방향을 기억하고 얼마나 돌았는지 보기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-1. 흔들림을 별 그래프로 찍기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-3. 기준선 위에 있는지 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-4. 기준선을 넘었다 내려오면 한 걸음 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-5. 원래 값과 다듬은 값 나란히 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-6. 다듬은 값으로 걸음 세기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 3-7. 기준선 세 개로 동시에 세어 비교하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-8. 5초 동안 최고값 · 최저값 재기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-10. 버튼을 두 번 누른 사이의 시간 재기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-11. 걸음 사이 간격 찍어 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-12. 만보기 첫걸음 — 콘솔에 걸음 수 찍기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-13. 만보기 — LED 깜빡임과 A · B 버튼 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 3-14. 완성된 만보기 — 100걸음마다 알림 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 3-15. 20걸음 시험 모드로 오차 줄이기 (★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 3-16. 걷기와 뛰기를 구분해 아이콘 보이기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-2. A 버튼으로 박자 두드려 케이던스 재기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-3. 방법 ① — 10초 동안 걸음 세어 × 6 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-4. 방법 ② — 걸음마다 간격으로 케이던스 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-6. 최근 5걸음 평균으로 케이던스 찍기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-7. 실시간 케이던스 측정기 — 아이콘과 숫자 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 4-8. 멈추면 0 이 되는 케이던스 측정기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-10. sleep() 으로 만드는 메트로놈 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 4-11. 네 박자마다 높은 소리 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-12. sleep() 메트로놈 + 걸음 세기 — 걸음을 놓칩니다 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-13. beat_due() 로 만드는 메트로놈 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-14. 박자를 내면서 걸음도 세기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-15. 목표 BPM 을 버튼으로 바꾸는 메트로놈 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-16. 케이던스와 목표 비교 화살표 (소리 없이) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 4-17. 러닝 페이스 메이커 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 4-18. 로고를 터치해 소리 켜고 끄기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 4-19. 차이에 따라 소리 높이가 바뀌는 페이스 메이커 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-2. 키로 어림한 보폭과 실측 보폭 비교 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-3. 걸은 거리 알려 주기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-4. 케이던스별 속도 계산표 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-5. log 맛보기 — 가짜 기록 10줄 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-6. 1초마다 걸음 수와 거리 기록하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-7. 러닝 기록기 — 시간 · 걸음 수 · 케이던스 · 거리 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 5-8. 속도도 함께 저장하기 (★★★) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 5-9. 걷기 · 달리기 보폭 따로 쓰기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-11. 저장 주기 정하기와 기록 지우기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-12. print 로 CSV 직접 출력하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-14. 요약 카드 계산하기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-15. 콘솔에 막대그래프 그리기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 5-16. 시나리오 러닝 기록기 (속도 · 메트로놈 포함) (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 5-17. 튀는 값 걸러 내기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-2. move() 로 한 걸음씩 걷기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-3. 길 안내 목록 따라가기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-4. LED 지도 위에서 정사각형 걷기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-5. A 버튼으로 걷는 위치 추적기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 6-6. B 버튼으로 출발점까지의 거리 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-7. 진짜 위치와 틀린 계산 비교하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-8. 걸음으로 움직이는 위치 추적기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-10. heading 과 tilt_heading 비교하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-11. 20m 를 걸은 뒤의 오차 계산표 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-12. 사각형을 계산으로 걸어 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-13. 사각형 걷기 추적기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 도전 6-14. A 버튼으로 출발점 되돌리기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 6-15. 처음 방향 맞추기 — 지금 보는 쪽을 0° 로 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-2. 교실을 문자 지도로 만들기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-3. 시작점 · 문 · 목표 찾기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS ["2: Type 'number' is not assignable to type 'number[]'.","5: Type 'number' is not assignable to type 'string[]'.","10: Argument of type 'number' is not assignable to parameter of type 'string'."]
+VIEW0 콘솔 MODAL  | 앗, 코드를 변환하는 과정에 문제가 있습니다.
+
+자바스크립트 코드를 블록으로 다시 변환할 수 없습니다. 자바스크립트로 계속 작업하거나, 변경 내용을 취소하고 이전 블록 버전으로 돌아갈 수 있습니다.
+
+취소 후 블록으로 이동
+자바스크립트 유지
+### 예제 7-5. 예제 공간 세 개 넘겨 보기 (회색 파이썬 블록 3)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS ["15: Operator '==' cannot be applied to types 'number[]' and 'string[]'."]
+VIEW0 콘솔 MODAL  | 앗, 코드를 변환하는 과정에 문제가 있습니다.
+
+자바스크립트 코드를 블록으로 다시 변환할 수 없습니다. 자바스크립트로 계속 작업하거나, 변경 내용을 취소하고 이전 블록 버전으로 돌아갈 수 있습니다.
+
+취소 후 블록으로 이동
+자바스크립트 유지
+### 예제 7-6. 내 공간을 보드 파일로 저장하고 다시 불러오기 (회색 파이썬 블록 3)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-7. 버튼으로 문까지 걸어 보기 (회색 파이썬 블록 4)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-8. 조이스틱으로 걷는 공간 속 위치 추적기 (회색 파이썬 블록 4)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 7-9. 복도 공간에서 걸어 보기 (회색 파이썬 블록 4)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS ["10: Property 'length' does not exist on type 'number'."]
+VIEW0 콘솔 MODAL  | 앗, 코드를 변환하는 과정에 문제가 있습니다.
+
+자바스크립트 코드를 블록으로 다시 변환할 수 없습니다. 자바스크립트로 계속 작업하거나, 변경 내용을 취소하고 이전 블록 버전으로 돌아갈 수 있습니다.
+
+취소 후 블록으로 이동
+자바스크립트 유지
+### 예제 7-10. 다섯 값을 CSV 한 줄로 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-11. 저장 줄 수 비교하기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-12. 걸음마다 경로 저장하기 (log) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-13. 1초마다 경로 저장하기 (log) (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-14. path.csv 에 경로 쓰고 읽기 (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 7-15. 경로 기록기 (log 저장) (회색 파이썬 블록 7)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 7-16. 파일로 저장하는 경로 기록기 (회색 파이썬 블록 9)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS ["14: Element implicitly has an 'any' type because type 'Number' has no index signature.","14: Property 'length' does not exist on type 'number'.","14: Element implicitly has an 'any' type because type 'Number' has no index signature.","14: Property 'length' does not exist on type 'number'."]
+VIEW0 콘솔 MODAL  | 앗, 코드를 변환하는 과정에 문제가 있습니다.
+
+자바스크립트 코드를 블록으로 다시 변환할 수 없습니다. 자바스크립트로 계속 작업하거나, 변경 내용을 취소하고 이전 블록 버전으로 돌아갈 수 있습니다.
+
+취소 후 블록으로 이동
+자바스크립트 유지
+### 더 해 보기 7-17. path.csv 가 잘 저장됐는지 확인하기 (회색 파이썬 블록 3)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-1. 보드에 저장된 path.csv 를 콘솔로 꺼내기 (회색 파이썬 블록 1)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-3. 콘솔에 경로 지도 그리기 (회색 파이썬 블록 5)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-4. LED 로 경로 재생하기 (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-5. 끝점 오차 거리 구하기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-6. 벽을 뚫은 걸음 찾기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-7. 길이 비율과 방향 차이로 원인 좁히기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 응용 8-8. 가상 공간 기록과 실제 보드 기록 비교하기 (회색 파이썬 블록 7)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-9. 같은 경로를 세 번 걸어 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-11. 그냥 평균과 원 평균 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-12. 방향 오프셋 재고 도면 방위 보기 (회색 파이썬 블록 0)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-13. 흔들리는 방향을 곧게 펴기 (회색 파이썬 블록 2)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-14. 칠판 앞에서 위치 바로잡기 (회색 파이썬 블록 4)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-15. 개선 전후 숫자로 비교하기 (회색 파이썬 블록 5)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 예제 8-16. 개선된 경로 기록기 (회색 파이썬 블록 3)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
+MARKERS []
+VIEW0 콘솔 MODAL 
+### 더 해 보기 8-17. 발표용 결과 카드 출력하기 (회색 파이썬 블록 11)
+{"err":"no workspace","keys":"pxtConfig,pxt,pxtc,pxtmelody,pxtTargetBundle,Blockly"}
