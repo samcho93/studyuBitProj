@@ -329,6 +329,39 @@ DIST = [` + DATA_DIST.join(', ') + `]
 </svg>`;
   })();
 
+  /* ───────── 그림 5-10. MY_DATA.HTM 을 데이터 보기로 열기 ───────── */
+  const FIG_MYDATA = `<svg viewBox="0 0 1280 400" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <defs><marker id="c5vA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>
+  <rect x="20" y="70" width="330" height="260" rx="16" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/>
+  <text x="185" y="110" text-anchor="middle" font-size="22" font-weight="bold" fill="var(--fg)">MICROBIT 드라이브</text>
+  <rect x="60" y="135" width="250" height="160" rx="10" fill="var(--card)" stroke="var(--accent2)" stroke-width="2"/>
+  <text x="185" y="170" text-anchor="middle" font-size="21" font-weight="bold" fill="var(--accent2)">MY_DATA.HTM</text>
+  <text x="185" y="205" text-anchor="middle" font-size="16" fill="var(--muted)">기록 화면용 HTML</text>
+  <text x="185" y="235" text-anchor="middle" font-size="16" font-family="monospace" fill="var(--fg)">time,steps,cadence</text>
+  <text x="185" y="260" text-anchor="middle" font-size="16" font-family="monospace" fill="var(--fg)">10,18,108</text>
+  <text x="185" y="283" text-anchor="middle" font-size="16" font-family="monospace" fill="var(--fg)">20,37,112 …</text>
+  <path d="M360 200 L455 200" stroke="var(--muted)" stroke-width="3" marker-end="url(#c5vA)"/>
+  <text x="408" y="185" text-anchor="middle" font-size="16" fill="var(--muted)">📂 열기</text>
+  <rect x="465" y="110" width="290" height="180" rx="16" fill="var(--card)" stroke="var(--accent)" stroke-width="3"/>
+  <text x="610" y="160" text-anchor="middle" font-size="23" font-weight="bold" fill="var(--accent)">📈 데이터 보기</text>
+  <text x="610" y="200" text-anchor="middle" font-size="17" fill="var(--fg)">기록 부분(이름표 줄 +</text>
+  <text x="610" y="225" text-anchor="middle" font-size="17" fill="var(--fg)">숫자 줄)만 찾아서</text>
+  <text x="610" y="255" text-anchor="middle" font-size="17" fill="var(--fg)">표 · 그래프로</text>
+  <path d="M765 200 L860 200" stroke="var(--muted)" stroke-width="3" marker-end="url(#c5vA)"/>
+  <g font-size="18" fill="var(--fg)">
+    <rect x="870" y="40" width="390" height="320" rx="16" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/>
+    <text x="1065" y="78" text-anchor="middle" font-size="21" font-weight="bold">보기 메뉴</text>
+    <text x="900" y="120">표 — 기록 목록 · 정렬</text>
+    <text x="900" y="155">선 · 영역 그래프 — 시간에 따른 변화</text>
+    <text x="900" y="190">막대 그래프 — 줄마다 크기 비교</text>
+    <text x="900" y="225">산점도 — 두 값의 관계</text>
+    <text x="900" y="260">히스토그램 — 자주 나온 구간</text>
+    <text x="900" y="295">통계 — 최솟값 · 최댓값 · 평균</text>
+    <text x="1065" y="338" text-anchor="middle" font-size="15" fill="var(--muted)">요약 카드: 총 걸음 · 거리 · 평균 케이던스</text>
+  </g>
+</svg>`;
+  const FIG_RV_LAUNCH = `<div class="rv-launch"><span class="muted">위쪽 막대의 <b>📈 데이터 보기</b> 메뉴를 누르세요.</span></div>`;
+
   /* ───────── 본문 예제 코드 ───────── */
   const PY_RECORDER = `from microbit import *
 import math
@@ -1024,6 +1057,35 @@ print("고친 평균 케이던스", sum(moving) // len(moving), "spm")`,
               ['3', '이상한 점 · 다음에 할 것', '2분쯤 236 이 튀었는데 보드가 헐거워서인 것 같다. 다음엔 밴드로 단단히 고정하겠다.']
             ]
           },
+
+          { type: 'h', text: 'MY_DATA.HTM 파일을 읽어서 시각화하기' },
+          { type: 'p', html: '실제 보드로 달리고 온 기록은 <b>MICROBIT</b> 드라이브의 <b>MY_DATA.HTM</b> 파일에 들어 있습니다. 이 파일을 열어 보면 기록을 보여 주는 화면(HTML)과 함께, 1교시에 <code>log.add()</code> 로 붙인 <b>CSV 모양의 기록</b>이 들어 있습니다. 이 강좌 사이트의 <b>📈 데이터 보기</b> 메뉴는 파일 안에서 <b>이름표 줄 + 숫자 줄</b>만 찾아 꺼낸 뒤, 표와 여러 가지 그래프로 바꿔 보여 줍니다.' },
+          { type: 'figure', html: FIG_MYDATA, caption: '그림 5-10. MY_DATA.HTM 에서 기록만 꺼내 표 · 그래프로 보기' },
+          { type: 'list', ordered: true, items: [
+            '기록이 담긴 보드를 USB 로 컴퓨터에 연결합니다. 파일 탐색기에 <b>MICROBIT</b> 드라이브가 보이는지 확인합니다.',
+            '화면 위쪽 막대의 <b>📈 데이터 보기</b>를 누릅니다 (아래 버튼으로도 열 수 있습니다).',
+            '<b>📂 파일 열기</b>를 누르고 <b>MICROBIT</b> 드라이브의 <b>MY_DATA.HTM</b> 을 고릅니다. 파일을 창 위로 끌어 놓아도 됩니다.',
+            '맨 위 <b>요약 카드</b>(총 걸음 · 거리 · 평균 케이던스 · 평균 보폭)를 먼저 읽고, 아래 <b>보기 메뉴</b>를 하나씩 눌러 봅니다.',
+            '기록 도중 이름표(<code>log.set_labels</code>)를 바꿨다면 기록이 <b>묶음</b> 여러 개로 나뉩니다. 위쪽 선택 상자에서 볼 묶음을 고릅니다.'
+          ] },
+          { type: 'figure', html: FIG_RV_LAUNCH },
+          { type: 'callout', kind: 'tip', title: '보드가 없어도 해 볼 수 있습니다', html: '<b>📊 시뮬레이터 기록으로 보기</b>는 시뮬레이터 📊 로그 탭의 기록을 바로 불러옵니다 (예제 5-16 을 먼저 실행해 기록을 쌓아 두세요). 📊 로그 탭에서 내려받은 <code>microbit-log.csv</code> 파일도 📂 파일 열기로 열 수 있고, <b>예시 데이터</b>는 그림 5-8 과 같은 기록입니다.' },
+          {
+            type: 'table', caption: '표 5-5. 데이터 보기 메뉴 — 언제 어떤 보기를 쓸까?',
+            head: ['메뉴', '보여 주는 것', '이럴 때 씁니다'],
+            rows: [
+              ['표', '기록 목록 전체 (이름표를 누르면 정렬)', '가장 큰 값 · 작은 값이 몇 번째 줄인지 찾을 때'],
+              ['선 그래프', '시간에 따라 바뀌는 값 (열 여러 개를 함께)', '언제 빨라지고 느려졌는지 볼 때'],
+              ['영역 그래프', '선 아래를 색칠한 그래프', '누적 걸음 · 거리처럼 쌓이는 양을 볼 때'],
+              ['막대 그래프', '줄마다 값의 크기 + 평균선', '구간끼리 크기를 비교할 때'],
+              ['산점도', '두 열을 가로 · 세로로 찍은 점 + 추세선', '케이던스가 높을수록 거리가 빨리 느는지 같은 관계를 볼 때'],
+              ['히스토그램', '값을 구간으로 나눠 몇 번 나왔는지', '주로 어느 빠르기로 달렸는지, 튀는 값이 있는지 볼 때'],
+              ['통계', '열마다 개수 · 최솟값 · 최댓값 · 평균 · 중앙값', '리포트에 숫자를 옮겨 적을 때']
+            ]
+          },
+          { type: 'p', html: '<b>예시 데이터로 해 보기.</b> 히스토그램에서 <code>cadence</code> 열을 고르면 봉우리가 <b>두 개</b> 보입니다. 110 근처는 걷기, 160 근처는 뛰기입니다. 그리고 오른쪽 끝에 <b>혼자 떨어진 막대</b>가 하나 있는데, 바로 튀는 값 236 입니다. 선 그래프에서는 지나치기 쉬운 값도 히스토그램에서는 눈에 잘 띕니다. 통계 메뉴에서 <code>cadence</code> 의 평균과 중앙값을 비교해 보세요.' },
+          { type: 'callout', kind: 'more', title: '산점도의 추세선', html: '추세선은 점들 사이를 <b>가장 잘 지나가는 직선</b>입니다. 계산 방법(최소제곱법)은 어려우니 준비된 계산으로 그려 줍니다. 가로축 <code>time</code>, 세로축 <code>distance</code> 로 그리면 추세선의 기울기가 곧 <b>1초에 간 거리(평균 속도)</b>가 됩니다.' },
+          { type: 'callout', kind: 'board', title: 'MY_DATA.HTM 이 잘 열리지 않을 때', html: '드라이브에 MY_DATA.HTM 이 없으면 보드에서 <code>log.add()</code> 가 한 번도 실행되지 않은 것입니다. 새 프로그램을 보드에 올리면 기록이 지워질 수 있으니, <b>기록을 먼저 꺼낸 뒤</b> 프로그램을 바꿉니다. 파일은 이 브라우저 안에서만 읽고 다른 곳으로 보내지 않습니다. 필요하면 <b>⬇ CSV</b> 로 정리된 기록만 따로 저장할 수 있습니다.' },
           { type: 'callout', kind: 'tip', title: '2교시 정리', html: '기록은 <b>📊 로그 탭의 CSV</b> 또는 <b>실제 보드의 MY_DATA.HTM</b> 으로 꺼냅니다. CSV 는 첫 줄 이름표 + 쉼표로 나눈 값입니다. 웹 화면에서는 요약 카드로 결과를, 선그래프로 변화를 읽고, 튀는 값은 원인을 찾아 걸러 냅니다. 다음 챕터부터는 걸음에 <b>방향</b>을 더해 “어디로 갔나”를 알아봅니다.' }
         ],
         slides: [
@@ -1071,6 +1133,8 @@ avg_stride = int(DIST[-1] * 100 / total)
 print("총 걸음", total)
 print("평균 케이던스", avg_cad)
 print("평균 보폭", avg_stride, "cm")`, notes: '<p>시나리오 기록이 있는 모둠은 자기 CSV 로, 없는 모둠은 본문 예시 데이터(그림 5-8)로 리포트를 씁니다.</p><p>★ 표 5-4 의 예시를 따라 3줄 쓰기, ★★ 예제 5-14 로 자기 카드 숫자 계산, ★★★ 응용 5-17 로 튀는 값을 걸러 다시 계산.</p><p>시간: 2분 (나머지는 과제로)</p>' },
+          { layout: 'diagram', title: 'MY_DATA.HTM 읽어서 시각화', html: FIG_MYDATA, caption: '📈 데이터 보기 → 📂 파일 열기 → MY_DATA.HTM', notes: '<p>위쪽 막대의 📈 데이터 보기 메뉴를 열고, 미리 기록해 둔 보드의 MY_DATA.HTM(없으면 예시 데이터)을 불러와 시연합니다.</p><p>💬 “파일 안에는 HTML 도 들어 있는데 어떻게 기록만 꺼낼까요?” — 이름표 줄 다음에 숫자 줄이 이어지는 곳을 찾는다.</p><p>새 프로그램을 올리기 전에 기록부터 꺼내라고 짚습니다.</p><p>시간: 2분</p>' },
+          { layout: 'table', title: '데이터 보기 메뉴', head: ['메뉴', '이럴 때'], rows: [['표', '몇 번째 줄인지 찾기 · 정렬'], ['선 · 영역 그래프', '시간에 따른 변화'], ['막대 그래프', '구간끼리 크기 비교'], ['산점도', '두 값의 관계 · 추세선'], ['히스토그램', '자주 나온 빠르기 · 튀는 값'], ['통계', '평균 · 중앙값 옮겨 적기']], lead: '같은 기록, 여러 가지 그림', notes: '<p>예시 데이터로 히스토그램(cadence)을 띄웁니다.</p><p>💬 “봉우리가 왜 두 개일까요?” — 걷기 110 근처, 뛰기 160 근처. 💬 “혼자 떨어진 막대는?” — 튀는 값 236.</p><p>통계 메뉴에서 평균과 중앙값을 비교하고, 리포트 ①줄에 쓰게 합니다.</p><p>시간: 3분</p>' },
           { layout: 'summary', title: '2교시 정리', bullets: ['꺼내기: 📊 로그 탭 CSV · 보드의 MY_DATA.HTM', 'CSV = 첫 줄 이름표 + 쉼표로 나눈 값', '요약 카드 = 결과 · 선그래프 = 변화', '튀는 값은 원인 찾고 걸러 내기', '운동 기록도 개인정보'], notes: '<p>두세 모둠이 리포트 1줄씩 발표합니다.</p><p>다음 시간 “생각하기”(ch06): 눈을 감고 교실 문까지 걸어가야 한다면, 무엇을 세고 무엇을 기억하며 걸을까요? 를 안내합니다.</p><p>시간: 1분</p>' }
         ]
       }

@@ -3,3 +3,38 @@
  * 다크 모드: :root[data-theme="dark"] { ... }   슬라이드 무대: .stage { --s-accent: ...; }
  * 시뮬레이터: css/sim.css (.sim-board · .sim-panel · .mb-*)
  */
+
+/* ── 러닝 데이터 보기 (js/custom.js · RunViewer) ── */
+.rv-modal { position: fixed; inset: 0; z-index: 9000; background: rgba(0, 0, 0, .45); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.rv-box { width: min(1100px, 100%); max-height: 100%; overflow: auto; background: var(--pane); color: var(--fg); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, .3); padding: 14px 18px 18px; }
+.rv-box.drag { outline: 3px dashed var(--accent); outline-offset: -8px; }
+.rv-head { display: flex; align-items: center; gap: 10px; font-size: 17px; }
+.rv-head .spacer { flex: 1; }
+.rv-sub { color: var(--muted); font-size: 13px; }
+.rv-load { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0; }
+.rv-load label.btn { cursor: pointer; }
+.rv-set { max-width: 420px; padding: 3px 6px; border-radius: 7px; border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.rv-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 36px 16px; text-align: center; color: var(--muted); line-height: 1.8; }
+.rv-cards { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+.rv-card { flex: 1 1 110px; background: var(--card2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.rv-card span { display: block; font-size: 12px; color: var(--muted); }
+.rv-card b { font-size: 20px; }
+.rv-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.rv-tabs button { border: 1px solid transparent; border-bottom: none; background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 8px 8px 0 0; cursor: pointer; font: inherit; }
+.rv-tabs button:hover { color: var(--fg); }
+.rv-tabs button.on { background: var(--card); color: var(--accent); border-color: var(--line); font-weight: bold; margin-bottom: -1px; }
+.rv-opts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13.5px; margin-bottom: 8px; min-height: 26px; }
+.rv-opts select { padding: 2px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.rv-chk { display: inline-flex; align-items: center; gap: 3px; cursor: pointer; }
+.rv-svg { width: 100%; height: auto; display: block; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.rv-legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 6px; font-size: 13px; }
+.rv-legend i { display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+.rv-note { color: var(--muted); font-size: 13px; margin: 6px 2px 0; }
+.rv-empty { color: var(--muted); padding: 30px; text-align: center; }
+.rv-table { max-height: 52vh; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+.rv-table table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.rv-table th, .rv-table td { padding: 5px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+.rv-table thead th { position: sticky; top: 0; background: var(--card2); cursor: pointer; user-select: none; }
+.rv-table tbody th { text-align: left; }
+.rv-table tbody tr:hover { background: var(--card2); }
+.rv-launch { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 14px; }
