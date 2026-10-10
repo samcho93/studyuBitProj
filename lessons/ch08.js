@@ -426,54 +426,6 @@ def nearest_landmark(x, y):
 </svg>`;
   })();
 
-  /* ───────── 그림 8-9. 공간 설계 창 (마우스로 공간 · 구조물 · 시작점 → 기록 겹치기) ───────── */
-  const FIG_SPACE = (() => {
-    const px = (x) => 320 + x * 50, py = (y) => 330 - y * 50;   // 공간 1m = 50px
-    let grid = '';
-    for (let x = 1; x < 8; x++) grid += `<line x1="${px(x)}" x2="${px(x)}" y1="${py(5)}" y2="${py(0)}" stroke="var(--line)"/>`;
-    for (let y = 1; y < 5; y++) grid += `<line x1="${px(0)}" x2="${px(8)}" y1="${py(y)}" y2="${py(y)}" stroke="var(--line)"/>`;
-    const tools = ['선택', '사각형', '원', '삼각형', '시작점'];
-    return `<svg viewBox="0 0 1280 400" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
-  <defs><marker id="c8sA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--ok)"/></marker></defs>
-  <text x="140" y="40" text-anchor="middle" font-size="21" font-weight="bold" fill="var(--fg)">① 도구 · 크기</text>
-  ${tools.map((t, i) => `<rect x="40" y="${60 + i * 42}" width="200" height="34" rx="8" fill="${i === 1 ? 'var(--accent)' : 'var(--code-bg)'}" stroke="var(--line)"/><text x="140" y="${83 + i * 42}" text-anchor="middle" font-size="18" fill="${i === 1 ? '#fff' : 'var(--fg)'}">${t}</text>`).join('')}
-  <text x="140" y="300" text-anchor="middle" font-size="17" fill="var(--muted)">공간 가로 8m · 세로 5m</text>
-  <text x="140" y="326" text-anchor="middle" font-size="17" fill="var(--muted)">구조물 가로 · 세로 · 반지름</text>
-  <text x="140" y="352" text-anchor="middle" font-size="17" fill="var(--muted)">회전 · 출발 방향</text>
-  <text x="520" y="40" text-anchor="middle" font-size="21" font-weight="bold" fill="var(--fg)">② 마우스로 그리기 → ③ 기록 겹치기</text>
-  <rect x="${px(0)}" y="${py(5)}" width="400" height="250" fill="var(--card)"/>
-  ${grid}
-  <rect x="${px(0)}" y="${py(5)}" width="400" height="250" fill="none" stroke="var(--fg)" stroke-width="4"/>
-  <rect x="${px(3)}" y="${py(3)}" width="50" height="50" fill="var(--muted)" fill-opacity=".4" stroke="var(--muted)" stroke-width="2"/>
-  <text x="${px(3.5)}" y="${py(2.5) + 6}" text-anchor="middle" font-size="15" fill="var(--fg)">기둥</text>
-  <circle cx="${px(5.5)}" cy="${py(2.3)}" r="25" fill="var(--muted)" fill-opacity=".4" stroke="var(--muted)" stroke-width="2"/>
-  <text x="${px(5.5)}" y="${py(2.3) + 6}" text-anchor="middle" font-size="15" fill="var(--fg)">원탁</text>
-  <polygon points="${px(2)},${py(1.4)} ${px(2.4)},${py(0.6)} ${px(1.6)},${py(0.6)}" fill="var(--muted)" fill-opacity=".4" stroke="var(--muted)" stroke-width="2"/>
-  <rect x="${px(3.8)}" y="${py(1.5)}" width="75" height="40" fill="var(--accent)" fill-opacity=".15" stroke="var(--accent)" stroke-width="2" stroke-dasharray="7 5"/>
-  <text x="${px(4.55)}" y="${py(0.8) + 18}" text-anchor="middle" font-size="14" fill="var(--accent)">끌어서 만들기</text>
-  <polyline points="${px(7.5)},${py(0.5)} ${px(7.4)},${py(5.1)} ${px(6.7)},${py(5.15)}" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-dasharray="6 5"/>
-  <g stroke="var(--danger)" stroke-width="4"><line x1="${px(6.7) - 9}" y1="${py(5.15) - 9}" x2="${px(6.7) + 9}" y2="${py(5.15) + 9}"/><line x1="${px(6.7) - 9}" y1="${py(5.15) + 9}" x2="${px(6.7) + 9}" y2="${py(5.15) - 9}"/></g>
-  <polyline points="${px(7.5)},${py(0.5)} ${px(7.5)},${py(4.6)} ${px(1.8)},${py(4.6)} ${px(1.8)},${py(2.2)} ${px(0.8)},${py(2.2)}" fill="none" stroke="var(--ok)" stroke-width="4" stroke-linejoin="round"/>
-  <circle cx="${px(0.8)}" cy="${py(2.2)}" r="8" fill="var(--ok)"/>
-  <line x1="${px(7.5)}" y1="${py(0.5)}" x2="${px(7.5)}" y2="${py(0.5) - 34}" stroke="var(--ok)" stroke-width="4" marker-end="url(#c8sA)"/>
-  <circle cx="${px(7.5)}" cy="${py(0.5)}" r="13" fill="var(--ok)"/>
-  <text x="${px(7.5)}" y="${py(0.5) + 6}" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">S</text>
-  <text x="${px(4)}" y="372" text-anchor="middle" font-size="16" fill="var(--muted)">S = 시작점 · 화살표 = 출발 방향 · 빨간 X = 벽 밖 · 구조물 안</text>
-  <text x="1015" y="40" text-anchor="middle" font-size="21" font-weight="bold" fill="var(--fg)">④ 결과 표</text>
-  <rect x="790" y="60" width="450" height="270" rx="14" fill="var(--code-bg)" stroke="var(--line)" stroke-width="2"/>
-  <g font-size="17" fill="var(--fg)">
-    <text x="810" y="98" font-weight="bold">기록</text><text x="960" y="98" font-weight="bold">걸은 길</text><text x="1070" y="98" font-weight="bold">통과 점</text>
-    <line x1="805" x2="1225" y1="112" y2="112" stroke="var(--line)"/>
-    <text x="810" y="146" fill="var(--danger)">개선 전</text><text x="960" y="146">15.4m</text><text x="1070" y="146" fill="var(--danger)" font-weight="bold">4</text>
-    <text x="810" y="184" fill="var(--warn)">실제 보드</text><text x="960" y="184">13.2m</text><text x="1070" y="184" fill="var(--danger)" font-weight="bold">1</text>
-    <text x="810" y="222" fill="var(--ok)">개선 후</text><text x="960" y="222">13.3m</text><text x="1070" y="222">0</text>
-  </g>
-  <text x="1015" y="270" text-anchor="middle" font-size="16" fill="var(--muted)">끝점 위치 · S → 끝점 거리 ·</text>
-  <text x="1015" y="296" text-anchor="middle" font-size="16" fill="var(--muted)">통과한 걸음 번호도 함께</text>
-</svg>`;
-  })();
-  const FIG_PM_LAUNCH = `<div class="pm-launch"><span class="muted">위쪽 막대의 <b>🗺 공간 · 경로</b> 메뉴를 누르세요.</span></div>`;
-
   MB_COURSE.addChapter({
     id: 'ch08', no: '08',
     title: '경로 시각화와 정확도 높이기',
@@ -539,6 +491,8 @@ except OSError:
           { type: 'h', text: '웹 지도 위에 경로 겹쳐 그리기' },
           { type: 'p', html: '웹 지도 화면은 두 가지를 불러옵니다. ch07 에서 만든 <b>공간 도면</b>과, 방금 꺼낸 <b>경로 CSV</b> 입니다. 그러면 도면 위에 두 가지 길이 겹쳐 보입니다. 하나는 걸으려고 계획했던 <b>계획 경로</b>, 다른 하나는 보드가 걸음 · 방향으로 계산한 <b>추정 경로</b>입니다.' },
           { type: 'figure', html: FIG_WEBMAP, caption: '그림 8-2. 웹 지도 화면 예시 — ch07 의 교실 도면 위에 개선 전 기록을 겹쳐 그림' },
+          { type: 'p', html: '웹 지도는 화면 위쪽 막대의 <b>🗺 웹 지도</b> 메뉴(또는 아래 버튼)로 엽니다. <b>📂 도면 불러오기</b>로 ch07 에서 저장한 <code>room.txt</code> 를, <b>📂 기록 불러오기</b>로 MY_DATA.HTM · path.csv 를 엽니다. 계획 경로는 <b>✏ 계획 경로 찍기</b>를 누르고 지도 칸을 차례로 눌러 그립니다.' },
+          { type: 'figure', html: '<div class="wm-launch"><span class="muted">위쪽 막대의 <b>🗺 웹 지도</b> 메뉴를 누르세요.</span></div>' },
           {
             type: 'table', caption: '표 8-1. 웹 지도 화면의 각 부분이 알려 주는 것',
             head: ['화면 부분', '보이는 모양', '알 수 있는 것'],
@@ -1117,34 +1071,6 @@ display.scroll(str(better) + "%")`,
             expect: '===== 발표용 결과 카드 =====\n프로젝트: 실내 경로 추적기\n적용한 개선: calibrate_stride, heading_offset, keep_straight\n끝점 오차: 206 cm -> 29 cm ( 86 % 줄어듦 )\n벽 통과 걸음: 4 -> 0\n걸은 길 대비 오차: 2 %\n(LED 에 86% 가 흘러갑니다)'
           },
           { type: 'callout', kind: 'tip', title: '발표를 잘하는 요령', html: '① 그래프 · 지도 한 장에는 <b>메시지 하나</b>만. ② 숫자에는 꼭 <b>단위</b>(cm, 걸음/분)를. ③ <b>한계를 솔직하게</b> 말하는 것은 약점이 아니라 실력입니다. ④ 친구 발표를 들을 때는 “좋았던 점 하나 + 궁금한 점 하나”를 적어 둡니다.' },
-
-          { type: 'h', text: '마우스로 공간을 만들고 내 경로 표시하기' },
-          { type: 'p', html: '지금까지는 글자 지도(<code>ROOM</code>)로 교실을 그렸습니다. 이번에는 <b>마우스로</b> 공간을 직접 그리고, 마이크로비트에 저장된 기록을 그 위에 겹쳐 봅니다. 화면 위쪽 막대의 <b>🗺 공간 · 경로</b> 메뉴(또는 아래 버튼)를 누르면 공간 설계 창이 열립니다. 발표에 쓸 <b>지도 한 장</b>을 여기에서 만들 수 있습니다.' },
-          { type: 'figure', html: FIG_SPACE, caption: '그림 8-9. 공간 설계 창 — 공간 크기 · 구조물 · 시작점을 정하고 기록을 겹쳐 그리기' },
-          { type: 'list', ordered: true, items: [
-            '<b>공간 크기 정하기</b>: 오른쪽 <b>공간</b> 칸에 가로 · 세로(m)를 넣습니다. 우리 교실을 줄자로 재어 넣으면 됩니다. 격자 한 칸의 크기(0.5m · 1m · 2m · 5m)도 고를 수 있고, <b>격자에 맞추기</b>를 켜면 구조물이 격자 반 칸 단위로 딱딱 맞춰집니다.',
-            '<b>구조물 만들기</b>: <b>사각형 · 원 · 삼각형</b> 도구를 고르고 공간 위에서 마우스를 <b>끌면</b> 그 크기로 생깁니다. 한 번 누르기만 하면 1m 크기로 생깁니다. 기둥 · 책상 · 사물함 · 화분처럼 <b>지나갈 수 없는 곳</b>을 만듭니다.',
-            '<b>크기 · 위치 바꾸기</b>: <b>선택</b> 도구로 구조물을 누르면 오른쪽 <b>고른 것</b> 칸에 이름 · 가운데 위치 · 가로 · 세로(원은 반지름) · 회전이 나옵니다. 숫자를 넣어 정확히 맞추거나, 마우스로 끌어 옮깁니다. 지우려면 <kbd>Delete</kbd> 키나 <b>삭제</b> 버튼을 누릅니다.',
-            '<b>시작점 정하기</b>: <b>시작점</b> 도구로 공간을 누르면 그 자리가 출발 위치 <b>S</b>, 곧 기록의 (0, 0) 이 됩니다. <b>출발 방향</b>은 A 를 누를 때 바라본 쪽입니다. 도면 위쪽을 보고 출발했다면 0° 그대로 둡니다.',
-            '<b>경로 표시하기</b>: <b>📂 MY_DATA.HTM · CSV 열기</b>로 보드의 기록을 고르면, 기록에서 <code>x</code> · <code>y</code> 열을 찾아 S 에서부터 걸음마다 점을 찍고 선으로 잇습니다. 기록은 다섯 개까지 함께 겹쳐 볼 수 있습니다.'
-          ] },
-          { type: 'figure', html: FIG_PM_LAUNCH },
-          {
-            type: 'table', caption: '표 8-9. 공간 설계 창의 도구',
-            head: ['도구', '마우스로 하는 일', '이럴 때 씁니다'],
-            rows: [
-              ['선택', '구조물 · S 를 눌러 고르고 끌어 옮기기', '크기 · 회전을 숫자로 고치기, 복제 · 삭제'],
-              ['사각형', '끌어서 가로 × 세로 정하기', '기둥 · 책상 · 사물함 · 칸막이'],
-              ['원', '끌어서 지름 정하기', '둥근 탁자 · 화분 · 원기둥'],
-              ['삼각형', '끌어서 밑변 × 높이 정하기', '모서리 화단 · 비스듬한 구조물 (회전과 함께)'],
-              ['시작점', '누른 곳이 출발 위치 S', 'A 를 누르고 출발한 자리 · 출발 방향'],
-              ['💾 공간 저장 · 📂 공간 불러오기', '공간 도면을 파일(.json)로', '모둠끼리 같은 교실 도면을 나눠 쓰기']
-            ]
-          },
-          { type: 'p', html: '<b>결과 읽기.</b> 창 아래 표에 기록마다 <b>점 수 · 걸은 길 · 끝점 위치 · S 에서 끝점까지 거리 · 통과 점</b>이 나옵니다. 벽 밖이나 구조물 안에 찍힌 점은 <b>빨간 X</b> 로 표시됩니다. 사람은 기둥을 뚫고 걸을 수 없으니, 빨간 X 가 있는 곳이 바로 계산이 틀어진 곳입니다. 예제 8-16 에서 랜드마크로 바로잡은 줄(<code>fix</code> 가 1)은 고리 모양으로 보입니다. <b>보여 줄 걸음</b> 막대를 움직이면 경로를 한 걸음씩 다시 볼 수 있습니다.' },
-          { type: 'p', html: '<b>예시로 해 보기.</b> <b>예시 공간</b>(ch07 교실과 같은 8m × 5m 에 기둥 · 원탁 · 화단)을 열고 <b>예시: 개선 전 · 실제 보드 · 개선 후</b>를 차례로 불러옵니다. 개선 전 기록은 7 · 8 · 22 · 23 걸음이 벽 밖에 X 로 찍힙니다(예제 8-6 의 결과와 같습니다). 실제 보드 기록은 기둥 옆에서 휘다가 15걸음째 점이 <b>기둥 안</b>에 찍힙니다. 개선 후 기록에는 X 가 없습니다. 세 기록을 함께 켜서 한 지도에서 비교해 보세요.' },
-          { type: 'callout', kind: 'more', title: '구조물 안인지 어떻게 알까?', html: '점이 구조물 안에 있는지는 <b>준비된 계산</b>이 판단합니다. 사각형은 “가로 · 세로 범위 안인가”, 원은 “가운데까지 거리가 반지름보다 짧은가”, 삼각형은 “그 높이에서 삼각형 폭 안인가”를 봅니다. 회전한 구조물은 점을 거꾸로 돌려 놓고 같은 방법으로 봅니다. 걸음 <b>점</b>만 검사하므로, 점과 점 사이 선이 구조물 모서리를 살짝 스치는 것은 잡지 못합니다.' },
-          { type: 'callout', kind: 'board', title: '실제 보드 기록을 겹칠 때', html: '기록에 <code>x</code> · <code>y</code> 열(cm)이 있어야 합니다. 예제 7-15 · 8-16 의 경로 기록기가 이렇게 저장합니다. 보드를 USB 로 연결해 <b>MICROBIT</b> 드라이브의 <b>MY_DATA.HTM</b> 을 고르면 됩니다. 출발할 때 바라본 방향과 창의 <b>출발 방향</b>이 다르면 경로 전체가 돌아가 보입니다. 공간 도면은 이 브라우저에 자동으로 저장되지만, 다른 컴퓨터에서 쓰려면 <b>💾 공간 저장</b>으로 파일을 만들어 둡니다.' },
           { type: 'callout', kind: 'info', title: '강좌를 마치며', html: '여러분은 작은 보드 하나로 걸음을 세고, 리듬을 맞추고, 거리를 재고, 건물 안에서 길을 그렸습니다. 그리고 그 과정에서 <b>잴 것 정하기 → 만들기 → 데이터로 확인하기 → 원인 찾기 → 고치기</b>라는, 엔지니어가 일하는 방식을 그대로 해 보았습니다. 이 방식은 마이크로비트가 아닌 어떤 프로젝트에서도 똑같이 쓸 수 있습니다.' }
         ],
         slides: [
@@ -1185,8 +1111,6 @@ for h in [262, 275, 268, 259, 185, 178]:
           { layout: 'table', title: '개선 도전 — 난이도 고르기', head: ['난이도', '할 일'], rows: [['★', '1순위 원인에 함수 하나 → 다시 기록'], ['★★', '두 가지 조합 · 하나씩 넣어 비교'], ['★★★', '나만의 개선 아이디어 구현']], lead: '예제 8-16 개선된 경로 기록기에서 출발', notes: '<p>예제 8-16 을 기본으로 나눠 주고, 모둠이 난이도를 고르게 합니다.</p><p>★★★ 예: 문 칸을 지나면 자동 바로잡기, 뛸 때 보폭 바꾸기, 벽을 따라 미끄러지기.</p><p>한 번에 하나씩 바꾸고 기록 → 비교를 순회하며 확인합니다.</p><p>시간: 9분</p>' },
           { layout: 'table', title: '두 프로젝트 돌아보기', head: ['단계', '러닝 측정기', '경로 추적기'], rows: [['센서', '가속도', '가속도 + 방위각'], ['계산', '걸음 · 케이던스', '걸음 + 방향 → x · y'], ['쓸모', '메트로놈 · 거리 · 속도', '가상 공간 · 벽 검사'], ['보여 주기', '웹 그래프', '웹 지도 · 재생'], ['고치기', '기준선 · 보폭', '보정 함수 · 랜드마크']], notes: '<p>💬 “두 프로젝트의 공통 뿌리는?” — 걸음 세기(is_step).</p><p>💬 “가장 어려웠던 단계는?” 모둠별로 한 가지씩 말하게 하고, 그것을 발표의 “만든 과정”에 넣게 합니다.</p><p>시간: 4분</p>' },
           { layout: 'diagram', title: '3분 발표 순서', html: FIG_PRESENT, caption: '문제 → 과정 → 결과 → 한계 → 다음 단계', notes: '<p>표 8-8 의 예시 문장을 읽어 줍니다.</p><p>더 해 보기 8-17 로 결과 카드를 만들어 발표 화면에 띄우게 합니다.</p><p>💬 “한계를 말하면 점수가 깎일까요?” — 아니요, 한계를 아는 것이 실력.</p><p>남은 시간에 모둠별 발표 리허설, 시간이 되면 두세 모둠 발표.</p><p>시간: 7분</p>' },
-          { layout: 'diagram', title: '마우스로 공간 만들고 경로 겹치기', html: FIG_SPACE, caption: '🗺 공간 · 경로 → 구조물 · 시작점 → 📂 MY_DATA.HTM', notes: '<p>위쪽 막대의 🗺 공간 · 경로 메뉴를 열고 시연합니다: 공간 크기 8 × 5 → 사각형 도구로 기둥 끌어 만들기 → 선택 도구로 크기 · 회전 숫자 고치기 → 시작점 도구로 S 놓기.</p><p>예시: 개선 전 · 실제 보드 · 개선 후를 차례로 불러와 겹칩니다.</p><p>💬 “빨간 X 는 무슨 뜻일까요?” — 사람이 갈 수 없는 곳(벽 밖 · 기둥 안)에 점이 찍힘 = 계산이 틀어진 곳.</p><p>시간: 3분</p>' },
-          { layout: 'table', title: '공간 설계 창의 도구', head: ['도구', '쓰임'], rows: [['선택', '고르기 · 끌어 옮기기 · 크기 숫자'], ['사각형 · 원 · 삼각형', '끌어서 구조물 만들기'], ['시작점', '출발 위치 S · 출발 방향'], ['📂 기록 열기', 'x · y 열 → S 에서부터 경로'], ['💾 공간 저장', '모둠끼리 도면 나눠 쓰기']], lead: '우리 교실을 재어서 그려 보기', notes: '<p>모둠별로 교실 가로 · 세로를 줄자로 재어 공간을 만들고, 기둥 · 책상을 구조물로 넣게 합니다.</p><p>자기 MY_DATA.HTM(없으면 시뮬레이터 기록)을 겹쳐 발표용 지도 한 장을 만듭니다.</p><p>💬 “경로가 통째로 돌아가 보이면?” — 출발 방향을 확인.</p><p>시간: 3분</p>' },
           { layout: 'summary', title: '2교시 정리', bullets: ['보폭 → <code>calibrate_stride()</code>', '출발 방향 → <code>heading_offset()</code> (원 평균)', '흔들림 → <code>keep_straight()</code>', '쌓인 오차 → 랜드마크 · 지도 맞춤', '한 번에 하나씩 바꾸고 다시 재기'], notes: '<p>강좌 전체를 마무리합니다: “잴 것 정하기 → 만들기 → 데이터로 확인 → 원인 찾기 → 고치기.”</p><p>발표를 다음 시간에 이어서 한다면 결과 카드와 지도 한 장을 준비해 오게 합니다.</p><p>시간: 2분</p>' }
         ]
       }

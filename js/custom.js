@@ -358,7 +358,7 @@
     modal.querySelectorAll('.rv-table thead th[data-k]').forEach((th) => { th.onclick = () => { const k = +th.dataset.k; if (st.sort === k) st.desc = !st.desc; else { st.sort = k; st.desc = false; } render(); }; });
   }
 
-  window.RunViewer = { open, close, parse: parseLog };
+  window.RunViewer = { open, close, parse: parseLog, fromSim };
 
   // 위쪽 막대 메뉴 [📈 데이터 보기]
   function addMenu() {
@@ -384,414 +384,318 @@
   setTimeout(fillLaunchers, 0);
 })();
 
-/* ── 공간 설계 · 경로 보기 (ch08) ──────────────────────────────────────
- * 마우스로 공간(가로 · 세로 m)을 만들고 사각형 · 원 · 삼각형 구조물과 시작점을 놓은 뒤,
- * MY_DATA.HTM · CSV · 시뮬레이터 기록의 x · y(cm) 를 시작점에서부터 겹쳐 그립니다.
- * 벽 밖 · 구조물 안에 찍힌 점은 빨간 X 로 표시합니다. 공간은 이 브라우저(localStorage)에 저장됩니다.
- * 열기: 위쪽 막대의 [🗺 공간 · 경로] 메뉴, 또는 본문의 <div class="pm-launch"></div> 자리 버튼.
+/* ── 웹 지도 (ch07 · ch08) ──────────────────────────────────────────────
+ * 문자 지도(도면) 위에 경로 기록(x · y 열, cm)을 겹쳐 그립니다.
+ * 계획 경로(초록 점선) · 추정 경로(선 + 걸음 점) · 벽 통과 걸음(빨간 X) · 끝점 오차 · ▶ 재생.
+ * 열기: 위쪽 막대의 [🗺 웹 지도] 메뉴, 또는 본문의 <div class="wm-launch"></div> 자리 버튼.
  */
 (function () {
   'use strict';
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m) => (window.app && app.toast ? app.toast(m) : alert(m));
-  const KEY = 'mbproj.pathmap.v1';
-  const KINDS = { rect: '사각형', circle: '원', tri: '삼각형' };
-  const TOOLS = [['select', '선택'], ['rect', '사각형'], ['circle', '원'], ['tri', '삼각형'], ['start', '시작점']];
-  const PCOLORS = ['var(--accent)', 'var(--ok)', 'var(--warn)', 'var(--more)', 'var(--accent2)'];
-  const r1 = (v) => Math.round(v * 10) / 10;
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const KEY = 'mb-webmap';
+  const CELL = 100;   // 1칸 = 100cm
+  const COLORS = ['var(--accent)', 'var(--warn)', 'var(--more)', 'var(--accent2)'];
 
-  // 예시 공간: ch07 2교시 교실 (8m × 5m, 시작점 = 문 옆) + 원탁 · 화단
-  const SAMPLE_SPACE = () => ({
-    w: 8, h: 5, grid: 1, snap: true,
-    start: { x: 7.5, y: 0.5, dir: 0 },
-    items: [
-      { type: 'rect', name: '기둥', x: 3.5, y: 2.5, w: 1, h: 1, rot: 0 },
-      { type: 'circle', name: '원탁', x: 5.5, y: 2.3, r: 0.5 },
-      { type: 'tri', name: '화단', x: 2, y: 1, w: 0.8, h: 0.8, rot: 0 }
-    ]
-  });
-  // 예시 기록 (ch08 그림 8-2 · 8-7 과 같은 값, cm · 시작점 기준)
+  // ch08 의 교실 · 계획 경로 · 세 기록 (본문 예제와 같은 값)
+  const SAMPLE_ROOM = ['##########', '#...BB...#', '#W.......#', '#W..P....#', '#W.......#', '#.......SD', '##########'];
+  const SAMPLE_PLAN = [[0, 0], [0, 400], [-600, 400], [-600, 200], [-700, 200]];
   const SAMPLES = {
     before: ['예시: 개선 전', [[-12, 66], [-26, 132], [-33, 198], [-48, 263], [-57, 330], [-69, 396], [-84, 461], [-150, 452], [-215, 436], [-281, 425], [-346, 410], [-412, 395], [-478, 384], [-545, 380], [-610, 365], [-676, 352], [-742, 345], [-739, 278], [-731, 211], [-720, 145], [-718, 78], [-783, 63], [-850, 59]]],
-    after: ['예시: 개선 후', [[1, 58], [2, 116], [4, 174], [7, 232], [8, 290], [11, 348], [8, 406], [-50, 406], [-108, 409], [-166, 410], [-224, 412], [-282, 410], [-340, 410], [-398, 408], [-456, 408], [-514, 408], [-572, 405], [-570, 347], [-569, 289], [-571, 231], [-573, 173], [-631, 171], [-689, 173]]],
-    board: ['예시: 실제 보드', [[0, 60], [0, 120], [3, 180], [3, 240], [3, 300], [4, 360], [1, 420], [-59, 420], [-119, 421], [-179, 423], [-226, 386], [-274, 350], [-321, 313], [-372, 280], [-422, 248], [-482, 243], [-486, 184], [-490, 124], [-491, 64], [-492, 4], [-552, 1], [-612, -4]]]
+    board: ['예시: 실제 보드', [[0, 60], [0, 120], [3, 180], [3, 240], [3, 300], [4, 360], [1, 420], [-59, 420], [-119, 421], [-179, 423], [-226, 386], [-274, 350], [-321, 313], [-372, 280], [-422, 248], [-482, 243], [-486, 184], [-490, 124], [-491, 64], [-492, 4], [-552, 1], [-612, -4]]],
+    after: ['예시: 개선 후', [[1, 58], [2, 116], [4, 174], [7, 232], [8, 290], [11, 348], [8, 406], [-50, 406], [-108, 409], [-166, 410], [-224, 412], [-282, 410], [-340, 410], [-398, 408], [-456, 408], [-514, 408], [-572, 405], [-570, 347], [-569, 289], [-571, 231], [-573, 173], [-631, 171], [-689, 173]]]
   };
 
-  const validSpace = (s) => !!(s && s.w > 0 && s.h > 0 && Array.isArray(s.items) && s.start);
-  function loadSpace() {
-    try { const s = JSON.parse(localStorage.getItem(KEY)); if (validSpace(s)) return s; } catch (e) { /* 저장된 것 없음 */ }
-    return SAMPLE_SPACE();
-  }
-  const st = { sp: loadSpace(), tool: 'select', sel: null, paths: [], upto: 0, labels: false, drag: null };
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st.sp)); } catch (e) { /* 저장 못 함 */ } };
-  const snapStep = () => (st.sp.snap ? Math.min(0.5, st.sp.grid / 2) : 0.1);
-  const snapV = (v) => { const s = snapStep(); return r1(Math.round(v / s) * s); };
+  // 파이썬 round() 와 같게 (.5 는 짝수 쪽으로) — 본문의 to_cell() 과 칸이 똑같이 나오도록
+  const pyRound = (v) => { const f = Math.floor(v), d = v - f; return d > 0.5 ? f + 1 : d < 0.5 ? f : (f % 2 === 0 ? f : f + 1); };
 
-  /* ── 준비된 계산: 점이 구조물 안인가? (회전한 구조물은 점을 거꾸로 돌려서 봄) ── */
-  function inside(it, px, py) {
-    if (it.type === 'circle') return Math.hypot(px - it.x, py - it.y) <= it.r;
-    const a = (it.rot || 0) * Math.PI / 180, dx = px - it.x, dy = -(py - it.y);   // 화면 방향(아래가 +)으로
-    const lx = dx * Math.cos(a) + dy * Math.sin(a), ly = -dx * Math.sin(a) + dy * Math.cos(a);
-    if (it.type === 'rect') return Math.abs(lx) <= it.w / 2 && Math.abs(ly) <= it.h / 2;
-    if (ly < -it.h / 2 || ly > it.h / 2) return false;          // 삼각형: 꼭짓점이 위, 밑변이 아래
-    return Math.abs(lx) <= (ly + it.h / 2) / it.h * it.w / 2;
+  /* ── 도면 (문자 지도) ── */
+  function findS(room) {
+    for (let r = 0; r < room.length; r++) { const c = room[r].indexOf('S'); if (c >= 0) return [c, r]; }
+    return null;
   }
-  function hitName(x, y) {
-    if (x < 0 || y < 0 || x > st.sp.w || y > st.sp.h) return '벽 밖';
-    for (let i = st.sp.items.length - 1; i >= 0; i--) if (inside(st.sp.items[i], x, y)) return st.sp.items[i].name || KINDS[st.sp.items[i].type];
-    return '';
-  }
-  // 기록 (x, y cm · 시작점 기준) → 공간 좌표 (m). 출발 방향 dir° 만큼 시계 방향으로 돌림
-  function toWorld(p) {
-    const s = st.sp.start, a = (s.dir || 0) * Math.PI / 180;
-    return { x: s.x + (p.x * Math.cos(a) + p.y * Math.sin(a)) / 100, y: s.y + (-p.x * Math.sin(a) + p.y * Math.cos(a)) / 100 };
-  }
-  function analyse(path) {
-    const s = st.sp.start;
-    let prev = { x: s.x, y: s.y }, len = 0;
-    const pts = path.pts.map((p) => { const w = toWorld(p); len += Math.hypot(w.x - prev.x, w.y - prev.y); prev = w; return Object.assign({}, p, w, { hit: hitName(w.x, w.y) }); });
-    return { pts, len, bad: pts.filter((p) => p.hit) };
+  // 글자 지도 읽기: 파이썬 ROOM = ["...", ...] 모양이면 따옴표 안만, 아니면 줄마다
+  function parseRoom(text) {
+    text = String(text).replace(/\r/g, '');
+    const q = text.match(/"([^"\n]+)"|'([^'\n]+)'/g);
+    let rows = q && q.length > 1 ? q.map((s) => s.slice(1, -1)) : text.split('\n').map((l) => l.replace(/\s+$/, '')).filter((l) => l.trim());
+    rows = rows.filter((l) => !/\s/.test(l) && l.length <= 80);
+    return rows.length && findS(rows) ? rows : null;
   }
 
-  /* ── 그리기 (SVG 1단위 = 1cm, 위쪽이 +y 가 되게 뒤집음) ── */
-  const X = (x) => r1(x * 100), Y = (y) => r1((st.sp.h - y) * 100);
-  function viewBox() {
-    let x0 = 0, y0 = 0, x1 = st.sp.w, y1 = st.sp.h;
-    st.paths.filter((p) => p.on).forEach((p) => p.pts.forEach((q) => { const w = toWorld(q); x0 = Math.min(x0, w.x); x1 = Math.max(x1, w.x); y0 = Math.min(y0, w.y); y1 = Math.max(y1, w.y); }));
-    const m = Math.max(x1 - x0, y1 - y0) * 0.08 + 0.3;
-    return [X(x0 - m), Y(y1 + m), r1((x1 - x0 + 2 * m) * 100), r1((y1 - y0 + 2 * m) * 100)];
+  function loadSaved() {
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.room) && findS(s.room)) return s; } catch (e) { /* 저장된 것 없음 */ }
+    return { room: SAMPLE_ROOM.slice(), plan: SAMPLE_PLAN.map((p) => p.slice()) };
   }
-  function shapeSvg(it, attrs) {
-    if (it.type === 'circle') return `<circle cx="${X(it.x)}" cy="${Y(it.y)}" r="${r1(it.r * 100)}" ${attrs}/>`;
-    const tr = `transform="translate(${X(it.x)} ${Y(it.y)}) rotate(${it.rot || 0})"`, w = it.w * 50, h = it.h * 50;
-    if (it.type === 'rect') return `<rect x="${-w}" y="${-h}" width="${2 * w}" height="${2 * h}" ${tr} ${attrs}/>`;
-    return `<polygon points="0,${-h} ${w},${h} ${-w},${h}" ${tr} ${attrs}/>`;
-  }
-  function svgHtml() {
-    const sp = st.sp, vb = viewBox(), k = Math.max(sp.w, sp.h) / 8, fs = r1(18 * k);
-    let g = `<rect x="0" y="0" width="${sp.w * 100}" height="${sp.h * 100}" fill="var(--card)"/>`;
-    for (let x = sp.grid; x < sp.w - 1e-9; x += sp.grid) g += `<line x1="${X(x)}" x2="${X(x)}" y1="0" y2="${sp.h * 100}" stroke="var(--line)" stroke-width="${k}"/>`;
-    for (let y = sp.grid; y < sp.h - 1e-9; y += sp.grid) g += `<line x1="0" x2="${sp.w * 100}" y1="${Y(y)}" y2="${Y(y)}" stroke="var(--line)" stroke-width="${k}"/>`;
-    const lab = Math.max(sp.grid, Math.ceil(Math.max(sp.w, sp.h) / 10));
-    for (let x = 0; x <= sp.w + 1e-9; x += lab) g += `<text x="${X(x)}" y="${r1(sp.h * 100 + fs * 1.2)}" font-size="${fs}" text-anchor="middle" fill="var(--muted)">${r1(x)}</text>`;
-    for (let y = 0; y <= sp.h + 1e-9; y += lab) g += `<text x="${r1(-fs * 0.5)}" y="${r1(Y(y) + fs * 0.35)}" font-size="${fs}" text-anchor="end" fill="var(--muted)">${r1(y)}</text>`;
-    g += `<rect x="0" y="0" width="${sp.w * 100}" height="${sp.h * 100}" fill="none" stroke="var(--fg)" stroke-width="${r1(5 * k)}"/>`;
-    g += `<text x="${sp.w * 50}" y="${r1(-fs * 0.6)}" font-size="${fs}" text-anchor="middle" fill="var(--muted)">위쪽 (출발 방향 0°) · ${r1(sp.w)}m × ${r1(sp.h)}m</text>`;
-    // 구조물
-    sp.items.forEach((it, i) => {
-      g += `<g class="pm-item" data-i="${i}">${shapeSvg(it, `fill="var(--muted)" fill-opacity=".35" stroke="var(--muted)" stroke-width="${r1(2 * k)}"`)}`;
-      g += `<text x="${X(it.x)}" y="${r1(Y(it.y) + fs * 0.35)}" font-size="${fs}" text-anchor="middle" fill="var(--fg)" pointer-events="none">${esc(it.name)}</text></g>`;
-      if (st.sel === i) g += shapeSvg(it, `fill="none" stroke="var(--accent)" stroke-width="${r1(4 * k)}" stroke-dasharray="${r1(10 * k)} ${r1(6 * k)}" pointer-events="none"`);
+  const saved = loadSaved();
+  const st = { room: saved.room, plan: saved.plan && saved.plan.length ? saved.plan : [[0, 0]], recs: [], upto: 0, dots: true, showPlan: true, edit: false, timer: null };
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ room: st.room, plan: st.plan })); } catch (e) { /* 저장 안 됨 */ } };
+
+  const charAt = (c, r) => (r >= 0 && r < st.room.length && c >= 0 && c < st.room[r].length ? st.room[r][c] : '#');
+  const toCell = (x, y) => { const [SC, SR] = findS(st.room); return [SC + pyRound(x / CELL), SR - pyRound(y / CELL)]; };
+  const isWall = (x, y) => '#P'.includes(charAt(...toCell(x, y)));
+
+  /* ── 기록 (x · y 열이 있는 묶음) ── */
+  function recordsFrom(sets) {
+    const out = [];
+    sets.forEach((ds) => {
+      const ix = ds.head.findIndex((h) => /^x$/i.test(h.trim())), iy = ds.head.findIndex((h) => /^y$/i.test(h.trim()));
+      if (ix < 0 || iy < 0) return;
+      const ifx = ds.head.findIndex((h) => /^fix$/i.test(h.trim()));
+      const pts = ds.rows.filter((r) => r[ix] != null && r[iy] != null).map((r) => [r[ix], r[iy], ifx >= 0 ? r[ifx] || 0 : 0]);
+      // 첫 줄이 (0, 0) 출발점이면 걸음이 아니므로 뺌
+      if (pts.length && pts[0][0] === 0 && pts[0][1] === 0) pts.shift();
+      if (pts.length) out.push({ name: ds.name, pts });
     });
-    if (st.drag && st.drag.mode === 'new' && st.drag.item) g += shapeSvg(st.drag.item, `fill="var(--accent)" fill-opacity=".2" stroke="var(--accent)" stroke-width="${r1(3 * k)}" stroke-dasharray="${r1(8 * k)} ${r1(5 * k)}"`);
-    // 경로
-    const s = sp.start;
-    st.paths.forEach((p, n) => {
-      if (!p.on) return;
-      const c = PCOLORS[n % PCOLORS.length], pts = analyse(p).pts.slice(0, st.upto);
-      g += `<polyline points="${[s].concat(pts).map((q) => X(q.x) + ',' + Y(q.y)).join(' ')}" fill="none" stroke="${c}" stroke-width="${r1(4 * k)}" stroke-linejoin="round" stroke-opacity=".85" pointer-events="none"/>`;
-      pts.forEach((q, i) => {
-        const cx = X(q.x), cy = Y(q.y), tip = `<title>${esc(p.name)} · ${q.n}걸음 · (${r1(q.x)}m, ${r1(q.y)}m)${q.hit ? ' · ' + esc(q.hit) + ' 통과!' : ''}</title>`;
-        if (q.hit) { const d = r1(10 * k); g += `<g stroke="var(--danger)" stroke-width="${r1(4 * k)}"><line x1="${cx - d}" y1="${cy - d}" x2="${cx + d}" y2="${cy + d}"/><line x1="${cx - d}" y1="${cy + d}" x2="${cx + d}" y2="${cy - d}"/><circle cx="${cx}" cy="${cy}" r="${r1(d * 1.4)}" fill="transparent" stroke="none">${tip}</circle></g>`; }
-        else if (q.fix) g += `<circle cx="${cx}" cy="${cy}" r="${r1(10 * k)}" fill="none" stroke="${c}" stroke-width="${r1(4 * k)}">${tip}</circle>`;
-        else g += `<circle cx="${cx}" cy="${cy}" r="${r1((i === pts.length - 1 ? 9 : 5) * k)}" fill="${c}">${tip}</circle>`;
-        if (st.labels) g += `<text x="${r1(cx + 9 * k)}" y="${r1(cy - 9 * k)}" font-size="${r1(fs * 0.75)}" fill="${c}" pointer-events="none">${esc(q.n)}</text>`;
-      });
-    });
-    // 시작점 + 출발 방향 화살표
-    const a = (s.dir || 0) * Math.PI / 180, L = 60 * k;
-    g += `<g class="pm-start"><line x1="${X(s.x)}" y1="${Y(s.y)}" x2="${r1(X(s.x) + L * Math.sin(a))}" y2="${r1(Y(s.y) - L * Math.cos(a))}" stroke="var(--ok)" stroke-width="${r1(5 * k)}" marker-end="url(#pmArrow)"/>`;
-    g += `<circle cx="${X(s.x)}" cy="${Y(s.y)}" r="${r1(15 * k)}" fill="var(--ok)" stroke="${st.sel === 'start' ? 'var(--accent)' : 'var(--card)'}" stroke-width="${r1(4 * k)}"/>`;
-    g += `<text x="${X(s.x)}" y="${r1(Y(s.y) + fs * 0.35)}" font-size="${fs}" font-weight="bold" text-anchor="middle" fill="#fff" pointer-events="none">S</text></g>`;
-    return `<svg class="pm-svg" viewBox="${vb.join(' ')}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif"><defs><marker id="pmArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--ok)"/></marker></defs>${g}</svg>`;
+    return out;
+  }
+  const maxLen = () => st.recs.reduce((m, r) => Math.max(m, r.pts.length), 0);
+  function addRecs(recs) {
+    stop();
+    recs.forEach((r) => { st.recs.push(r); });
+    while (st.recs.length > COLORS.length) st.recs.shift();
+    st.upto = maxLen(); render();
   }
 
-  /* ── 오른쪽 칸 ── */
-  const num = (k, v, min, max, stp, title) => `<input type="number" class="pm-p" data-k="${k}" value="${r1(v)}" min="${min}" max="${max}" step="${stp}"${title ? ` title="${title}"` : ''}>`;
-  function propsHtml() {
-    const sp = st.sp;
-    if (st.sel === 'start') {
-      return `<div class="pm-row"><b>시작점 S</b></div>
-        <div class="pm-row">x ${num('x', sp.start.x, 0, sp.w, 0.1)} y ${num('y', sp.start.y, 0, sp.h, 0.1)} m</div>
-        <div class="pm-row">출발 방향 ${num('dir', sp.start.dir || 0, -360, 360, 5, '도면 위쪽 = 0°, 오른쪽 = 90° (시계 방향)')}°</div>
-        <div class="pm-row">${[0, 90, 180, 270].map((d) => `<button class="btn small ghost pm-dir" data-d="${d}">${d}°</button>`).join('')}</div>
-        <p class="rv-note">A 를 누르고 출발할 때 바라본 쪽입니다. 도면 위쪽을 보고 출발했다면 0° 입니다.</p>`;
+  function analyse(rec) {
+    const shown = rec.pts.slice(0, st.upto);
+    let len = 0, px = 0, py = 0;
+    shown.forEach(([x, y]) => { len += Math.hypot(x - px, y - py); px = x; py = y; });
+    const walls = [];
+    shown.forEach(([x, y], i) => { if (isWall(x, y)) walls.push(i + 1); });
+    const end = shown[shown.length - 1], pe = st.plan[st.plan.length - 1];
+    const err = end && st.plan.length > 1 ? Math.round(Math.hypot(end[0] - pe[0], end[1] - pe[1])) : null;
+    return { n: shown.length, len, end, err, walls };
+  }
+
+  /* ── 그리기 ── */
+  const PAD = 24;
+  function geom() {
+    const rows = st.room.length, cols = Math.max(...st.room.map((l) => l.length));
+    const s = Math.min(64, 680 / cols, 440 / rows);
+    const [SC, SR] = findS(st.room);
+    return { s, rows, cols, W: cols * s + PAD * 2, H: rows * s + PAD * 2, px: (x) => PAD + (SC + x / CELL + 0.5) * s, py: (y) => PAD + (SR - y / CELL + 0.5) * s };
+  }
+  const CELL_STYLE = {
+    '#': ['var(--fg)', 0.75], 'P': ['var(--muted)', 0.8], 'D': ['var(--ok)', 0.35],
+    'B': ['var(--accent2)', 0.22], 'W': ['var(--accent2)', 0.22], 'G': ['var(--danger)', 0.2]
+  };
+  function mapSvg() {
+    const g = geom(), s = g.s;
+    let h = '';
+    st.room.forEach((line, r) => {
+      for (let c = 0; c < line.length; c++) {
+        const ch = line[c], x = PAD + c * s, y = PAD + r * s, sty = CELL_STYLE[ch];
+        h += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${sty ? sty[0] : 'var(--card)'}" fill-opacity="${sty ? sty[1] : 1}" stroke="var(--line)"/>`;
+        if (ch !== '#' && ch !== '.' && ch !== 'S') h += `<text x="${x + s / 2}" y="${y + s / 2 + 5}" text-anchor="middle" font-size="${Math.round(s * 0.36)}" fill="var(--fg)">${esc(ch)}</text>`;
+      }
+    });
+    const line = (pts) => pts.map(([x, y]) => g.px(x).toFixed(1) + ',' + g.py(y).toFixed(1)).join(' ');
+    // 계획 경로
+    if (st.showPlan && st.plan.length > 1) {
+      h += `<polyline points="${line(st.plan)}" fill="none" stroke="var(--ok)" stroke-width="4" stroke-dasharray="10 7" stroke-linejoin="round"/>`;
+      h += st.plan.slice(1).map(([x, y]) => `<circle cx="${g.px(x)}" cy="${g.py(y)}" r="4" fill="var(--ok)"/>`).join('');
     }
-    const it = sp.items[st.sel];
-    if (!it) return '<p class="rv-note">선택 도구로 구조물이나 시작점 S 를 누르면 여기에서 크기 · 위치를 바꿀 수 있습니다.</p>';
-    const size = it.type === 'circle' ? `<div class="pm-row">반지름 ${num('r', it.r, 0.1, 50, 0.1)} m</div>`
-      : `<div class="pm-row">가로 ${num('w', it.w, 0.1, 50, 0.1)} 세로 ${num('h', it.h, 0.1, 50, 0.1)} m</div><div class="pm-row">회전 ${num('rot', it.rot || 0, -360, 360, 15)}°</div>`;
-    return `<div class="pm-row"><b>${KINDS[it.type]}</b> <input type="text" class="pm-name" value="${esc(it.name)}" maxlength="12" title="이름"></div>
-      <div class="pm-row">가운데 x ${num('x', it.x, -50, 100, 0.1)} y ${num('y', it.y, -50, 100, 0.1)} m</div>
-      ${size}
-      <div class="pm-row"><button class="btn small ghost pm-dup">복제</button><button class="btn small ghost pm-del">삭제 (Delete)</button></div>`;
-  }
-  function pathsHtml() {
-    if (!st.paths.length) return '<p class="rv-note">아직 불러온 기록이 없습니다. 기록에 <code>x</code> · <code>y</code> 열(cm)이 있어야 합니다.</p>';
-    const max = Math.max(...st.paths.map((p) => p.pts.length));
-    return st.paths.map((p, n) => `<div class="pm-row pm-path"><label class="rv-chk"><input type="checkbox" class="pm-on" data-n="${n}"${p.on ? ' checked' : ''}><i style="background:${PCOLORS[n % PCOLORS.length]}"></i>${esc(p.name)}</label><button class="icon-btn pm-rm" data-n="${n}" title="이 기록 빼기">✕</button></div>`).join('') +
-      `<div class="pm-row">보여 줄 걸음 <input type="range" class="pm-upto" min="0" max="${max}" value="${st.upto}"> <span class="pm-upto-n">${st.upto} / ${max}</span></div>
-       <label class="rv-chk"><input type="checkbox" class="pm-labels"${st.labels ? ' checked' : ''}>걸음 번호 보이기</label>`;
-  }
-  function resultHtml() {
-    const on = st.paths.filter((p) => p.on);
-    if (!on.length) return '';
-    const s = st.sp.start;
-    const rows = on.map((p) => {
-      const a = analyse(p), e = a.pts[a.pts.length - 1];
-      const bad = a.bad.length ? a.bad.slice(0, 8).map((q) => `${esc(q.n)}걸음(${esc(q.hit)})`).join(', ') + (a.bad.length > 8 ? ' …' : '') : '없음';
-      return `<tr><th>${esc(p.name)}</th><td>${a.pts.length}</td><td>${r1(a.len)}m</td><td>(${r1(e.x)}, ${r1(e.y)})</td><td>${r1(Math.hypot(e.x - s.x, e.y - s.y))}m</td><td class="${a.bad.length ? 'pm-bad' : ''}">${a.bad.length}</td><td class="pm-badlist">${bad}</td></tr>`;
-    }).join('');
-    return `<div class="rv-table"><table><thead><tr><th>기록</th><th>점 수</th><th>걸은 길</th><th>끝점 (m)</th><th>S → 끝점</th><th>통과 점</th><th>통과한 걸음 (어디)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    // 추정 경로들
+    st.recs.forEach((rec, k) => {
+      const c = COLORS[k], shown = rec.pts.slice(0, st.upto);
+      if (!shown.length) return;
+      h += `<polyline points="${line([[0, 0]].concat(shown))}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      shown.forEach(([x, y, fix], i) => {
+        const X = g.px(x), Y = g.py(y), tip = `<title>${esc(rec.name)} · ${i + 1}걸음째 (${x}, ${y})</title>`;
+        if (isWall(x, y)) h += `<g stroke="var(--danger)" stroke-width="3.5">${tip}<line x1="${X - 7}" y1="${Y - 7}" x2="${X + 7}" y2="${Y + 7}"/><line x1="${X - 7}" y1="${Y + 7}" x2="${X + 7}" y2="${Y - 7}"/></g>`;
+        else if (st.dots) h += `<circle cx="${X.toFixed(1)}" cy="${Y.toFixed(1)}" r="4" fill="${c}">${tip}</circle>`;
+        if (fix) h += `<circle cx="${X.toFixed(1)}" cy="${Y.toFixed(1)}" r="9" fill="none" stroke="${c}" stroke-width="2.5">${tip}</circle>`;
+      });
+      // 끝점 오차 (끝까지 재생했을 때만)
+      const a = analyse(rec);
+      if (a.err != null && st.upto >= rec.pts.length) {
+        const pe = st.plan[st.plan.length - 1];
+        h += `<line x1="${g.px(pe[0])}" y1="${g.py(pe[1])}" x2="${g.px(a.end[0])}" y2="${g.py(a.end[1])}" stroke="var(--danger)" stroke-width="2.5" stroke-dasharray="4 4"/>`;
+      }
+      const last = shown[shown.length - 1];
+      h += `<circle cx="${g.px(last[0])}" cy="${g.py(last[1])}" r="7" fill="none" stroke="${c}" stroke-width="3"/>`;
+    });
+    // 시작점 S
+    h += `<circle cx="${g.px(0)}" cy="${g.py(0)}" r="${Math.max(9, g.s * 0.3)}" fill="var(--ok)"/><text x="${g.px(0)}" y="${g.py(0) + 6}" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">S</text>`;
+    return `<svg class="rv-svg wm-svg${st.edit ? ' editing' : ''}" viewBox="0 0 ${g.W} ${g.H}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">${h}</svg>`;
   }
 
   /* ── 화면 (모달) ── */
   let modal = null;
-  const $ = (s) => modal.querySelector(s);
   function ensureModal() {
     if (modal) return modal;
     modal = document.createElement('div');
-    modal.className = 'rv-modal pm-modal hidden';
-    modal.innerHTML = `<div class="rv-box pm-box" role="dialog" aria-label="공간 설계 · 경로 보기">
-      <div class="rv-head"><b>🗺 공간 설계 · 경로 보기</b><span class="rv-sub">공간 크기 · 구조물 · 시작점을 정하고 기록을 겹쳐 그리기</span><span class="spacer"></span><button class="icon-btn rv-close" title="닫기 (Esc)">✕</button></div>
-      <div class="pm-tools" role="toolbar">${TOOLS.map(([t, n]) => `<button class="btn small ghost" data-tool="${t}">${n}</button>`).join('')}<span class="pm-tip"></span></div>
-      <div class="pm-main">
-        <div class="pm-canvas"></div>
-        <div class="pm-side">
-          <div class="pm-sec"><h4>공간</h4>
-            <div class="pm-row">가로 <input type="number" class="pm-sw" min="1" max="50" step="0.5"> 세로 <input type="number" class="pm-sh" min="1" max="50" step="0.5"> m</div>
-            <div class="pm-row">격자 <select class="pm-grid">${[0.5, 1, 2, 5].map((v) => `<option value="${v}">${v}m</option>`).join('')}</select><label class="rv-chk"><input type="checkbox" class="pm-snap">격자에 맞추기</label></div>
-            <div class="pm-row"><button class="btn small ghost pm-new">빈 공간</button><button class="btn small ghost pm-sample">예시 공간</button></div>
-            <div class="pm-row"><button class="btn small ghost pm-save" title="공간 도면을 .json 파일로 저장">💾 공간 저장</button><label class="btn small ghost">📂 공간 불러오기<input type="file" class="pm-load" accept=".json" hidden></label></div>
+    modal.className = 'rv-modal hidden';
+    modal.innerHTML = `<div class="rv-box" role="dialog" aria-label="웹 지도">
+      <div class="rv-head"><b>🗺 웹 지도</b><span class="rv-sub">도면 위에 계획 경로 · 추정 경로를 겹쳐 보기 (1칸 = 1m)</span><span class="spacer"></span><button class="icon-btn rv-close" title="닫기 (Esc)">✕</button></div>
+      <div class="rv-load">
+        <label class="btn small ghost" title="문자 지도 글자 파일 (room.txt) — ROOM = [...] 파이썬 코드가 든 파일도 됩니다">📂 도면 불러오기<input type="file" class="wm-room-file" accept=".txt,.py" hidden></label>
+        <label class="btn small primary">📂 기록 불러오기 (MY_DATA.HTM · CSV)<input type="file" class="wm-rec-file" accept=".htm,.html,.csv,.txt" hidden></label>
+        <button class="btn small ghost" data-src="sim">📊 시뮬레이터 기록</button>
+        <select class="rv-set wm-sample" title="ch08 예시 기록"><option value="">예시 기록 ▾</option>${Object.keys(SAMPLES).map((k) => `<option value="${k}">${SAMPLES[k][0]}</option>`).join('')}</select>
+        <button class="btn small ghost wm-clear" title="불러온 기록 모두 지우기">기록 지우기</button>
+      </div>
+      <div class="rv-load wm-ctrl">
+        <button class="btn small primary wm-play">▶ 재생</button>
+        <input type="range" class="wm-range" min="0" value="0">
+        <span class="wm-step muted"></span>
+        <label class="rv-chk"><input type="checkbox" class="wm-dots">걸음 점</label>
+        <label class="rv-chk"><input type="checkbox" class="wm-plan">계획 경로</label>
+        <button class="btn small ghost wm-edit" title="지도 칸을 눌러 계획 경로의 꺾이는 점을 차례로 찍습니다">✏ 계획 경로 찍기</button>
+        <button class="btn small ghost wm-plan-undo" title="계획 경로의 마지막 점 지우기">↶</button>
+        <button class="btn small ghost wm-plan-clear">계획 지우기</button>
+      </div>
+      <div class="wm-main">
+        <div class="wm-map"></div>
+        <div class="wm-side">
+          <div class="wm-legend">
+            <div><i class="ln plan"></i>계획 경로 (걸으려던 길)</div>
+            <div><i class="ln"></i>추정 경로 · 점 = 한 걸음</div>
+            <div><b class="x">✕</b>벽 · 기둥 칸에 찍힌 걸음</div>
+            <div><i class="ln err"></i>끝점 오차 (계획 끝 ↔ 추정 끝)</div>
+            <div><b class="ring">◯</b>랜드마크로 바로잡은 걸음 (fix = 1)</div>
           </div>
-          <div class="pm-sec"><h4>고른 것</h4><div class="pm-props"></div></div>
-          <div class="pm-sec"><h4>경로 기록</h4>
-            <div class="pm-row"><label class="btn small primary">📂 MY_DATA.HTM · CSV 열기<input type="file" class="pm-file" accept=".htm,.html,.csv,.txt" hidden></label><button class="btn small ghost" data-src="sim">📊 시뮬레이터 기록</button></div>
-            <div class="pm-row">${Object.keys(SAMPLES).map((k) => `<button class="btn small ghost" data-src="${k}">${SAMPLES[k][0]}</button>`).join('')}</div>
-            <div class="pm-paths"></div>
-          </div>
+          <details class="wm-roomed"><summary>✏ 도면 글자로 고치기</summary>
+            <p class="rv-note"># 벽 · . 바닥 · D 문 · P 기둥 · S 시작점 · B · W 랜드마크 — 한 글자 = 1m</p>
+            <textarea class="wm-text" rows="9" spellcheck="false"></textarea>
+            <div class="rv-load"><button class="btn small primary wm-apply">적용</button><button class="btn small ghost wm-sroom">예시 교실</button><button class="btn small ghost wm-save">💾 room.txt 저장</button></div>
+          </details>
         </div>
       </div>
-      <div class="pm-result"></div>
+      <div class="wm-result"></div>
     </div>`;
     document.body.appendChild(modal);
-
+    const $ = (s) => modal.querySelector(s);
     $('.rv-close').onclick = close;
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
-    document.addEventListener('keydown', (e) => {
-      if (modal.classList.contains('hidden')) return;
-      if (e.key === 'Escape') close();
-      else if ((e.key === 'Delete' || e.key === 'Backspace') && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); delSel(); }
-    });
-    modal.querySelectorAll('[data-tool]').forEach((b) => { b.onclick = () => { st.tool = b.dataset.tool; render(); }; });
-    $('.pm-sw').onchange = (e) => { st.sp.w = clamp(+e.target.value || 1, 1, 50); changed(); };
-    $('.pm-sh').onchange = (e) => { st.sp.h = clamp(+e.target.value || 1, 1, 50); changed(); };
-    $('.pm-grid').onchange = (e) => { st.sp.grid = +e.target.value; changed(); };
-    $('.pm-snap').onchange = (e) => { st.sp.snap = e.target.checked; changed(); };
-    $('.pm-new').onclick = () => {
-      if (st.sp.items.length && !confirm('구조물을 모두 지우고 빈 공간으로 시작할까요?')) return;
-      st.sp = { w: st.sp.w, h: st.sp.h, grid: st.sp.grid, snap: st.sp.snap, start: { x: 0.5, y: 0.5, dir: 0 }, items: [] }; st.sel = null; changed();
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(); });
+    $('.wm-room-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) readText(f, (t) => loadRoomText(t, f.name)); };
+    $('.wm-rec-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) readText(f, (t) => loadRecText(t, f.name)); };
+    $('[data-src=sim]').onclick = () => load('sim');
+    $('.wm-sample').onchange = (e) => { if (e.target.value) load(e.target.value); e.target.value = ''; };
+    $('.wm-clear').onclick = () => { stop(); st.recs = []; st.upto = 0; render(); };
+    $('.wm-play').onclick = () => (st.timer ? stop() : play());
+    $('.wm-range').oninput = (e) => { stop(); st.upto = +e.target.value; render(); };
+    $('.wm-dots').onchange = (e) => { st.dots = e.target.checked; render(); };
+    $('.wm-plan').onchange = (e) => { st.showPlan = e.target.checked; render(); };
+    $('.wm-edit').onclick = () => { st.edit = !st.edit; if (st.edit) st.showPlan = true; render(); };
+    $('.wm-plan-undo').onclick = () => { if (st.plan.length > 1) st.plan.pop(); persist(); render(); };
+    $('.wm-plan-clear').onclick = () => { st.plan = [[0, 0]]; persist(); render(); };
+    $('.wm-apply').onclick = () => loadRoomText($('.wm-text').value, '입력한 도면');
+    $('.wm-sroom').onclick = () => { st.room = SAMPLE_ROOM.slice(); st.plan = SAMPLE_PLAN.map((p) => p.slice()); persist(); render(); };
+    $('.wm-save').onclick = () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([st.room.join('\n') + '\n'], { type: 'text/plain' }));
+      a.download = 'room.txt'; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     };
-    $('.pm-sample').onclick = () => { if (st.sp.items.length && !confirm('지금 공간 대신 예시 공간(ch07 교실)을 열까요?')) return; st.sp = SAMPLE_SPACE(); st.sel = null; changed(); };
-    $('.pm-save').onclick = () => download('space.json', JSON.stringify(st.sp, null, 1), 'application/json');
-    $('.pm-load').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) readText(f, (t) => loadSpaceText(t, f.name)); };
-    $('.pm-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) readText(f, (t) => addFromText(t, f.name)); };
-    modal.querySelectorAll('[data-src]').forEach((b) => { b.onclick = () => loadSrc(b.dataset.src); });
-
-    // 오른쪽 칸은 다시 그려지므로 이벤트를 위임
-    const side = $('.pm-side');
-    side.addEventListener('change', onSide);
-    side.addEventListener('input', (e) => { if (e.target.classList.contains('pm-upto')) { st.upto = +e.target.value; draw(); $('.pm-upto-n').textContent = st.upto + ' / ' + e.target.max; } });
-    side.addEventListener('click', (e) => {
-      const t = e.target.closest('button'); if (!t) return;
-      if (t.classList.contains('pm-dir')) { st.sp.start.dir = +t.dataset.d; changed(); }
-      else if (t.classList.contains('pm-del')) delSel();
-      else if (t.classList.contains('pm-dup')) { const it = Object.assign({}, st.sp.items[st.sel]); it.x = r1(it.x + 0.5); it.y = r1(it.y - 0.5); st.sp.items.push(it); st.sel = st.sp.items.length - 1; changed(); }
-      else if (t.classList.contains('pm-rm')) { st.paths.splice(+t.dataset.n, 1); fitUpto(); render(); }
-    });
-
-    const cv = $('.pm-canvas');
-    cv.addEventListener('pointerdown', onDown);
-    cv.addEventListener('pointermove', onMove);
-    cv.addEventListener('pointerup', onUp);
-    cv.addEventListener('pointercancel', onUp);
-    const box = $('.pm-box');
+    $('.wm-map').addEventListener('click', onMapClick);
+    const box = $('.rv-box');
     box.addEventListener('dragover', (e) => { e.preventDefault(); box.classList.add('drag'); });
     box.addEventListener('dragleave', () => box.classList.remove('drag'));
     box.addEventListener('drop', (e) => {
       e.preventDefault(); box.classList.remove('drag');
       const f = e.dataTransfer.files[0];
-      if (f) readText(f, (t) => (/\.json$/i.test(f.name) ? loadSpaceText(t, f.name) : addFromText(t, f.name)));
+      if (f) readText(f, (t) => { if (!loadRecText(t, f.name, true)) loadRoomText(t, f.name); });
     });
     return modal;
   }
-
-  function onSide(e) {
-    const t = e.target;
-    if (t.classList.contains('pm-p')) {
-      const k = t.dataset.k, v = r1(+t.value), isStart = st.sel === 'start';
-      const o = isStart ? st.sp.start : st.sp.items[st.sel];
-      if (!o || !isFinite(v)) return;
-      if (/^[whr]$/.test(k)) o[k] = Math.max(0.1, v);
-      else if (isStart && k === 'x') o.x = clamp(v, 0, st.sp.w);
-      else if (isStart && k === 'y') o.y = clamp(v, 0, st.sp.h);
-      else o[k] = v;
-      changed();
-    } else if (t.classList.contains('pm-name')) { const it = st.sp.items[st.sel]; if (it) { it.name = t.value.trim() || KINDS[it.type]; changed(); } }
-    else if (t.classList.contains('pm-on')) { st.paths[+t.dataset.n].on = t.checked; render(); }
-    else if (t.classList.contains('pm-labels')) { st.labels = t.checked; draw(); }
+  function readText(f, cb) { const r = new FileReader(); r.onload = () => cb(String(r.result)); r.readAsText(f); }
+  function loadRoomText(text, name) {
+    const room = parseRoom(text);
+    if (!room) { toast(name + ' 에서 시작점 S 가 있는 문자 지도를 찾지 못했습니다.'); return false; }
+    st.room = room; persist(); render();
+    toast(name + ' — 도면 ' + Math.max(...room.map((l) => l.length)) + ' × ' + room.length + '칸을 불러왔습니다.');
+    return true;
   }
-  function delSel() {
-    if (typeof st.sel !== 'number' || !st.sp.items[st.sel]) return;
-    st.sp.items.splice(st.sel, 1); st.sel = null; changed();
+  function loadRecText(text, name, quiet) {
+    const recs = window.RunViewer ? recordsFrom(RunViewer.parse(text, name)) : [];
+    if (!recs.length) { if (!quiet) toast(name + ' 에서 x · y 열이 있는 기록을 찾지 못했습니다.'); return false; }
+    addRecs(recs);
+    toast(name + ' — 기록 ' + recs.length + '개 (' + recs.map((r) => r.pts.length + '걸음').join(', ') + ')');
+    return true;
   }
-
-  /* ── 마우스: 구조물 그리기 · 고르기 · 끌어 옮기기 · 시작점 놓기 ── */
-  function worldAt(e) {
-    const svg = $('.pm-svg'), pt = svg.createSVGPoint();
-    pt.x = e.clientX; pt.y = e.clientY;
-    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-    return { x: p.x / 100, y: st.sp.h - p.y / 100 };
-  }
-  function boxItem(type, a, b) {
-    const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), y0 = Math.min(a.y, b.y), y1 = Math.max(a.y, b.y);
-    if (type === 'circle') return { type, x: r1((x0 + x1) / 2), y: r1((y0 + y1) / 2), r: Math.max(0.1, r1(Math.max(x1 - x0, y1 - y0) / 2)) };
-    return { type, x: r1((x0 + x1) / 2), y: r1((y0 + y1) / 2), w: Math.max(0.1, r1(x1 - x0)), h: Math.max(0.1, r1(y1 - y0)), rot: 0 };
-  }
-  function onDown(e) {
-    if (e.button || !$('.pm-svg')) return;
-    const w = worldAt(e), p = { x: snapV(w.x), y: snapV(w.y) };
-    $('.pm-canvas').setPointerCapture(e.pointerId);
-    if (st.tool === 'start') {
-      st.sp.start.x = clamp(p.x, 0, st.sp.w); st.sp.start.y = clamp(p.y, 0, st.sp.h); st.sel = 'start';
-      st.drag = { mode: 'move', o: st.sp.start, dx: 0, dy: 0, inRoom: true };
-      changed(); return;
+  function load(src) {
+    if (SAMPLES[src]) {
+      // 예시 기록은 ch08 교실에서 계획 경로를 걸은 것
+      if (st.room.join('\n') !== SAMPLE_ROOM.join('\n')) st.room = SAMPLE_ROOM.slice();
+      if (st.plan.length < 2) st.plan = SAMPLE_PLAN.map((p) => p.slice());
+      persist();
+      addRecs([{ name: SAMPLES[src][0], pts: SAMPLES[src][1].map((p) => [p[0], p[1], 0]) }]);
+    } else if (src === 'sim') {
+      const ds = window.RunViewer && RunViewer.fromSim();
+      const recs = ds ? recordsFrom([ds]) : [];
+      if (recs.length) addRecs(recs);
+      else toast('시뮬레이터 📊 로그에 x · y 기록이 없습니다. 먼저 경로 기록기(예제 7-15 · 8-16)를 실행해 걸어 보세요.');
     }
-    if (KINDS[st.tool]) { st.drag = { mode: 'new', a: p, item: null }; return; }
-    const g = e.target.closest('.pm-item, .pm-start');
-    if (!g) { st.sel = null; render(); return; }
-    st.sel = g.classList.contains('pm-start') ? 'start' : +g.dataset.i;
-    const o = st.sel === 'start' ? st.sp.start : st.sp.items[st.sel];
-    st.drag = { mode: 'move', o, dx: o.x - w.x, dy: o.y - w.y, inRoom: st.sel === 'start' };
+  }
+  function onMapClick(e) {
+    if (!st.edit) return;
+    const svg = modal.querySelector('.wm-svg'); if (!svg) return;
+    const g = geom(), b = svg.getBoundingClientRect();
+    const mx = (e.clientX - b.left) * g.W / b.width, my = (e.clientY - b.top) * g.H / b.height;
+    const c = Math.floor((mx - PAD) / g.s), r = Math.floor((my - PAD) / g.s);
+    if (c < 0 || r < 0 || c >= g.cols || r >= g.rows) return;
+    const [SC, SR] = findS(st.room);
+    st.plan.push([(c - SC) * CELL, (SR - r) * CELL]); persist(); render();
+  }
+  function play() {
+    const n = maxLen(); if (!n) return;
+    if (st.upto >= n) st.upto = 0;
+    st.timer = setInterval(() => { st.upto++; if (st.upto >= maxLen()) stop(); else render(); }, 300);
     render();
   }
-  function onMove(e) {
-    const d = st.drag; if (!d) return;
-    const w = worldAt(e);
-    if (d.mode === 'new') d.item = boxItem(st.tool, d.a, { x: snapV(w.x), y: snapV(w.y) });
-    else {
-      d.o.x = snapV(w.x + d.dx); d.o.y = snapV(w.y + d.dy); d.moved = true;
-      if (d.inRoom) { d.o.x = clamp(d.o.x, 0, st.sp.w); d.o.y = clamp(d.o.y, 0, st.sp.h); }
-    }
-    draw();
-  }
-  function onUp() {
-    const d = st.drag; if (!d) return;
-    st.drag = null;
-    if (d.mode === 'new') {
-      let it = d.item;
-      const small = !it || (it.type === 'circle' ? it.r < 0.15 : it.w < 0.15 && it.h < 0.15);
-      if (small) it = boxItem(st.tool, { x: d.a.x - 0.5, y: d.a.y - 0.5 }, { x: d.a.x + 0.5, y: d.a.y + 0.5 });   // 한 번 누르기 = 1m 크기
-      it.name = KINDS[it.type] + ' ' + (st.sp.items.filter((q) => q.type === it.type).length + 1);
-      st.sp.items.push(it); st.sel = st.sp.items.length - 1; st.tool = 'select';
-      changed();
-    } else if (d.moved) changed();
-  }
-
-  /* ── 공간 파일 · 기록 불러오기 ── */
-  function readText(f, cb) { const r = new FileReader(); r.onload = () => cb(String(r.result)); r.readAsText(f); }
-  function download(name, text, type) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([text], { type }));
-    a.download = name; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  }
-  function loadSpaceText(text, fileName) {
-    let s = null;
-    try { s = JSON.parse(text); } catch (e) { /* 아래에서 안내 */ }
-    if (!validSpace(s)) { toast(fileName + ' 은 공간 파일이 아닙니다.'); return; }
-    st.sp = s; st.sel = null; changed();
-    toast(fileName + ' 공간을 불러왔습니다.');
-  }
-  // 이름표 · 숫자 줄 묶음 { head, rows } 에서 x · y 열을 찾아 경로로
-  function pathFromSet(ds, name) {
-    const find = (re) => ds.head.findIndex((h) => re.test(String(h).trim()));
-    const ix = find(/^x$/i), iy = find(/^y$/i), ifx = find(/^fix$/i), is = find(/^steps?$|걸음/i);
-    if (ix < 0 || iy < 0) return null;
-    const pts = [];
-    ds.rows.forEach((r, i) => {
-      if (r[ix] == null || r[iy] == null || !isFinite(r[ix]) || !isFinite(r[iy])) return;
-      pts.push({ x: +r[ix], y: +r[iy], fix: ifx >= 0 && +r[ifx] === 1, n: is >= 0 && r[is] != null ? r[is] : i + 1 });
-    });
-    return pts.length ? { name, pts, on: true } : null;
-  }
-  function fitUpto() { st.upto = st.paths.length ? Math.max(...st.paths.map((q) => q.pts.length)) : 0; }
-  function addPath(p) {
-    if (st.paths.length >= PCOLORS.length) st.paths.shift();
-    st.paths.push(p);
-    fitUpto(); render();
-    const bad = analyse(p).bad.length;
-    toast(p.name + ' — 점 ' + p.pts.length + '개' + (bad ? ', 벽 · 구조물 통과 ' + bad + '개' : ''));
-  }
-  function addFromText(text, fileName) {
-    if (!window.RunViewer || !RunViewer.parse) { toast('기록 읽기 기능을 찾지 못했습니다.'); return; }
-    const paths = RunViewer.parse(text, fileName).map((s) => pathFromSet(s, fileName)).filter(Boolean);
-    if (!paths.length) { toast(fileName + ' 에서 x · y 열이 있는 기록을 찾지 못했습니다. 예제 7-15 · 8-16 의 경로 기록기로 저장한 기록이 필요합니다.'); return; }
-    addPath(paths.reduce((b, p) => (p.pts.length > b.pts.length ? p : b)));   // 가장 긴 묶음
-  }
-  function loadSrc(src) {
-    if (SAMPLES[src]) { addPath({ name: SAMPLES[src][0], pts: SAMPLES[src][1].map((q, i) => ({ x: q[0], y: q[1], fix: false, n: i + 1 })), on: true }); return; }
-    if (src === 'sim') {
-      const L = window.app && app.sim && app.sim.s && app.sim.s.log;
-      const toNum = (v) => (v == null || v === '' || !isFinite(+v) ? null : +v);
-      const p = L && L.rows && L.rows.length ? pathFromSet({ head: L.labels, rows: L.rows.map((r) => L.labels.map((k) => toNum(r.obj[k]))) }, '시뮬레이터 📊 로그') : null;
-      if (p) addPath(p); else toast('시뮬레이터 📊 로그에 x · y 기록이 없습니다. 먼저 예제 7-15 나 8-16 의 경로 기록기를 실행해 걸어 보세요.');
-    }
-  }
-
-  /* ── 다시 그리기 ── */
-  function changed() { save(); render(); }
-  function draw() { if (modal) $('.pm-canvas').innerHTML = svgHtml(); }
-  const TIPS = { select: '구조물 · S 를 눌러 고르고 끌어 옮깁니다.', rect: '공간 위에서 끌어 사각형을 만듭니다 (한 번 누르면 1m).', circle: '끌어서 원의 지름을 정합니다 (한 번 누르면 지름 1m).', tri: '끌어서 삼각형의 밑변 × 높이를 정합니다.', start: '누른 곳이 출발 위치 S 가 됩니다.' };
-  function render() {
-    if (!modal) return;
-    const sp = st.sp;
-    modal.querySelectorAll('[data-tool]').forEach((b) => { b.classList.toggle('primary', b.dataset.tool === st.tool); b.classList.toggle('ghost', b.dataset.tool !== st.tool); });
-    $('.pm-tip').textContent = TIPS[st.tool];
-    $('.pm-canvas').dataset.tool = st.tool;
-    $('.pm-sw').value = sp.w; $('.pm-sh').value = sp.h; $('.pm-grid').value = String(sp.grid); $('.pm-snap').checked = !!sp.snap;
-    $('.pm-props').innerHTML = propsHtml();
-    $('.pm-paths').innerHTML = pathsHtml();
-    $('.pm-result').innerHTML = resultHtml();
-    draw();
-  }
+  function stop() { if (st.timer) { clearInterval(st.timer); st.timer = null; } if (modal) render(); }
 
   function open(src) {
     ensureModal().classList.remove('hidden');
-    render();
-    if (src) loadSrc(src);
+    if (src) load(src); else render();
   }
-  function close() { if (modal) modal.classList.add('hidden'); }
-  window.PathMap = { open, close, inside };
+  function close() { st.edit = false; stop(); if (modal) modal.classList.add('hidden'); }
 
-  // 위쪽 막대 메뉴 [🗺 공간 · 경로]
+  function render() {
+    if (!modal) return;
+    const $ = (s) => modal.querySelector(s), n = maxLen();
+    $('.wm-map').innerHTML = mapSvg();
+    $('.wm-range').max = n; $('.wm-range').value = st.upto; $('.wm-range').disabled = !n;
+    $('.wm-step').textContent = n ? st.upto + ' / ' + n + ' 걸음' : '';
+    $('.wm-play').textContent = st.timer ? '⏸ 멈춤' : '▶ 재생';
+    $('.wm-play').disabled = !n;
+    $('.wm-dots').checked = st.dots; $('.wm-plan').checked = st.showPlan;
+    $('.wm-edit').classList.toggle('primary', st.edit); $('.wm-edit').classList.toggle('ghost', !st.edit);
+    $('.wm-edit').textContent = st.edit ? '✔ 찍기 끝' : '✏ 계획 경로 찍기';
+    const ta = $('.wm-text'); if (document.activeElement !== ta) ta.value = st.room.join('\n');
+    if (!st.recs.length) {
+      $('.wm-result').innerHTML = `<div class="rv-drop">${st.edit ? '지도 칸을 차례로 누르면 S 에서부터 계획 경로가 이어집니다.<br>' : ''}<b>📂 기록 불러오기</b>로 MY_DATA.HTM · path.csv 를 열거나, 여기에 파일을 끌어 놓으세요. 기록에 <code>x</code> · <code>y</code> 열(cm)이 있어야 합니다.<br>먼저 둘러보려면 <b>예시 기록 ▾</b> 에서 하나를 고르세요.</div>`;
+      return;
+    }
+    const m = (v) => (v / 100).toFixed(1) + 'm';
+    $('.wm-result').innerHTML = `<div class="rv-table"><table><thead><tr><th>기록</th><th>걸음 수</th><th>걸은 길</th><th>끝점 (x, y)</th><th>끝점 오차</th><th>벽 통과 걸음</th></tr></thead><tbody>${st.recs.map((rec, k) => {
+      const a = analyse(rec);
+      return `<tr><th><i class="wm-sw" style="background:${COLORS[k]}"></i>${esc(rec.name)}</th><td>${a.n}</td><td>${m(a.len)}</td><td>${a.end ? '(' + Math.round(a.end[0]) + ', ' + Math.round(a.end[1]) + ')' : ''}</td><td>${a.err == null ? '<span class="muted">계획 없음</span>' : a.err + 'cm'}</td><td>${a.walls.length ? `<b style="color:var(--danger)">${a.walls.length}</b> <span class="muted">(${a.walls.join(', ')}걸음째)</span>` : '0'}</td></tr>`;
+    }).join('')}</tbody></table></div><p class="rv-note">끝점 오차는 계획 경로의 마지막 점과 추정 경로의 마지막 점 사이의 직선 거리입니다. 벽 통과 걸음은 본문의 <code>to_cell()</code> · <code>is_wall()</code> 과 같은 계산으로 찾습니다.</p>`;
+  }
+
+  window.WebMap = { open, close };
+
+  // 위쪽 막대 메뉴 [🗺 웹 지도]
   function addMenu() {
     const bar = document.querySelector('#center .topbar');
-    if (!bar || bar.querySelector('.pm-menu')) return;
+    if (!bar || bar.querySelector('.wm-menu')) return;
     const b = document.createElement('button');
-    b.className = 'btn ghost small pm-menu';
-    b.title = '마우스로 공간 · 구조물을 만들고 경로 기록을 겹쳐 보기';
-    b.textContent = '🗺 공간 · 경로';
+    b.className = 'btn ghost small wm-menu';
+    b.title = '도면 위에 경로 기록(MY_DATA.HTM · CSV)을 겹쳐 보기';
+    b.textContent = '🗺 웹 지도';
     b.onclick = () => open();
     bar.insertBefore(b, bar.querySelector('.view-switch'));
   }
-  // 본문의 <div class="pm-launch"></div> 자리에 여는 버튼 넣기
+  // 본문의 <div class="wm-launch"></div> 자리에 여는 버튼 넣기
   function fillLaunchers() {
-    document.querySelectorAll('.pm-launch:not(.ready)').forEach((el) => {
+    document.querySelectorAll('.wm-launch:not(.ready)').forEach((el) => {
       el.classList.add('ready');
-      el.innerHTML = '<button class="btn primary">🗺 공간 설계 창 열기</button><button class="btn ghost" data-src="before">예시: 개선 전 경로로 열기</button><button class="btn ghost" data-src="board">예시: 실제 보드 경로로 열기</button>';
+      el.innerHTML = '<button class="btn primary">🗺 웹 지도 열기</button><button class="btn ghost" data-src="before">예시: 개선 전 기록으로 보기</button>';
       el.querySelectorAll('button').forEach((b) => { b.onclick = () => open(b.dataset.src); });
     });
   }
