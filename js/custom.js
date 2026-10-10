@@ -2518,3 +2518,214 @@ def to_json(src):
   document.addEventListener('lb:render', () => { addMenu(); setTimeout(addCodeButtons, 0); });
   setTimeout(addCodeButtons, 0);
 })();
+
+/* ── 움직임 조이스틱 (가상의 사람) ────────────────────────────────────────
+ * 시뮬레이터 보드 아래에 [🏃 움직임 조이스틱] 칸을 넣습니다.
+ * 위로 밀면 걷기(살짝) · 뛰기(끝까지), 옆으로 밀면 왼쪽 · 오른쪽으로 돕니다. 놓으면 멈춥니다.
+ * 움직이는 동안 accelerometer 는 걸음마다 출렁이는 값을, compass.heading() 은 바뀐 방향을 돌려줍니다.
+ * (가만히 있을 때 출렁임 크기 ≈ 1024, 걷기 봉우리 ≈ 1400~1550, 뛰기 봉우리 ≈ 1900~2200)
+ */
+(function () {
+  'use strict';
+
+  const WALK_LEN = 0.7, RUN_LEN = 1.1;   // 미니 지도용 보폭 (m)
+  const st = {
+    jx: 0, jy: 0,          // 조이스틱 위치 (-1 ~ 1, 위 = 앞으로)
+    hold: false,           // 손을 놓아도 유지
+    drag: false,
+    phase: 0, lastT: 0,    // 걸음 진행 (1 = 한 걸음)
+    steps: 0,
+    px: 0, py: 0, trail: [[0, 0]],
+    open: true
+  };
+  let panel = null, simRef = null;
+
+  // 조이스틱 → 움직임 상태 (위로 민 만큼 빠르게)
+  function motion() {
+    const r = Math.max(0, Math.min(1, -st.jy));
+    if (r < 0.08) return { kind: 'stop', label: '멈춤', cad: 0, amp: 0 };
+    if (r < 0.6) {
+      const t = (r - 0.08) / 0.52;
+      return { kind: 'walk', label: '걷기', cad: Math.round(90 + 40 * t), amp: 380 + 140 * t };
+    }
+    const t = (r - 0.6) / 0.4;
+    return { kind: 'run', label: '뛰기', cad: Math.round(140 + 45 * t), amp: 900 + 300 * t };
+  }
+  const turning = () => Math.abs(st.jx) > 0.15;
+
+  // 시간을 앞으로 돌리며 걸음 · 방향 · 위치를 갱신
+  function advance(now) {
+    const dt = Math.min(0.2, Math.max(0, (now - (st.lastT || now)) / 1000));
+    st.lastT = now;
+    const m = motion();
+    const s = simRef.s;
+    if (turning()) s.heading = (s.heading + st.jx * 90 * dt + 360) % 360;
+    if (m.cad) {
+      const before = Math.floor(st.phase);
+      st.phase += dt * m.cad / 60;
+      const n = Math.floor(st.phase) - before;
+      for (let i = 0; i < n; i++) {
+        st.steps++;
+        const L = m.kind === 'run' ? RUN_LEN : WALK_LEN, h = s.heading * Math.PI / 180;
+        st.px += Math.sin(h) * L; st.py -= Math.cos(h) * L;
+        st.trail.push([st.px, st.py]);
+        if (st.trail.length > 600) st.trail.shift();
+      }
+    }
+    return m;
+  }
+
+  // 한 걸음 안에서의 출렁임 모양 (0 ~ 1 → 봉우리 하나 + 작은 골짜기)
+  function bump(f) {
+    if (f < 0.35) return Math.sin(Math.PI * f / 0.35);
+    if (f < 0.65) return -0.25 * Math.sin(Math.PI * (f - 0.35) / 0.3);
+    return 0;
+  }
+
+  // 프로그램이 accelerometer 를 읽을 때 걸음 출렁임을 돌려준다 (멈춤일 때는 원래 값 = 기울기 판)
+  function hook(sim) {
+    if (sim._mvHooked) return;
+    sim._mvHooked = true;
+    const orig = sim.accelValues.bind(sim);
+    sim.accelValues = function () {
+      const now = performance.now();
+      if (now < this.s.shakeUntil) return orig();
+      const m = advance(now);
+      if (!m.cad) return orig();
+      const f = st.phase - Math.floor(st.phase);
+      const j = () => (Math.random() - 0.5) * 50;
+      const mag = 1024 + m.amp * bump(f) + j();
+      const sway = Math.sin(Math.PI * st.phase) * m.amp * 0.15;
+      const fwd = Math.cos(2 * Math.PI * f) * m.amp * 0.1;
+      return [Math.round(sway + j()), Math.round(fwd + j()), Math.round(-Math.sqrt(Math.max(0, mag * mag - sway * sway - fwd * fwd)))];
+    };
+  }
+
+  function knobTo(x, y) {
+    const d = Math.hypot(x, y);
+    if (d > 1) { x /= d; y /= d; }
+    st.jx = x; st.jy = y;
+    paint();
+  }
+
+  function build() {
+    const out = document.getElementById('output'), tabs = document.getElementById('simTabs');
+    if (!out || !tabs || document.getElementById('mvPanel')) return;
+    panel = document.createElement('div');
+    panel.id = 'mvPanel';
+    panel.className = 'mv-panel';
+    panel.innerHTML = `<div class="mv-head"><b>🏃 움직임 조이스틱</b><span class="mv-state" id="mvState">멈춤</span><span class="spacer"></span>
+        <button class="btn tiny ghost" id="mvToggle" title="접기 · 펴기">▾</button></div>
+      <div class="mv-body">
+        <div class="mv-joy" id="mvJoy" title="위로 살짝 밀면 걷기 · 끝까지 밀면 뛰기, 옆으로 밀면 돌기"><span class="mv-l t">뛰기</span><span class="mv-l m">걷기</span><span class="mv-l l">⟲</span><span class="mv-l r">⟳</span><i id="mvKnob"></i></div>
+        <div class="mv-info">
+          <div>케이던스 <b id="mvCad">0</b> 걸음/분</div>
+          <div>걸음 <b id="mvSteps">0</b> · 방향 <b id="mvHead">0</b>°</div>
+          <div class="btn-row"><button class="btn tiny" data-mv="stop">⏹ 멈춤</button><button class="btn tiny" data-mv="walk">🚶 걷기</button><button class="btn tiny" data-mv="run">🏃 뛰기</button></div>
+          <div class="btn-row"><button class="btn tiny ghost" data-mv="left">⟲ 왼쪽 90°</button><button class="btn tiny ghost" data-mv="right">⟳ 오른쪽 90°</button></div>
+          <label class="mv-hold"><input type="checkbox" id="mvHold"> 손을 놓아도 계속 움직이기</label>
+        </div>
+        <div class="mv-map"><canvas id="mvMap" width="120" height="120" title="가상의 사람이 실제로 걸은 길 (정답 경로)"></canvas>
+          <button class="btn tiny ghost" id="mvClear" title="걸음 수 · 길 지우기">↺ 지우기</button></div>
+      </div>`;
+    out.insertBefore(panel, tabs);
+
+    const joy = panel.querySelector('#mvJoy');
+    const at = (e) => {
+      const b = joy.getBoundingClientRect(), R = b.width / 2 - 12;
+      knobTo((e.clientX - b.left - b.width / 2) / R, (e.clientY - b.top - b.height / 2) / R);
+    };
+    joy.addEventListener('pointerdown', (e) => { st.drag = true; joy.setPointerCapture(e.pointerId); at(e); e.preventDefault(); });
+    joy.addEventListener('pointermove', (e) => { if (st.drag) at(e); });
+    const up = () => { if (!st.drag) return; st.drag = false; if (!st.hold) knobTo(0, 0); };
+    joy.addEventListener('pointerup', up);
+    joy.addEventListener('pointercancel', up);
+
+    panel.querySelector('#mvHold').addEventListener('change', (e) => { st.hold = e.target.checked; });
+    panel.querySelector('#mvToggle').addEventListener('click', () => { st.open = !st.open; lastView = ''; paint(); });
+    panel.querySelector('#mvClear').addEventListener('click', () => { st.steps = 0; st.px = st.py = 0; st.trail = [[0, 0]]; paint(); });
+    panel.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-mv]');
+      if (!b) return;
+      const k = b.dataset.mv;
+      if (k === 'stop') knobTo(0, 0);
+      else if (k === 'walk') knobTo(0, -0.35);
+      else if (k === 'run') knobTo(0, -0.85);
+      else { simRef.s.heading = (simRef.s.heading + (k === 'left' ? 270 : 90)) % 360; simRef.emit('input'); paint(); }
+    });
+    paint();
+  }
+
+  // 미니 지도: 가상의 사람이 실제로 걸은 길 (위 = 북쪽, 방위 0°)
+  function drawMap() {
+    const c = panel.querySelector('#mvMap');
+    const g = c.getContext('2d'), W = c.width, H = c.height, css = getComputedStyle(document.documentElement);
+    const col = (n, d) => (css.getPropertyValue(n).trim() || d);
+    g.clearRect(0, 0, W, H);
+    let span = 6;
+    for (const [x, y] of st.trail) span = Math.max(span, Math.abs(x - st.px) * 2 + 2, Math.abs(y - st.py) * 2 + 2);
+    span = Math.min(span, 40);
+    const k = (W - 10) / span, sx = (x) => W / 2 + (x - st.px) * k, sy = (y) => H / 2 + (y - st.py) * k;
+    const grid = span > 20 ? 5 : 1;
+    g.strokeStyle = col('--line', '#ccc'); g.lineWidth = 1;
+    for (let v = Math.ceil((st.px - span / 2) / grid) * grid; v < st.px + span / 2; v += grid) { g.beginPath(); g.moveTo(sx(v), 0); g.lineTo(sx(v), H); g.stroke(); }
+    for (let v = Math.ceil((st.py - span / 2) / grid) * grid; v < st.py + span / 2; v += grid) { g.beginPath(); g.moveTo(0, sy(v)); g.lineTo(W, sy(v)); g.stroke(); }
+    g.strokeStyle = col('--accent', '#2a6fdb'); g.lineWidth = 2; g.beginPath();
+    st.trail.forEach(([x, y], i) => (i ? g.lineTo(sx(x), sy(y)) : g.moveTo(sx(x), sy(y))));
+    g.stroke();
+    g.fillStyle = col('--ok', '#2a2'); g.beginPath(); g.arc(sx(0), sy(0), 3, 0, 7); g.fill();
+    const h = simRef.s.heading * Math.PI / 180, cx = W / 2, cy = H / 2;
+    g.fillStyle = col('--danger', '#d33'); g.beginPath();
+    g.moveTo(cx + Math.sin(h) * 9, cy - Math.cos(h) * 9);
+    g.lineTo(cx + Math.sin(h + 2.5) * 6, cy - Math.cos(h + 2.5) * 6);
+    g.lineTo(cx + Math.sin(h - 2.5) * 6, cy - Math.cos(h - 2.5) * 6);
+    g.closePath(); g.fill();
+    g.fillStyle = col('--muted', '#888'); g.font = '10px sans-serif';
+    g.fillText('N↑', W - 18, 11); g.fillText(grid + 'm 칸', 3, H - 4);
+  }
+
+  let lastView = '';
+  function paint() {
+    if (!panel || !simRef) return;
+    const m = motion(), head = Math.round(simRef.s.heading) % 360;
+    panel.classList.toggle('closed', !st.open);
+    panel.querySelector('#mvToggle').textContent = st.open ? '▾' : '▸';
+    const knob = panel.querySelector('#mvKnob');
+    knob.style.left = (50 + st.jx * 38) + '%';
+    knob.style.top = (50 + st.jy * 38) + '%';
+    const turn = turning() ? (st.jx < 0 ? ' · 왼쪽으로 돌기' : ' · 오른쪽으로 돌기') : '';
+    const view = [m.label + turn, m.cad, st.steps, head, st.trail.length, st.open].join('|');
+    if (view === lastView) return;
+    lastView = view;
+    const stEl = panel.querySelector('#mvState');
+    stEl.textContent = m.label + turn;
+    stEl.dataset.kind = m.kind;
+    panel.querySelector('#mvCad').textContent = m.cad;
+    panel.querySelector('#mvSteps').textContent = st.steps;
+    panel.querySelector('#mvHead').textContent = head;
+    // 🧭 센서 탭의 방위각 슬라이더 · 나침반도 함께 맞춘다
+    const sv = app.simView;
+    if (sv && sv.tab === 'sensor') {
+      sv.sync('heading', head);
+      const o = sv.panel.querySelector('[data-out="heading"]');
+      if (o) o.textContent = head + '°';
+      sv.drawNeedle();
+    }
+    if (st.open) drawMap();
+  }
+
+  function tick() {
+    // 프로그램이 센서를 읽지 않을 때도 걸음 · 방향이 흐르게
+    if (motion().cad || turning()) advance(performance.now()); else st.lastT = performance.now();
+    paint();
+  }
+
+  function init() {
+    if (!window.app || !app.sim) { setTimeout(init, 200); return; }
+    simRef = app.sim;
+    hook(simRef);
+    build();
+    setInterval(tick, 60);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

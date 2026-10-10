@@ -78,3 +78,26 @@
 .bk-ws { flex: 1; min-width: 0; position: relative; }
 .bk-code { flex: 0 0 42%; margin: 0; overflow: auto; padding: 10px 12px; background: var(--code-bg, var(--card)); color: var(--fg); font: 13px/1.5 ui-monospace, Consolas, monospace; border-left: 1px solid var(--line); white-space: pre; }
 .bk-ws .blocklyText.bk-raw-line { font-family: ui-monospace, Consolas, monospace; }
+
+/* ── 움직임 조이스틱 (js/custom.js · 가상의 사람) ── */
+.mv-panel { flex: none; padding: 6px 10px 8px; background: var(--card2); border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.mv-head { display: flex; align-items: center; gap: 8px; }
+.mv-head .spacer { flex: 1; }
+.mv-state { padding: 1px 8px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.mv-state[data-kind="walk"] { color: var(--ok); border-color: var(--ok); }
+.mv-state[data-kind="run"] { color: var(--danger); border-color: var(--danger); }
+.mv-panel.closed .mv-body { display: none; }
+.mv-body { display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.mv-joy { position: relative; width: 108px; height: 108px; flex: none; border-radius: 50%; background: radial-gradient(circle, var(--card) 0 30%, var(--pane) 31% 100%); border: 2px solid var(--line); touch-action: none; cursor: grab; user-select: none; }
+.mv-joy:active { cursor: grabbing; }
+.mv-joy i { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; left: 50%; top: 50%; border-radius: 50%; background: var(--accent); box-shadow: 0 2px 6px rgba(0, 0, 0, .3); pointer-events: none; }
+.mv-l { position: absolute; font-size: 10.5px; color: var(--muted); pointer-events: none; }
+.mv-l.t { top: 3px; left: 50%; transform: translateX(-50%); }
+.mv-l.m { top: 19px; left: 50%; transform: translateX(-50%); }
+.mv-l.l { left: 5px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+.mv-l.r { right: 5px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+.mv-info { flex: 1 1 150px; display: flex; flex-direction: column; gap: 3px; min-width: 150px; }
+.mv-info .btn-row { display: flex; flex-wrap: wrap; gap: 3px; }
+.mv-hold { color: var(--muted); font-size: 11.5px; }
+.mv-map { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.mv-map canvas { width: 96px; height: 96px; background: var(--pane); border: 1px solid var(--line); border-radius: 8px; }
