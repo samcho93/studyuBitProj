@@ -58,3 +58,23 @@
 .wm-text { width: 100%; box-sizing: border-box; font-family: monospace; font-size: 14px; line-height: 1.3; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--fg); resize: vertical; }
 .wm-sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 .wm-launch { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 14px; }
+
+/* ── 블록 코딩 (js/custom.js · MakeCode 호환 블록 편집기) ── */
+#center { position: relative; }
+.bk-panel { position: absolute; left: 0; right: 0; bottom: 0; top: var(--bk-top, 0px); z-index: 40; display: flex; flex-direction: column; background: var(--pane); border-top: 1px solid var(--line); }
+.bk-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.bk-bar .spacer { flex: 1; }
+.bk-bar label.btn { cursor: pointer; }
+.bk-src { font-size: 13px; max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bk-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.bk-seg button { border: 0; background: var(--card); color: var(--fg); padding: 3px 9px; font: inherit; font-size: 13px; cursor: pointer; }
+.bk-seg button + button { border-left: 1px solid var(--line); }
+.bk-seg button.on { background: var(--accent); color: #fff; }
+.bk-report { font-size: 13px; padding: 5px 12px; color: var(--muted); border-bottom: 1px solid var(--line); line-height: 1.6; max-height: 7.5em; overflow: auto; }
+.bk-report:empty { display: none; }
+.bk-report ul { margin: 2px 0 0; padding-left: 20px; }
+.bk-warn { color: var(--warn); }
+.bk-main { flex: 1; min-height: 0; display: flex; }
+.bk-ws { flex: 1; min-width: 0; position: relative; }
+.bk-code { flex: 0 0 42%; margin: 0; overflow: auto; padding: 10px 12px; background: var(--code-bg, var(--card)); color: var(--fg); font: 13px/1.5 ui-monospace, Consolas, monospace; border-left: 1px solid var(--line); white-space: pre; }
+.bk-ws .blocklyText.bk-raw-line { font-family: ui-monospace, Consolas, monospace; }

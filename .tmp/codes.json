@@ -1,0 +1,824 @@
+[
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-1. Hi 흘려보내기",
+  "code": "from microbit import *\n\ndisplay.scroll(\"Hi\")"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-2. 그림 보여 주고 기다리기",
+  "code": "from microbit import *\n\ndisplay.show(Image.HEART)   # 하트 그림\nsleep(1000)                 # 1000ms = 1초 기다리기\ndisplay.show(Image.HAPPY)   # 웃는 얼굴\nsleep(1000)\ndisplay.clear()             # 화면 끄기"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-3. 하트 깜빡이기 — while True:",
+  "code": "from microbit import *\n\nwhile True:\n    display.show(Image.HEART)\n    sleep(500)\n    display.clear()\n    sleep(500)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-5. A 는 하트, B 는 웃는 얼굴",
+  "code": "from microbit import *\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.HEART)\n    if button_b.was_pressed():\n        display.show(Image.HAPPY)\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-6. 누르고 있는 동안만 하트",
+  "code": "from microbit import *\n\nwhile True:\n    if button_a.is_pressed():\n        display.show(Image.HEART)\n    else:\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-7. 얼마나 세게 움직이나? (맛보기)",
+  "code": "from microbit import *\nimport math\n\ndef move_power():\n    # 흔들림의 세기를 숫자 하나로 (지금은 몰라도 됩니다)\n    x, y, z = accelerometer.get_values()\n    return math.sqrt(x * x + y * y + z * z)\n\nwhile True:\n    p = move_power()\n    if p > 1600:\n        display.show(Image.SURPRISED)   # 뛰기\n    elif p > 1150:\n        display.show(Image.HAPPY)       # 걷기\n    else:\n        display.show(Image.ASLEEP)      # 멈춤\n    sleep(100)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "예제 1-8. 내 이름 + 버튼 그림",
+  "code": "from microbit import *\n\ndisplay.scroll(\"MINJI\")      # 내 이름으로 바꾸기\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.HEART)\n    if button_b.was_pressed():\n        display.show(Image.HAPPY)\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "도전 1-9. 로고를 만지면 이름 다시 보기 (★★★)",
+  "code": "from microbit import *\n\ndisplay.scroll(\"MINJI\")\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.HEART)\n    if button_b.was_pressed():\n        display.show(Image.HAPPY)\n    if pin_logo.is_touched():\n        display.scroll(\"MINJI\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-1",
+  "title": "[slide] 첫 프로그램",
+  "code": "from microbit import *\n\ndisplay.scroll(\"Hi\")\ndisplay.show(Image.HEART)\nsleep(1000)\ndisplay.show(Image.HAPPY)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-1",
+  "title": "[slide] 계속 반복 — while True:",
+  "code": "from microbit import *\n\nwhile True:\n    display.show(Image.HEART)\n    sleep(500)\n    display.clear()\n    sleep(500)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-1",
+  "title": "[slide] 버튼 입력 — was_pressed()",
+  "code": "from microbit import *\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.HEART)\n    if button_b.was_pressed():\n        display.show(Image.HAPPY)\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-1",
+  "title": "[slide] 움직임 맛보기 — 조이스틱",
+  "code": "from microbit import *\nimport math\n\ndef move_power():\n    x, y, z = accelerometer.get_values()\n    return math.sqrt(x * x + y * y + z * z)\n\nwhile True:\n    p = move_power()\n    if p > 1600:\n        display.show(Image.SURPRISED)\n    elif p > 1150:\n        display.show(Image.HAPPY)\n    else:\n        display.show(Image.ASLEEP)\n    sleep(100)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-10. 변수와 계산",
+  "code": "from microbit import *\n\nsteps = 0                # 걸음 수 상자\nsteps = steps + 1        # 하나 늘리기\nsteps = steps + 1\nprint(\"걸음 수:\", steps)\n\nstride = 0.7             # 보폭 0.7m\ndistance = steps * stride\nprint(\"거리(m):\", distance)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-12. 걷기 · 뛰기 나누기",
+  "code": "from microbit import *\n\nspm = 150   # 1분에 걸은 걸음 수 (바꿔 보세요)\n\nif spm >= 140:\n    print(\"뛰는 중\")\n    display.show(\"R\")\nelif spm >= 60:\n    print(\"걷는 중\")\n    display.show(\"W\")\nelse:\n    print(\"쉬는 중\")\n    display.show(\"S\")"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-13. 1초마다 세기 — while True: + print()",
+  "code": "from microbit import *\n\ncount = 0\nwhile True:\n    count = count + 1\n    print(\"시간(초):\", count)\n    display.show(count % 10)   # 화면에는 끝자리만\n    sleep(1000)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-14. 함수 만들고 쓰기",
+  "code": "from microbit import *\n\ndef distance(steps, stride):\n    # 걸음 수와 보폭을 넣으면 거리(m)가 나온다\n    return steps * stride\n\nprint(distance(1000, 0.7))\nprint(distance(2000, 0.8))"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-15. 넣는 것이 없는 함수",
+  "code": "from microbit import *\n\ndef smile():\n    # 넣는 것: 없음 / 하는 일: 웃는 얼굴 0.5초\n    display.show(Image.HAPPY)\n    sleep(500)\n    display.clear()\n\nsmile()\nsmile()\nprint(\"두 번 웃었습니다\")"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-16. 1단계 — A 버튼으로 세기만",
+  "code": "from microbit import *\n\ncount = 0\nwhile True:\n    if button_a.was_pressed():\n        count = count + 1\n        print(count)\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "예제 1-17. 2단계 — 함수로 나누고 화면에 보이기",
+  "code": "from microbit import *\n\ndef add_one(n):\n    # 넣는 것: 지금 수 / 나오는 것: 1 큰 수\n    return n + 1\n\ndef reset():\n    # 넣는 것: 없음 / 나오는 것: 0\n    return 0\n\ncount = 0\ndisplay.show(count)\nwhile True:\n    if button_a.was_pressed():\n        count = add_one(count)\n        display.show(count)\n    if button_b.was_pressed():\n        count = reset()\n        display.show(count)\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "응용 1-18. 문제 찾기 — is_pressed() 로 바꾸면?",
+  "code": "from microbit import *\n\ncount = 0\nwhile True:\n    if button_a.is_pressed():     # was_pressed 대신\n        count = count + 1\n        print(count)\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "도전 1-19. 로고를 만지면 지금 수를 흘려 보기 (★★★)",
+  "code": "from microbit import *\n\ndef add_one(n):\n    return n + 1\n\ndef reset():\n    return 0\n\ncount = 0\nwhile True:\n    if button_a.was_pressed():\n        count = add_one(count)\n        display.show(Image.YES)\n    if button_b.was_pressed():\n        count = reset()\n        display.show(Image.NO)\n    if pin_logo.is_touched():\n        display.scroll(str(count))\n    sleep(20)"
+ },
+ {
+  "sec": "ch01-2",
+  "title": "[slide] 변수와 계산",
+  "code": "from microbit import *\n\nsteps = 0\nsteps = steps + 1\nsteps = steps + 1\nprint(\"걸음 수:\", steps)\n\nstride = 0.7\nprint(\"거리(m):\", steps * stride)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-2",
+  "title": "[slide] if / elif / else",
+  "code": "from microbit import *\n\nspm = 150\n\nif spm >= 140:\n    display.show(\"R\")\nelif spm >= 60:\n    display.show(\"W\")\nelse:\n    display.show(\"S\")",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-2",
+  "title": "[slide] while True: + print()",
+  "code": "from microbit import *\n\ncount = 0\nwhile True:\n    count = count + 1\n    print(\"시간(초):\", count)\n    sleep(1000)",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-2",
+  "title": "[slide] 함수 만들고 쓰기",
+  "code": "from microbit import *\n\ndef distance(steps, stride):\n    return steps * stride\n\nprint(distance(1000, 0.7))\nprint(distance(2000, 0.8))",
+  "slide": 1
+ },
+ {
+  "sec": "ch01-2",
+  "title": "[slide] 예상 문제 — is_pressed() 라면?",
+  "code": "from microbit import *\n\ncount = 0\nwhile True:\n    if button_a.is_pressed():\n        count = count + 1\n        print(count)\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-1. x · y · z 값 찍어 보기",
+  "code": "from microbit import *\n\nwhile True:\n    x = accelerometer.get_x()\n    y = accelerometer.get_y()\n    z = accelerometer.get_z()\n    print(x, y, z)\n    sleep(500)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-3. 세 값을 한 번에 받기",
+  "code": "from microbit import *\n\nwhile True:\n    x, y, z = accelerometer.get_values()\n    print(\"x:\", x, \" y:\", y, \" z:\", z)\n    sleep(300)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-4. 준비된 함수 strength() 써 보기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 세 화살표를 하나로 합친 길이 (단위 mg)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    print(strength())\n    sleep(200)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-5. 흔들림 세기를 별 막대로 찍기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    s = strength()\n    # 100 마다 별 하나\n    print(s, \"*\" * (s // 100))\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-6. 1초 동안 가장 큰 값 찾기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    biggest = 0\n    for i in range(20):        # 0.05초 x 20번 = 1초\n        s = strength()\n        if s > biggest:\n            biggest = s\n        sleep(50)\n    print(\"1초 최고:\", biggest)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "예제 2-7. 흔들림 미터 (★ 그대로 실행)",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\ndef show_bar(n):\n    # 아래부터 n 줄을 켠 그림 보이기 (n = 1~5)\n    rows = [\"00000\"] * (5 - n) + [\"99999\"] * n\n    display.show(Image(\":\".join(rows)))\n\nlevels = [1200, 1500, 1800, 2200]\n\nwhile True:\n    s = strength()\n    n = 1\n    for v in levels:\n        if s > v:\n            n = n + 1\n    show_bar(n)\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "응용 2-8. 기준값 바꾸기 (★★)",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\ndef show_bar(n):\n    rows = [\"00000\"] * (5 - n) + [\"99999\"] * n\n    display.show(Image(\":\".join(rows)))\n\n# 내가 잰 값(표 2-3)에 맞게 네 숫자를 바꿔 보세요\nlevels = [1100, 1300, 1600, 2000]\n\nwhile True:\n    s = strength()\n    n = 1\n    for v in levels:\n        if s > v:\n            n = n + 1\n    show_bar(n)\n    print(s, n)\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "도전 2-9. 가장 큰 값 기억해서 B 버튼으로 보기 (★★★)",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\ndef show_bar(n):\n    rows = [\"00000\"] * (5 - n) + [\"99999\"] * n\n    display.show(Image(\":\".join(rows)))\n\nlevels = [1200, 1500, 1800, 2200]\nbest = 0\n\nwhile True:\n    s = strength()\n    if s > best:\n        best = s              # 가장 큰 값 기억\n    if button_b.was_pressed():\n        display.scroll(best)\n    if button_a.was_pressed():\n        best = 0              # 다시 시작\n    n = 1\n    for v in levels:\n        if s > v:\n            n = n + 1\n    show_bar(n)\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-1",
+  "title": "[slide] x · y · z 읽기",
+  "code": "from microbit import *\n\nwhile True:\n    x = accelerometer.get_x()\n    y = accelerometer.get_y()\n    z = accelerometer.get_z()\n    print(x, y, z)\n    sleep(500)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-1",
+  "title": "[slide] 멈춤 · 걷기 · 뛰기 비교",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    s = strength()\n    print(s, \"*\" * (s // 100))\n    sleep(100)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-10. 보정하고 방위각 찍기",
+  "code": "from microbit import *\n\ncompass.calibrate()          # 처음에 한 번 보정\n\nwhile True:\n    h = compass.heading()\n    print(\"방위각:\", h)\n    sleep(500)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-12. 8방향 글자로 보이기",
+  "code": "from microbit import *\n\ndef direction8(heading):\n    # 0~359 도를 8조각 중 하나의 글자로\n    names = [\"N\", \"NE\", \"E\", \"SE\", \"S\", \"SW\", \"W\", \"NW\"]\n    return names[((heading + 22) // 45) % 8]\n\ncompass.calibrate()\n\nwhile True:\n    h = compass.heading()\n    d = direction8(h)\n    print(h, d)\n    display.scroll(d)\n    sleep(200)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-13. 내가 보는 방향을 화살표로",
+  "code": "from microbit import *\n\nARROWS = [Image.ARROW_N, Image.ARROW_NE, Image.ARROW_E, Image.ARROW_SE,\n          Image.ARROW_S, Image.ARROW_SW, Image.ARROW_W, Image.ARROW_NW]\n\ndef index8(heading):\n    # 0~359 도 → 0~7 번 조각\n    return ((heading + 22) // 45) % 8\n\nwhile True:\n    i = index8(compass.heading())\n    display.show(ARROWS[i])\n    sleep(200)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-14. 걸으며 방향 바꾸기 관찰",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\ndef direction8(heading):\n    names = [\"N\", \"NE\", \"E\", \"SE\", \"S\", \"SW\", \"W\", \"NW\"]\n    return names[((heading + 22) // 45) % 8]\n\nwhile True:\n    h = compass.heading()\n    print(\"방향\", h, direction8(h), \" 세기\", strength())\n    sleep(300)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-15. 자석 세기 살펴보기",
+  "code": "from microbit import *\n\nwhile True:\n    f = compass.get_field_strength()\n    print(\"자석 세기:\", f)\n    sleep(500)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "예제 2-16. 화살표 나침반 (기본)",
+  "code": "from microbit import *\n\nARROWS = [Image.ARROW_N, Image.ARROW_NE, Image.ARROW_E, Image.ARROW_SE,\n          Image.ARROW_S, Image.ARROW_SW, Image.ARROW_W, Image.ARROW_NW]\n\ndef index8(heading):\n    return ((heading + 22) // 45) % 8\n\ncompass.calibrate()\n\nwhile True:\n    h = compass.heading()\n    north = (360 - h) % 360      # 보드 기준 북쪽 각도\n    display.show(ARROWS[index8(north)])\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "응용 2-17. 8방향 글자 표시 추가 (★★)",
+  "code": "from microbit import *\n\nARROWS = [Image.ARROW_N, Image.ARROW_NE, Image.ARROW_E, Image.ARROW_SE,\n          Image.ARROW_S, Image.ARROW_SW, Image.ARROW_W, Image.ARROW_NW]\n\ndef index8(heading):\n    return ((heading + 22) // 45) % 8\n\ndef direction8(heading):\n    names = [\"N\", \"NE\", \"E\", \"SE\", \"S\", \"SW\", \"W\", \"NW\"]\n    return names[index8(heading)]\n\ncompass.calibrate()\n\nwhile True:\n    h = compass.heading()\n    if button_a.was_pressed():\n        display.scroll(direction8(h))     # 내가 보는 방향 글자\n    north = (360 - h) % 360\n    display.show(ARROWS[index8(north)])\n    sleep(100)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "도전 2-18. 지금 방향을 기억하고 얼마나 돌았는지 보기 (★★★)",
+  "code": "from microbit import *\n\ndef turned(start, now):\n    # 시작 방향에서 얼마나 돌았나: -180 ~ 180 (오른쪽 +, 왼쪽 -)\n    d = (now - start) % 360\n    if d > 180:\n        d = d - 360\n    return d\n\ncompass.calibrate()\nstart = compass.heading()\ndisplay.show(Image.YES)\n\nwhile True:\n    if button_a.was_pressed():\n        start = compass.heading()      # 지금 방향 기억\n        display.show(Image.YES)\n    if button_b.was_pressed():\n        display.scroll(turned(start, compass.heading()))\n    sleep(50)"
+ },
+ {
+  "sec": "ch02-2",
+  "title": "[slide] 보정하고 방위각 읽기",
+  "code": "from microbit import *\n\ncompass.calibrate()\n\nwhile True:\n    h = compass.heading()\n    print(\"방위각:\", h)\n    sleep(500)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-2",
+  "title": "[slide] 8방향 글자 — direction8()",
+  "code": "from microbit import *\n\ndef direction8(heading):\n    names = [\"N\", \"NE\", \"E\", \"SE\", \"S\", \"SW\", \"W\", \"NW\"]\n    return names[((heading + 22) // 45) % 8]\n\nwhile True:\n    h = compass.heading()\n    print(h, direction8(h))\n    display.scroll(direction8(h))\n    sleep(200)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-2",
+  "title": "[slide] 내가 보는 방향을 화살표로",
+  "code": "from microbit import *\n\nARROWS = [Image.ARROW_N, Image.ARROW_NE, Image.ARROW_E, Image.ARROW_SE,\n          Image.ARROW_S, Image.ARROW_SW, Image.ARROW_W, Image.ARROW_NW]\n\ndef index8(heading):\n    return ((heading + 22) // 45) % 8\n\nwhile True:\n    display.show(ARROWS[index8(compass.heading())])\n    sleep(200)",
+  "slide": 1
+ },
+ {
+  "sec": "ch02-2",
+  "title": "[slide] 걸으며 방향 바꾸기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    print(\"방향\", compass.heading(), \" 세기\", strength())\n    sleep(300)",
+  "slide": 1
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-1. 흔들림을 별 그래프로 찍기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    s = strength()\n    bar = (s - 500) // 50      # 500 보다 큰 만큼 별 막대\n    if bar < 0:\n        bar = 0\n    print(s, \"*\" * bar)\n    sleep(50)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-3. 기준선 위에 있는지 보기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nTHRESHOLD = 1200    # 기준선\n\nwhile True:\n    s = strength()\n    if s > THRESHOLD:\n        print(s, \"▲ 기준선 위\")\n        display.set_pixel(2, 2, 9)\n    else:\n        print(s)\n        display.set_pixel(2, 2, 0)\n    sleep(50)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-4. 기준선을 넘었다 내려오면 한 걸음",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nTHRESHOLD = 1200    # 기준선\nabove = False       # 지금 봉우리 위에 있나?\ncount = 0\n\nwhile True:\n    s = strength()\n    if s > THRESHOLD:\n        above = True\n    elif above:             # 봉우리 위에 있다가 내려옴\n        above = False\n        count += 1\n        print(\"한 걸음!\", count)\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-5. 원래 값과 다듬은 값 나란히 보기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nwhile True:\n    s = strength()\n    sm = smooth(s)\n    print(\"원래\", s, \" 다듬음\", sm)\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-6. 다듬은 값으로 걸음 세기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nTHRESHOLD = 1150    # 다듬으면 봉우리가 낮아지니 기준선도 조금 낮게\nabove = False\ncount = 0\n\nwhile True:\n    s = smooth(strength())\n    if s > THRESHOLD:\n        above = True\n    elif above:\n        above = False\n        count += 1\n        print(\"한 걸음!\", count)\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "응용 3-7. 기준선 세 개로 동시에 세어 비교하기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nLINES = [1030, 1150, 1600]     # 낮음 · 중간 · 높음\nabove = [False, False, False]\ncounts = [0, 0, 0]\n\nwhile True:\n    s = smooth(strength())\n    for i in range(3):\n        if s > LINES[i]:\n            above[i] = True\n        elif above[i]:\n            above[i] = False\n            counts[i] += 1\n    if button_a.was_pressed():\n        print(\"낮음\", counts[0], \" 중간\", counts[1], \" 높음\", counts[2])\n    if button_b.was_pressed():\n        counts = [0, 0, 0]\n        print(\"다시 셉니다\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "예제 3-8. 5초 동안 최고값 · 최저값 재기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.ARROW_S)\n        biggest = 0\n        smallest = 9999\n        for i in range(250):        # 0.02초 x 250번 = 5초\n            s = smooth(strength())\n            if s > biggest:\n                biggest = s\n            if s < smallest:\n                smallest = s\n            sleep(20)\n        print(\"최고:\", biggest, \" 최저:\", smallest)\n        display.scroll(biggest)\n        display.show(\"A\")\n    sleep(50)"
+ },
+ {
+  "sec": "ch03-1",
+  "title": "[slide] 콘솔을 그래프처럼",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nwhile True:\n    s = strength()\n    bar = (s - 500) // 50\n    if bar < 0:\n        bar = 0\n    print(s, \"*\" * bar)\n    sleep(50)",
+  "slide": 1
+ },
+ {
+  "sec": "ch03-1",
+  "title": "[slide] 넘었다 내려오면 한 걸음",
+  "code": "from microbit import *\nimport math\ndef strength():\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\nTHRESHOLD = 1200\nabove = False\ncount = 0\nwhile True:\n    s = strength()\n    if s > THRESHOLD:\n        above = True\n    elif above:\n        above = False\n        count += 1\n        print(\"한 걸음!\", count)\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch03-2",
+  "title": "예제 3-10. 버튼을 두 번 누른 사이의 시간 재기",
+  "code": "from microbit import *\n\nlast = running_time()\n\nwhile True:\n    if button_a.was_pressed():\n        now = running_time()\n        gap = now - last            # 지난번에 누른 뒤 흐른 시간\n        print(\"간격:\", gap, \"ms\")\n        last = now\n    sleep(10)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "예제 3-11. 걸음 사이 간격 찍어 보기",
+  "code": "from microbit import *\nimport math\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nTHRESHOLD = 1150\nabove = False\nlast = 0\n\nwhile True:\n    s = smooth(strength())\n    if s > THRESHOLD:\n        above = True\n    elif above:\n        above = False\n        now = running_time()\n        print(\"걸음 간격:\", now - last, \"ms\")\n        last = now\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "예제 3-12. 만보기 첫걸음 — 콘솔에 걸음 수 찍기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (우리 모둠 값으로)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True\n    # 조건 1) 기준선 위로 올라갔다가 내려옴\n    # 조건 2) 앞 걸음과 MIN_GAP(ms) 이상 떨어짐\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nsteps = 0\n\nwhile True:\n    s = smooth(strength())\n    if is_step(s):\n        steps += 1\n        print(\"걸음 수:\", steps)\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "예제 3-13. 만보기 — LED 깜빡임과 A · B 버튼",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (우리 모둠 값으로)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True\n    # 조건 1) 기준선 위로 올라갔다가 내려옴\n    # 조건 2) 앞 걸음과 MIN_GAP(ms) 이상 떨어짐\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nsteps = 0\n\nwhile True:\n    s = smooth(strength())\n    if is_step(s):\n        steps += 1\n        display.set_pixel(2, 2, 9)   # 걸음마다 가운데 점 깜빡\n        sleep(30)\n        display.set_pixel(2, 2, 0)\n    if button_a.was_pressed():\n        display.scroll(steps)        # 지금까지 걸음 수\n    if button_b.was_pressed():\n        steps = 0                    # 처음부터 다시\n        display.show(Image.YES)\n        sleep(300)\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "예제 3-14. 완성된 만보기 — 100걸음마다 알림",
+  "code": "from microbit import *\nimport math\nimport music\n\nTHRESHOLD = 1150   # 기준선 (우리 모둠 값으로)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\nGOAL = 100         # 몇 걸음마다 소리를 낼까\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True\n    # 조건 1) 기준선 위로 올라갔다가 내려옴\n    # 조건 2) 앞 걸음과 MIN_GAP(ms) 이상 떨어짐\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nsteps = 0\n\nwhile True:\n    s = smooth(strength())\n    if is_step(s):\n        steps += 1\n        display.set_pixel(2, 2, 9)\n        sleep(30)\n        display.set_pixel(2, 2, 0)\n        if steps % GOAL == 0:        # 100, 200, 300 ... 걸음\n            music.play([\"C5:2\", \"E5:2\", \"G5:4\"], wait=False)\n            print(\"목표 달성!\", steps)\n    if button_a.was_pressed():\n        display.scroll(steps)\n    if button_b.was_pressed():\n        steps = 0\n        display.show(Image.YES)\n        sleep(300)\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "응용 3-15. 20걸음 시험 모드로 오차 줄이기 (★★)",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 바꿔 보기: 1050, 1250 ...\nMIN_GAP = 300      # 바꿔 보기: 250, 400 ...\nTARGET = 20        # 실제로 걸을 걸음 수\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True\n    # 조건 1) 기준선 위로 올라갔다가 내려옴\n    # 조건 2) 앞 걸음과 MIN_GAP(ms) 이상 떨어짐\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nsteps = 0\ndisplay.show(Image.YES)\n\nwhile True:\n    s = smooth(strength())\n    if is_step(s):\n        steps += 1\n        display.set_pixel(2, 2, 9)\n        sleep(30)\n        display.set_pixel(2, 2, 0)\n    if button_a.was_pressed():\n        print(\"기준\", THRESHOLD, \"간격\", MIN_GAP, \"→\", steps, \"걸음, 오차\", steps - TARGET)\n        display.scroll(steps - TARGET)    # 오차를 LED 로\n    if button_b.was_pressed():\n        steps = 0\n        display.show(Image.YES)\n        sleep(300)\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "도전 3-16. 걷기와 뛰기를 구분해 아이콘 보이기 (★★★)",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선\nMIN_GAP = 300      # 최소 간격 (ms)\nRUN_LEVEL = 1700   # 봉우리가 이보다 높으면 뛰기\n\nWALK = Image(\"00900:09990:00900:09090:09090\")\nRUN = Image(\"00990:99900:00909:09090:90009\")\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02 에서 만든 것)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (들쭉날쭉한 선을 부드럽게)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True\n    # 조건 1) 기준선 위로 올라갔다가 내려옴\n    # 조건 2) 앞 걸음과 MIN_GAP(ms) 이상 떨어짐\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nsteps = 0\npeak = 0           # 이번 걸음에서 가장 높았던 값\n\nwhile True:\n    s = smooth(strength())\n    if s > peak:\n        peak = s\n    if is_step(s):\n        steps += 1\n        if peak > RUN_LEVEL:\n            display.show(RUN)\n        else:\n            display.show(WALK)\n        peak = 0       # 다음 걸음을 위해 다시 0\n    if button_a.was_pressed():\n        display.scroll(steps)\n    sleep(20)"
+ },
+ {
+  "sec": "ch03-2",
+  "title": "[slide] running_time() — 시간 재기",
+  "code": "from microbit import *\n\nlast = running_time()\n\nwhile True:\n    if button_a.was_pressed():\n        now = running_time()\n        print(\"간격:\", now - last, \"ms\")\n        last = now\n    sleep(10)",
+  "slide": 1
+ },
+ {
+  "sec": "ch03-2",
+  "title": "[slide] 만보기 핵심 — while 안",
+  "code": "from microbit import *\n\nsteps = 0\nwhile True:\n    if accelerometer.was_gesture(\"shake\"):   # (걸음 대신 흔들기)\n        steps += 1\n        display.set_pixel(2, 2, 9)\n        sleep(30)\n        display.set_pixel(2, 2, 0)\n    if button_a.was_pressed():\n        display.scroll(steps)\n    if button_b.was_pressed():\n        steps = 0\n        display.show(Image.YES)\n        sleep(300)\n        display.clear()\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch04-1",
+  "title": "예제 4-2. A 버튼으로 박자 두드려 케이던스 재기",
+  "code": "from microbit import *\n\nlast = running_time()\n\nwhile True:\n    if button_a.was_pressed():\n        now = running_time()\n        gap = now - last             # 지난번과의 간격 (ms)\n        last = now\n        print(\"간격\", gap, \"ms → 케이던스\", 60000 // gap)\n    sleep(10)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "예제 4-3. 방법 ① — 10초 동안 걸음 세어 × 6",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed():\n        display.show(Image.SQUARE_SMALL)     # 재는 중\n        steps = 0\n        start = running_time()\n        while running_time() - start < 10000:   # 10초 동안\n            if is_step(smooth(strength())):\n                steps += 1\n            sleep(20)\n        cadence = steps * 6\n        print(\"10초 걸음\", steps, \"→ 케이던스\", cadence, \"spm\")\n        display.scroll(cadence)\n        display.show(\"A\")\n    sleep(50)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "예제 4-4. 방법 ② — 걸음마다 간격으로 케이던스",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nlast = 0\n\nwhile True:\n    if is_step(smooth(strength())):\n        now = running_time()\n        gap = now - last             # 앞 걸음과의 간격\n        last = now\n        print(\"간격\", gap, \"ms → 케이던스\", 60000 // gap)\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "예제 4-6. 최근 5걸음 평균으로 케이던스 찍기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\ntimes = []          # 최근 걸음 시각 (ms)\n\nwhile True:\n    if is_step(smooth(strength())):\n        times.append(running_time())    # 걸음 시각 적기\n        if len(times) > 5:\n            times.pop(0)                # 가장 오래된 것 버리기\n        print(\"케이던스\", cadence_from(times), \"spm\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "예제 4-7. 실시간 케이던스 측정기 — 아이콘과 숫자",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nWALK = Image(\"00900:09990:00900:09090:09090\")   # 걷기\nJOG = Image(\"00900:09990:00900:09090:90009\")    # 조깅\nRUN = Image(\"00990:99900:00909:09090:90009\")    # 달리기\n\ntimes = []\ncadence = 0\n\nwhile True:\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        cadence = cadence_from(times)\n        if cadence >= 160:\n            display.show(RUN)\n        elif cadence >= 130:\n            display.show(JOG)\n        else:\n            display.show(WALK)\n    if button_a.was_pressed():\n        display.scroll(cadence)          # 숫자로 보기\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "도전 4-8. 멈추면 0 이 되는 케이던스 측정기 (★★★)",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nWALK = Image(\"00900:09990:00900:09090:09090\")   # 걷기\nJOG = Image(\"00900:09990:00900:09090:90009\")    # 조깅\nRUN = Image(\"00990:99900:00909:09090:90009\")    # 달리기\n\nSTOP_TIME = 2000    # 이만큼 걸음이 없으면 멈춘 것 (ms)\ntimes = []\ncadence = 0\n\nwhile True:\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        cadence = cadence_from(times)\n        if cadence >= 160:\n            display.show(RUN)\n        elif cadence >= 130:\n            display.show(JOG)\n        else:\n            display.show(WALK)\n    if len(times) > 0 and running_time() - times[-1] > STOP_TIME:\n        cadence = 0\n        times = []\n        display.show(\"0\")                # 멈춤\n    if button_a.was_pressed():\n        display.scroll(cadence)\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-1",
+  "title": "[slide] 버튼으로 박자 두드리기",
+  "code": "from microbit import *\n\nlast = running_time()\n\nwhile True:\n    if button_a.was_pressed():\n        now = running_time()\n        gap = now - last\n        last = now\n        print(\"간격\", gap, \"ms →\", 60000 // gap)\n    sleep(10)",
+  "slide": 1
+ },
+ {
+  "sec": "ch04-1",
+  "title": "[slide] 걸음 시각 적기",
+  "code": "from microbit import *\n\ndef cadence_from(times):\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)\n    return int(60000 / gap)\n\ntimes = []\nwhile True:\n    if accelerometer.was_gesture(\"shake\"):   # 걸음 대신\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        print(cadence_from(times))\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-10. sleep() 으로 만드는 메트로놈",
+  "code": "from microbit import *\nimport music\n\nBPM = 120\ngap = 60000 // BPM            # 박자 간격 (ms)\n\nwhile True:\n    music.pitch(1760, 30)     # 짧은 '틱'\n    display.show(Image.SQUARE_SMALL)\n    sleep(gap - 30)           # 소리 낸 시간만큼 빼고 기다리기\n    display.clear()"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "응용 4-11. 네 박자마다 높은 소리",
+  "code": "from microbit import *\nimport music\n\nBPM = 120\ngap = 60000 // BPM\nbeat = 0\n\nwhile True:\n    if beat % 4 == 0:\n        music.pitch(2093, 30)   # 첫 박자는 더 높게\n    else:\n        music.pitch(1568, 30)\n    beat += 1\n    sleep(gap - 30)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-12. sleep() 메트로놈 + 걸음 세기 — 걸음을 놓칩니다",
+  "code": "from microbit import *\nimport math\nimport music\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nBPM = 120\ngap = 60000 // BPM\nsteps = 0\n\nwhile True:\n    music.pitch(1760, 30)\n    sleep(gap - 30)           # 이 동안 센서를 못 읽음!\n    if is_step(smooth(strength())):\n        steps += 1\n        print(\"걸음\", steps)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-13. beat_due() 로 만드는 메트로놈",
+  "code": "from microbit import *\nimport music\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\nBPM = 120\nlit = 0             # 점을 켠 시각\n\nwhile True:\n    if beat_due(BPM):\n        music.pitch(1760, 30, wait=False)   # 틀어 놓고 바로 다음 일\n        display.set_pixel(2, 2, 9)\n        lit = running_time()\n    if running_time() - lit > 100:          # 0.1초 뒤 점 끄기\n        display.set_pixel(2, 2, 0)\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-14. 박자를 내면서 걸음도 세기",
+  "code": "from microbit import *\nimport math\nimport music\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\nBPM = 120\nsteps = 0\n\nwhile True:\n    if beat_due(BPM):\n        music.pitch(1760, 30, wait=False)\n    if is_step(smooth(strength())):\n        steps += 1\n        print(\"걸음\", steps)\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-15. 목표 BPM 을 버튼으로 바꾸는 메트로놈",
+  "code": "from microbit import *\nimport music\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\ntarget = 120        # 목표 BPM\n\nwhile True:\n    if beat_due(target):\n        music.pitch(1760, 30, wait=False)\n    if button_a.was_pressed() and target > 60:\n        target -= 5\n        display.scroll(target, delay=80, wait=False)\n    if button_b.was_pressed() and target < 200:\n        target += 5\n        display.scroll(target, delay=80, wait=False)\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-16. 케이던스와 목표 비교 화살표 (소리 없이)",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\ntarget = 120\ntimes = []\n\nwhile True:\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        diff = cadence_from(times) - target\n        if diff < -5:\n            display.show(Image.ARROW_N)   # 느려요\n        elif diff > 5:\n            display.show(Image.ARROW_S)   # 빨라요\n        else:\n            display.show(Image.YES)       # 좋아요\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "예제 4-17. 러닝 페이스 메이커",
+  "code": "from microbit import *\nimport math\nimport music\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\ntarget = 120        # 목표 BPM\ntimes = []\n\nwhile True:\n    # ① 박자 소리\n    if beat_due(target):\n        music.pitch(1760, 30, wait=False)\n    # ② 걸음이면 케이던스와 목표 비교\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        diff = cadence_from(times) - target\n        if diff < -5:\n            display.show(Image.ARROW_N)\n        elif diff > 5:\n            display.show(Image.ARROW_S)\n        else:\n            display.show(Image.YES)\n    # ③ 목표 BPM 바꾸기\n    if button_a.was_pressed() and target > 60:\n        target -= 5\n        display.scroll(target, delay=80, wait=False)\n    if button_b.was_pressed() and target < 200:\n        target += 5\n        display.scroll(target, delay=80, wait=False)\n    # ④ 2초 동안 걸음이 없으면 멈춤\n    if len(times) > 0 and running_time() - times[-1] > 2000:\n        times = []\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "응용 4-18. 로고를 터치해 소리 켜고 끄기",
+  "code": "from microbit import *\nimport music\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\ntarget = 120\nsound_on = True\nlit = 0\n\nwhile True:\n    if pin_logo.is_touched():\n        sound_on = not sound_on              # 켜짐 ↔ 꺼짐\n        print(\"소리\", sound_on)\n        sleep(300)                           # 한 번 터치를 여러 번으로 세지 않게\n    if beat_due(target):\n        if sound_on:\n            music.pitch(1760, 30, wait=False)\n        display.show(Image.SQUARE)           # 소리가 꺼져도 LED 로 박자\n        lit = running_time()\n    if running_time() - lit > 80:\n        display.clear()\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "도전 4-19. 차이에 따라 소리 높이가 바뀌는 페이스 메이커 (★★★)",
+  "code": "from microbit import *\nimport math\nimport music\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)   # 평균 간격\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:          # 너무 뒤처졌으면 지금부터 다시\n        next_beat = now + gap\n    return True\n\ntarget = 120\ntimes = []\ndiff = 0\n\nwhile True:\n    if beat_due(target):\n        tone = 1760 + diff * 30          # 빠르면 높게, 느리면 낮게\n        if tone < 400:\n            tone = 400\n        if tone > 3500:\n            tone = 3500\n        music.pitch(tone, 30, wait=False)\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        diff = cadence_from(times) - target\n    if button_a.was_pressed() and target > 60:\n        target -= 5\n    if button_b.was_pressed() and target < 200:\n        target += 5\n    if len(times) > 0 and running_time() - times[-1] > 2000:\n        times = []\n        diff = 0\n    sleep(20)"
+ },
+ {
+  "sec": "ch04-2",
+  "title": "[slide] music.pitch() 로 “틱”",
+  "code": "from microbit import *\nimport music\n\nBPM = 120\ngap = 60000 // BPM\n\nwhile True:\n    music.pitch(1760, 30)\n    display.show(Image.SQUARE_SMALL)\n    sleep(gap - 30)\n    display.clear()",
+  "slide": 1
+ },
+ {
+  "sec": "ch04-2",
+  "title": "[slide] 합치면? — 걸음을 놓쳐요",
+  "code": "from microbit import *\nimport music\n\nBPM = 120\ngap = 60000 // BPM\nsteps = 0\n\nwhile True:\n    music.pitch(1760, 30)\n    sleep(gap - 30)          # 이 동안 못 봄!\n    if accelerometer.was_gesture(\"shake\"):\n        steps += 1\n        print(\"걸음\", steps)",
+  "slide": 1
+ },
+ {
+  "sec": "ch04-2",
+  "title": "[slide] beat_due() 메트로놈",
+  "code": "from microbit import *\nimport music\n\nnext_beat = 0\ndef beat_due(bpm):\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    next_beat = now + 60000 // bpm\n    return True\n\nwhile True:\n    if beat_due(120):\n        music.pitch(1760, 30, wait=False)\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-2. 키로 어림한 보폭과 실측 보폭 비교",
+  "code": "from microbit import *\n\ndef stride_from_height(height, running=False):\n    # 준비된 함수: 키(cm)로 보폭(cm)을 어림하기 (대략값)\n    if running:\n        return height * 60 // 100    # 달리기: 키의 약 60%\n    return height * 41 // 100        # 걷기: 키의 약 41%\n\nfor h in [130, 150, 170]:\n    print(\"키\", h, \"cm → 걷기\", stride_from_height(h), \"cm · 달리기\", stride_from_height(h, True), \"cm\")\n\nMY_HEIGHT = 150     # 내 키 (cm)\nMY_STRIDE = 63      # 생각하기에서 실측한 보폭 (cm)\nguess = stride_from_height(MY_HEIGHT)\nprint(\"어림\", guess, \"cm / 실측\", MY_STRIDE, \"cm / 차이\", MY_STRIDE - guess, \"cm\")"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-3. 걸은 거리 알려 주기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nSTRIDE = 65        # 내 보폭 (cm)\nsteps = 0\n\nwhile True:\n    if is_step(smooth(strength())):\n        steps += 1\n    if button_a.was_pressed():\n        meters = steps * STRIDE // 100        # cm → m\n        print(steps, \"걸음 →\", meters, \"m\")\n        display.scroll(str(meters) + \"m\")\n    if button_b.was_pressed():\n        steps = 0\n        display.show(Image.YES)\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-4. 케이던스별 속도 계산표",
+  "code": "from microbit import *\n\nSTRIDE = 65        # 보폭 (cm)\n\nprint(\"케이던스 | 속도(m/분) | 1km 시간(분)\")\nfor cadence in [100, 120, 140, 160, 180]:\n    speed = STRIDE * cadence // 100      # 보폭(m) x 케이던스\n    minutes = 1000 // speed              # 1000m 를 가는 데 몇 분?\n    print(cadence, \"|\", speed, \"|\", minutes)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-5. log 맛보기 — 가짜 기록 10줄",
+  "code": "from microbit import *\nimport log\n\nlog.set_labels('time', 'steps', timestamp=None)\n\nsteps = 0\nfor sec in range(1, 11):\n    steps += 2                      # 1초에 2걸음씩 걷는다고 가정\n    log.add(time=sec, steps=steps)  # 표에 한 줄 붙이기\n    display.show(sec % 10)\n    sleep(1000)\n\ndisplay.show(Image.YES)\nprint(\"기록 끝! 로그 탭을 열어 보세요\")"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-6. 1초마다 걸음 수와 거리 기록하기",
+  "code": "from microbit import *\nimport math\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nSTRIDE = 65        # 내 보폭 (cm)\nlog.set_labels('time', 'steps', 'distance', timestamp=None)\n\nsteps = 0\nstart = running_time()\nnext_save = start + 1000          # 다음에 저장할 시각\n\nwhile True:\n    if is_step(smooth(strength())):\n        steps += 1\n    now = running_time()\n    if now >= next_save:          # 1초가 지났으면 저장\n        next_save += 1000\n        sec = (now - start) // 1000\n        log.add(time=sec, steps=steps, distance=round(steps * STRIDE / 100, 1))\n        print(sec, \"초\", steps, \"걸음\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-7. 러닝 기록기 — 시간 · 걸음 수 · 케이던스 · 거리",
+  "code": "from microbit import *\nimport math\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm) (ch04)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nSTRIDE = 65        # 내 보폭 (cm) — 실측값으로 바꾸기\nREADY = Image(\"09000:09900:09990:09900:09000\")   # 대기: A 를 누르면 시작\nREC = Image(\"00000:09990:09990:09990:00000\")     # 기록 중\n\nlog.set_labels('time', 'steps', 'cadence', 'distance', timestamp=None)\n\nrecording = False\nsteps = 0\ntimes = []\nstart = 0\nnext_save = 0\ndisplay.show(READY)\n\nwhile True:\n    now = running_time()\n    if button_a.was_pressed() and not recording:    # A: 기록 시작\n        recording = True\n        steps = 0\n        times = []\n        start = now\n        next_save = now + 1000\n        display.show(REC)\n    if button_b.was_pressed() and recording:        # B: 기록 정지\n        recording = False\n        display.show(READY)\n    if is_step(smooth(strength())) and recording:\n        steps += 1\n        times.append(now)\n        if len(times) > 5:\n            times.pop(0)\n    if recording and now >= next_save:              # 1초마다 저장\n        next_save += 1000\n        if times and now - times[-1] > 2000:\n            times = []                              # 2초 동안 걸음 없음\n        sec = (now - start) // 1000\n        cadence = cadence_from(times)\n        distance = round(steps * STRIDE / 100, 1)   # m\n        log.add(time=sec, steps=steps, cadence=cadence, distance=distance)\n        display.set_pixel(4, 0, 9 * (sec % 2))      # 깜빡이는 점\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "도전 5-8. 속도도 함께 저장하기 (★★★)",
+  "code": "from microbit import *\nimport math\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm) (ch04)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nSTRIDE = 65        # 내 보폭 (cm)\nREADY = Image(\"09000:09900:09990:09900:09000\")   # 대기: A 를 누르면 시작\nREC = Image(\"00000:09990:09990:09990:00000\")     # 기록 중\n\nlog.set_labels('time', 'steps', 'cadence', 'distance', 'speed', timestamp=None)\n\nrecording = False\nsteps = 0\ntimes = []\nstart = 0\nnext_save = 0\ndisplay.show(READY)\n\nwhile True:\n    now = running_time()\n    if button_a.was_pressed() and not recording:\n        recording = True\n        steps = 0\n        times = []\n        start = now\n        next_save = now + 1000\n        display.show(REC)\n    if button_b.was_pressed() and recording:\n        recording = False\n        display.show(READY)\n    if is_step(smooth(strength())) and recording:\n        steps += 1\n        times.append(now)\n        if len(times) > 5:\n            times.pop(0)\n    if recording and now >= next_save:\n        next_save += 1000\n        if times and now - times[-1] > 2000:\n            times = []\n        sec = (now - start) // 1000\n        cadence = cadence_from(times)\n        distance = round(steps * STRIDE / 100, 1)\n        speed = STRIDE * cadence // 100             # 속도 = 보폭 x 케이던스 (m/분)\n        log.add(time=sec, steps=steps, cadence=cadence, distance=distance, speed=speed)\n        display.set_pixel(4, 0, 9 * (sec % 2))\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "응용 5-9. 걷기 · 달리기 보폭 따로 쓰기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm) (ch04)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nWALK_STRIDE = 65   # 걷기 보폭 (cm)\nRUN_STRIDE = 90    # 달리기 보폭 (cm)\ndistance = 0       # cm\ntimes = []\n\nwhile True:\n    if is_step(smooth(strength())):\n        times.append(running_time())\n        if len(times) > 5:\n            times.pop(0)\n        if cadence_from(times) >= 140:     # 뛰는 중\n            distance += RUN_STRIDE\n        else:\n            distance += WALK_STRIDE\n        print(\"거리\", distance / 100, \"m\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "예제 5-11. 저장 주기 정하기와 기록 지우기",
+  "code": "from microbit import *\nimport log\n\nSAVE_GAP = 2000     # 저장 주기 (ms) — 1000, 5000 으로 바꿔 보기\nlog.set_labels('time', 'temp', timestamp=None)\n\nstart = running_time()\nnext_save = start\ncount = 0\n\nwhile True:\n    now = running_time()\n    if now >= next_save:\n        next_save += SAVE_GAP\n        log.add(time=(now - start) // 1000, temp=temperature())\n        count += 1\n        print(\"저장\", count, \"줄\")\n    if pin_logo.is_touched():            # 로고: 기록 모두 지우기\n        log.delete()\n        count = 0\n        display.show(Image.NO)\n        sleep(500)\n        display.clear()\n        print(\"기록을 모두 지웠습니다\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-1",
+  "title": "[slide] 준비된 함수 stride_from_height()",
+  "code": "from microbit import *\n\ndef stride_from_height(height, running=False):\n    # 키(cm)로 보폭(cm) 어림하기\n    if running:\n        return height * 60 // 100\n    return height * 41 // 100\n\nMY_HEIGHT = 150\nMY_STRIDE = 63      # 실측\nguess = stride_from_height(MY_HEIGHT)\nprint(\"어림\", guess, \"실측\", MY_STRIDE)",
+  "slide": 1
+ },
+ {
+  "sec": "ch05-1",
+  "title": "[slide] log 맛보기",
+  "code": "from microbit import *\nimport log\n\nlog.set_labels('time', 'steps', timestamp=None)\n\nsteps = 0\nfor sec in range(1, 11):\n    steps += 2\n    log.add(time=sec, steps=steps)\n    display.show(sec % 10)\n    sleep(1000)\n\ndisplay.show(Image.YES)",
+  "slide": 1
+ },
+ {
+  "sec": "ch05-2",
+  "title": "예제 5-12. print 로 CSV 직접 출력하기",
+  "code": "from microbit import *\n\n# 예시 러닝 기록: 10초마다 한 줄 (걷기 1분 → 뛰기 2분 → 걷기 1분)\nCAD = [108, 112, 114, 110, 113, 111, 150, 160, 164, 162, 166, 236, 163, 161, 165, 158, 162, 160, 130, 114, 112, 110, 113, 0]\nSTEPS = [18, 37, 56, 74, 93, 112, 137, 164, 191, 218, 246, 273, 300, 327, 355, 381, 408, 435, 457, 476, 495, 513, 532, 532]\nDIST = [11.7, 24.1, 36.4, 48.1, 60.5, 72.8, 95.3, 119.6, 143.9, 168.2, 193.4, 217.7, 242, 266.3, 291.5, 314.9, 339.2, 363.5, 377.8, 390.1, 402.5, 414.2, 426.6, 426.6]\n\nprint(\"time,steps,cadence,distance\")          # 첫 줄: 이름표\nfor i in range(6):\n    t = (i + 1) * 10\n    print(str(t) + \",\" + str(STEPS[i]) + \",\" + str(CAD[i]) + \",\" + str(DIST[i]))"
+ },
+ {
+  "sec": "ch05-2",
+  "title": "예제 5-14. 요약 카드 계산하기",
+  "code": "from microbit import *\n\n# 예시 러닝 기록: 10초마다 한 줄 (걷기 1분 → 뛰기 2분 → 걷기 1분)\nCAD = [108, 112, 114, 110, 113, 111, 150, 160, 164, 162, 166, 236, 163, 161, 165, 158, 162, 160, 130, 114, 112, 110, 113, 0]\nSTEPS = [18, 37, 56, 74, 93, 112, 137, 164, 191, 218, 246, 273, 300, 327, 355, 381, 408, 435, 457, 476, 495, 513, 532, 532]\nDIST = [11.7, 24.1, 36.4, 48.1, 60.5, 72.8, 95.3, 119.6, 143.9, 168.2, 193.4, 217.7, 242, 266.3, 291.5, 314.9, 339.2, 363.5, 377.8, 390.1, 402.5, 414.2, 426.6, 426.6]\n\ntotal = STEPS[-1]                        # 마지막 줄 = 총 걸음\nmeters = DIST[-1]                        # 마지막 줄 = 거리\nmoving = [c for c in CAD if c > 0]       # 멈춤(0)은 빼기\navg_cad = sum(moving) // len(moving)\navg_stride = int(meters * 100 / total)   # cm\nminutes = len(CAD) * 10 / 60             # 10초마다 한 줄\nspeed = int(meters / minutes)\n\nprint(\"총 걸음\", total, \"걸음\")\nprint(\"거리\", meters, \"m\")\nprint(\"평균 케이던스\", avg_cad, \"spm\")\nprint(\"평균 보폭\", avg_stride, \"cm\")\nprint(\"평균 속도\", speed, \"m/분\")"
+ },
+ {
+  "sec": "ch05-2",
+  "title": "예제 5-15. 콘솔에 막대그래프 그리기",
+  "code": "from microbit import *\n\n# 예시 러닝 기록: 10초마다 한 줄 (걷기 1분 → 뛰기 2분 → 걷기 1분)\nCAD = [108, 112, 114, 110, 113, 111, 150, 160, 164, 162, 166, 236, 163, 161, 165, 158, 162, 160, 130, 114, 112, 110, 113, 0]\nSTEPS = [18, 37, 56, 74, 93, 112, 137, 164, 191, 218, 246, 273, 300, 327, 355, 381, 408, 435, 457, 476, 495, 513, 532, 532]\nDIST = [11.7, 24.1, 36.4, 48.1, 60.5, 72.8, 95.3, 119.6, 143.9, 168.2, 193.4, 217.7, 242, 266.3, 291.5, 314.9, 339.2, 363.5, 377.8, 390.1, 402.5, 414.2, 426.6, 426.6]\n\nfor i in range(len(CAD)):\n    t = (i + 1) * 10\n    bar = \"#\" * (CAD[i] // 10)           # 10 spm 마다 # 하나\n    print(t, \"초\", bar, CAD[i])"
+ },
+ {
+  "sec": "ch05-2",
+  "title": "예제 5-16. 시나리오 러닝 기록기 (속도 · 메트로놈 포함)",
+  "code": "from microbit import *\nimport math\nimport music\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef cadence_from(times):\n    # 준비된 함수: 최근 걸음 시각(ms) 목록 -> 평균 케이던스(spm) (ch04)\n    if len(times) < 2:\n        return 0\n    gap = (times[-1] - times[0]) / (len(times) - 1)\n    if gap <= 0:\n        return 0\n    return int(60000 / gap)\n\nnext_beat = 0\n\ndef beat_due(bpm):\n    # 준비된 함수: 지금 박자 소리를 낼 때이면 True (ch04)\n    global next_beat\n    now = running_time()\n    if now < next_beat:\n        return False\n    gap = 60000 // bpm\n    next_beat += gap\n    if next_beat < now:\n        next_beat = now + gap\n    return True\n\nWALK_STRIDE = 65   # 걷기 보폭 (cm)\nRUN_STRIDE = 90    # 달리기 보폭 (cm)\nBPM = 160          # 메트로놈 박자\nREADY = Image(\"09000:09900:09990:09900:09000\")   # 대기: A 를 누르면 시작\nREC = Image(\"00000:09990:09990:09990:00000\")     # 기록 중\n\nlog.set_labels('time', 'steps', 'cadence', 'distance', 'speed', 'beat', timestamp=None)\n\nrecording = False\nmetronome = False\nlogo_before = False\nsteps = 0\ndistance = 0       # cm\ntimes = []\nstart = 0\nnext_save = 0\ndisplay.show(READY)\n\nwhile True:\n    now = running_time()\n    if button_a.was_pressed() and not recording:\n        recording = True\n        steps = 0\n        distance = 0\n        times = []\n        start = now\n        next_save = now + 1000\n        display.show(REC)\n    if button_b.was_pressed() and recording:\n        recording = False\n        display.show(READY)\n    touched = pin_logo.is_touched()                 # 로고: 메트로놈 켜기/끄기\n    if touched and not logo_before:\n        metronome = not metronome\n    logo_before = touched\n    if metronome and beat_due(BPM):\n        music.pitch(1760, 30, wait=False)\n    if is_step(smooth(strength())) and recording:\n        steps += 1\n        times.append(now)\n        if len(times) > 5:\n            times.pop(0)\n        if cadence_from(times) >= 140:              # 뛰는 중이면 큰 보폭\n            distance += RUN_STRIDE\n        else:\n            distance += WALK_STRIDE\n    if recording and now >= next_save:\n        next_save += 1000\n        if times and now - times[-1] > 2000:\n            times = []\n        sec = (now - start) // 1000\n        cadence = cadence_from(times)\n        stride = RUN_STRIDE if cadence >= 140 else WALK_STRIDE\n        speed = stride * cadence // 100\n        log.add(time=sec, steps=steps, cadence=cadence,\n                distance=round(distance / 100, 1), speed=speed,\n                beat=1 if metronome else 0)\n        display.set_pixel(4, 0, 9 * (sec % 2))\n    sleep(20)"
+ },
+ {
+  "sec": "ch05-2",
+  "title": "응용 5-17. 튀는 값 걸러 내기",
+  "code": "from microbit import *\n\n# 예시 러닝 기록: 10초마다 한 줄 (걷기 1분 → 뛰기 2분 → 걷기 1분)\nCAD = [108, 112, 114, 110, 113, 111, 150, 160, 164, 162, 166, 236, 163, 161, 165, 158, 162, 160, 130, 114, 112, 110, 113, 0]\nSTEPS = [18, 37, 56, 74, 93, 112, 137, 164, 191, 218, 246, 273, 300, 327, 355, 381, 408, 435, 457, 476, 495, 513, 532, 532]\nDIST = [11.7, 24.1, 36.4, 48.1, 60.5, 72.8, 95.3, 119.6, 143.9, 168.2, 193.4, 217.7, 242, 266.3, 291.5, 314.9, 339.2, 363.5, 377.8, 390.1, 402.5, 414.2, 426.6, 426.6]\n\nLIMIT = 220            # 사람이 내기 어려운 케이던스\n\nclean = []\nfor c in CAD:\n    if c > LIMIT and len(clean) > 0:\n        print(\"튀는 값\", c, \"→\", clean[-1], \"로 바꿈\")\n        c = clean[-1]            # 바로 앞 값으로 바꾸기\n    clean.append(c)\n\nmoving = [c for c in clean if c > 0]\nprint(\"고친 평균 케이던스\", sum(moving) // len(moving), \"spm\")"
+ },
+ {
+  "sec": "ch05-2",
+  "title": "[slide] print 로 CSV 만들기",
+  "code": "from microbit import *\n\nCAD = [108, 112, 114, 110]\nSTEPS = [18, 37, 56, 74]\n\nprint(\"time,steps,cadence\")\nfor i in range(4):\n    t = (i + 1) * 10\n    print(str(t) + \",\" + str(STEPS[i]) + \",\" + str(CAD[i]))",
+  "slide": 1
+ },
+ {
+  "sec": "ch06-1",
+  "title": "예제 6-2. move() 로 한 걸음씩 걷기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nx, y = 0, 0\nfor heading in [90, 90, 0, 0, 45]:\n    x, y = move(x, y, heading, 100)     # 보폭 100cm = 모눈 한 칸\n    print(\"방향\", heading, \"→ x =\", round(x), \"y =\", round(y))"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "예제 6-3. 길 안내 목록 따라가기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nROUTE = [(90, 2), (0, 2), (270, 2), (180, 2)]   # (방향, 걸음 수)\nx, y = 0, 0\nfor heading, steps in ROUTE:\n    for i in range(steps):\n        x, y = move(x, y, heading, 100)\n    print(heading, \"쪽으로\", steps, \"걸음 → x =\", round(x), \"y =\", round(y))"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "예제 6-4. LED 지도 위에서 정사각형 걷기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100        # LED 한 칸 = 100cm\nOX, OY = 2, 2     # 출발점 = 가운데 칸\n\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nROUTE = [(90, 1), (0, 1), (270, 2), (180, 2), (90, 2), (0, 1), (270, 1)]\nwhile True:\n    x, y = 0, 0\n    show_pos(x, y)\n    sleep(800)\n    for heading, steps in ROUTE:\n        for i in range(steps):\n            x, y = move(x, y, heading, 100)\n            show_pos(x, y)\n            sleep(500)"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "예제 6-5. A 버튼으로 걷는 위치 추적기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100        # LED 한 칸 = 100cm\nOX, OY = 2, 2     # 출발점 = 가운데 칸\n\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nSTRIDE = 100       # 한 걸음 = 모눈 한 칸 (100cm)\nx, y = 0, 0\nsteps = 0\nshow_pos(x, y)\n\nwhile True:\n    if button_a.was_pressed():\n        h = compass.heading()\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        show_pos(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· x =\", round(x), \"y =\", round(y))\n    sleep(50)"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "응용 6-6. B 버튼으로 출발점까지의 거리 보기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100        # LED 한 칸 = 100cm\nOX, OY = 2, 2     # 출발점 = 가운데 칸\n\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nSTRIDE = 100\nx, y = 0, 0\nshow_pos(x, y)\n\nwhile True:\n    if button_a.was_pressed():\n        x, y = move(x, y, compass.heading(), STRIDE)\n        show_pos(x, y)\n        print(\"x =\", round(x), \"y =\", round(y))\n    if button_b.was_pressed():\n        d = math.sqrt(x * x + y * y)     # 출발점까지 곧은 거리\n        print(\"출발점까지\", round(d), \"cm\")\n        display.scroll(str(round(d / 100)) + \"m\")\n        show_pos(x, y)\n    sleep(50)"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "예제 6-7. 진짜 위치와 틀린 계산 비교하기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef walk(heading, stride, steps):\n    # 같은 방향으로 steps 걸음 걸은 뒤의 위치\n    x, y = 0, 0\n    for i in range(steps):\n        x, y = move(x, y, heading, stride)\n    return x, y\n\ntx, ty = walk(0, 65, 20)       # 진짜: 북쪽으로 보폭 65cm 20걸음\nprint(\"진짜 위치:\", round(tx), round(ty))\n\nbx, by = walk(0, 75, 20)       # 보폭을 75cm 로 크게 잡음\ngap = math.sqrt((bx - tx) * (bx - tx) + (by - ty) * (by - ty))\nprint(\"보폭 75cm:\", round(bx), round(by), \"→ 차이\", round(gap), \"cm\")\n\nhx, hy = walk(10, 65, 20)      # 방향이 10도 틀어짐\ngap = math.sqrt((hx - tx) * (hx - tx) + (hy - ty) * (hy - ty))\nprint(\"방향 10도:\", round(hx), round(hy), \"→ 차이\", round(gap), \"cm\")"
+ },
+ {
+  "sec": "ch06-1",
+  "title": "[slide] 준비된 함수 move()",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # heading 방향으로 stride 만큼 한 칸 밀기\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nx, y = 0, 0\nfor heading in [90, 90, 0, 0, 45]:\n    x, y = move(x, y, heading, 100)\n    print(\"방향\", heading, \"→\", round(x), round(y))",
+  "slide": 1
+ },
+ {
+  "sec": "ch06-1",
+  "title": "[slide] 진짜 위치와 틀린 계산",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef walk(heading, stride, steps):\n    x, y = 0, 0\n    for i in range(steps):\n        x, y = move(x, y, heading, stride)\n    return x, y\n\nprint(\"진짜   \", walk(0, 65, 20))\nprint(\"보폭 75\", walk(0, 75, 20))\nprint(\"방향 10\", walk(10, 65, 20))",
+  "slide": 1
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-8. 걸음으로 움직이는 위치 추적기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100        # LED 한 칸 = 100cm\nOX, OY = 2, 2     # 출발점 = 가운데 칸\n\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nSTRIDE = 65        # 내 보폭 (cm, ch05 실측)\nx, y = 0, 0\nsteps = 0\nshow_pos(x, y)\n\nwhile True:\n    if is_step(smooth(strength())):\n        h = compass.heading()\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        show_pos(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· x =\", round(x), \"y =\", round(y))\n    sleep(20)"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-10. heading 과 tilt_heading 비교하기",
+  "code": "from microbit import *\n\nTILT_LIMIT = 300   # 이보다 기울면 방향을 믿지 않음\n\ngood_heading = 0\n\ndef tilt_heading():\n    # 준비된 함수: 기울기를 살펴 보정한 방위 (0~359)\n    # 많이 기울면 바로 전의 믿을 만한 방위를 그대로 씀\n    global good_heading\n    x, y, z = accelerometer.get_values()\n    if abs(x) > TILT_LIMIT or abs(y) > TILT_LIMIT:\n        return good_heading\n    h = compass.heading()\n    diff = (h - good_heading + 540) % 360 - 180\n    good_heading = (good_heading + diff // 2) % 360\n    return good_heading\n\nwhile True:\n    x, y, z = accelerometer.get_values()\n    th = tilt_heading()\n    print(\"기울기\", x, y, \"| heading\", compass.heading(), \"| tilt_heading\", th)\n    sleep(300)"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-11. 20m 를 걸은 뒤의 오차 계산표",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef walk(heading, stride, steps):\n    # 같은 방향으로 steps 걸음 걸은 뒤의 위치\n    x, y = 0, 0\n    for i in range(steps):\n        x, y = move(x, y, heading, stride)\n    return x, y\n\ntx, ty = walk(0, 65, 31)         # 진짜: 북쪽으로 31걸음 (약 20m)\nprint(\"20m(31걸음) 걸은 뒤\")\nfor err in [1, 2, 5, 10]:\n    x, y = walk(err, 65, 31)\n    print(\"방향\", err, \"도 틀림 → 옆으로\", round(x), \"cm\")\nfor d in [-5, 5, 10]:\n    x, y = walk(0, 65 + d, 31)\n    print(\"보폭\", d, \"cm 틀림 → 앞뒤로\", round(y - ty), \"cm\")"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-12. 사각형을 계산으로 걸어 보기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef report(name, route):\n    # route 대로 보폭 50cm 로 걸은 끝점과 출발점의 차이\n    x, y = 0, 0\n    for heading, steps in route:\n        for i in range(steps):\n            x, y = move(x, y, heading, 50)\n    gap = math.sqrt(x * x + y * y)\n    print(name, \"→ 끝점\", round(x), round(y), \"· 차이\", round(gap), \"cm\")\n\nreport(\"완벽\", [(90, 10), (0, 6), (270, 10), (180, 6)])\nreport(\"모두 5도\", [(95, 10), (5, 6), (275, 10), (185, 6)])\nreport(\"한 변 20도\", [(90, 10), (0, 6), (290, 10), (180, 6)])\nreport(\"2걸음 놓침\", [(90, 10), (0, 6), (270, 8), (180, 6)])"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-13. 사각형 걷기 추적기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nTILT_LIMIT = 300\ngood_heading = 0\n\ndef tilt_heading():\n    # 준비된 함수: 기울기를 살펴 보정한 방위 (0~359)\n    # 많이 기울면 바로 전의 믿을 만한 방위를 그대로 씀\n    global good_heading\n    x, y, z = accelerometer.get_values()\n    if abs(x) > TILT_LIMIT or abs(y) > TILT_LIMIT:\n        return good_heading\n    h = compass.heading()\n    diff = (h - good_heading + 540) % 360 - 180\n    good_heading = (good_heading + diff // 2) % 360\n    return good_heading\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 125         # LED 한 칸 = 125cm (5m 가 4칸)\nOX, OY = 0, 4      # 출발점 = 왼쪽 아래 칸\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nSTRIDE = 65        # 내 보폭 (cm)\nx, y = 0, 0\nsteps = 0\nshow_pos(x, y)\n\nwhile True:\n    h = tilt_heading()                  # 매 바퀴 방위 다듬기\n    if is_step(smooth(strength())):\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        show_pos(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· x =\", round(x), \"y =\", round(y))\n    if button_b.was_pressed():\n        gap = math.sqrt(x * x + y * y)\n        print(\"출발점과의 차이:\", round(gap), \"cm\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "도전 6-14. A 버튼으로 출발점 되돌리기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\nTILT_LIMIT = 300\ngood_heading = 0\n\ndef tilt_heading():\n    # 준비된 함수: 기울기를 살펴 보정한 방위 (0~359)\n    # 많이 기울면 바로 전의 믿을 만한 방위를 그대로 씀\n    global good_heading\n    x, y, z = accelerometer.get_values()\n    if abs(x) > TILT_LIMIT or abs(y) > TILT_LIMIT:\n        return good_heading\n    h = compass.heading()\n    diff = (h - good_heading + 540) % 360 - 180\n    good_heading = (good_heading + diff // 2) % 360\n    return good_heading\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 125\nOX, OY = 0, 4\ndef show_pos(x, y):\n    # 준비된 함수: 위치 (x, y) 를 5x5 LED 지도에 점 하나로\n    col = OX + round(x / CELL)\n    row = OY - round(y / CELL)\n    col = min(4, max(0, col))\n    row = min(4, max(0, row))\n    display.clear()\n    display.set_pixel(OX, OY, 2)      # 출발점은 흐리게\n    display.set_pixel(col, row, 9)    # 지금 위치는 밝게\n\nSTRIDE = 65\nx, y = 0, 0\nsteps = 0\nshow_pos(x, y)\n\nwhile True:\n    h = tilt_heading()\n    if is_step(smooth(strength())):\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        show_pos(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· x =\", round(x), \"y =\", round(y))\n    if button_b.was_pressed():\n        gap = math.sqrt(x * x + y * y)\n        print(\"출발점과의 차이:\", round(gap), \"cm\")\n    if button_a.was_pressed():          # 새로 더한 부분\n        x, y = 0, 0\n        steps = 0\n        show_pos(x, y)\n        print(\"--- 출발점 (0, 0) 으로 되돌림 ---\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "예제 6-15. 처음 방향 맞추기 — 지금 보는 쪽을 0° 로",
+  "code": "from microbit import *\n\nbase = 0          # 기준 방향 (처음엔 북쪽)\n\nwhile True:\n    if button_a.was_pressed():\n        base = compass.heading()        # 지금 보는 쪽 = 앞 (0도)\n        display.show(Image.YES)\n    rel = (compass.heading() - base) % 360\n    print(\"나침반\", compass.heading(), \"→ 출발 기준\", rel)\n    sleep(300)"
+ },
+ {
+  "sec": "ch06-2",
+  "title": "[slide] 준비된 함수 tilt_heading()",
+  "code": "from microbit import *\n\nTILT_LIMIT = 300\ngood_heading = 0\n\ndef tilt_heading():\n    global good_heading\n    x, y, z = accelerometer.get_values()\n    if abs(x) > TILT_LIMIT or abs(y) > TILT_LIMIT:\n        return good_heading              # 많이 기움 → 이전 값\n    h = compass.heading()\n    diff = (h - good_heading + 540) % 360 - 180\n    good_heading = (good_heading + diff // 2) % 360\n    return good_heading\n\nwhile True:\n    print(compass.heading(), tilt_heading())\n    sleep(300)",
+  "slide": 1
+ },
+ {
+  "sec": "ch06-2",
+  "title": "[slide] 사각형을 계산으로 걸어 보기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef report(name, route):\n    x, y = 0, 0\n    for heading, steps in route:\n        for i in range(steps):\n            x, y = move(x, y, heading, 50)\n    print(name, round(x), round(y))\n\nreport(\"완벽\", [(90, 10), (0, 6), (270, 10), (180, 6)])\nreport(\"모두 5도\", [(95, 10), (5, 6), (275, 10), (185, 6)])\nreport(\"한 변 20도\", [(90, 10), (0, 6), (290, 10), (180, 6)])\nreport(\"2걸음 놓침\", [(90, 10), (0, 6), (270, 8), (180, 6)])",
+  "slide": 1
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-2. 교실을 문자 지도로 만들기",
+  "code": "from microbit import *\n\nCELL = 100        # 1칸 = 1m = 100cm\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\nfor r in range(len(ROOM)):\n    print(r, ROOM[r])\n\nwalls = 0\ninside = 0\nfor row in ROOM:\n    for ch in row:\n        if ch == \"#\":\n            walls += 1\n        elif ch != \"D\":\n            inside += 1\nprint(\"벽 칸:\", walls)\nprint(\"안쪽 넓이:\", inside, \"m² (1칸 = 1m × 1m)\")"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-3. 시작점 · 문 · 목표 찾기",
+  "code": "from microbit import *\nimport math\n\nCELL = 100\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\nsc, sr = find(\"S\")\nfor name, ch in [(\"문\", \"D\"), (\"목표\", \"G\")]:\n    c, r = find(ch)\n    dx = c - sc          # 동쪽으로 몇 칸\n    dy = sr - r          # 북쪽으로 몇 칸 (줄 번호는 아래로 커짐)\n    dist = math.sqrt(dx * dx + dy * dy)\n    print(name, \"칸\", (c, r), \"· 시작점에서 동\", dx, \"북\", dy, \"· 곧게\", round(dist, 1), \"m\")"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-5. 예제 공간 세 개 넘겨 보기",
+  "code": "from microbit import *\n\nCLASSROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\nHALL = [\n    \"#########D##########\",\n    \"#S.................#\",\n    \"#....P.......P.....#\",\n    \"#.................G#\",\n    \"####################\",\n]\nLIBRARY = [\n    \"############\",\n    \"#S.........#\",\n    \"#.##.##.##.#\",\n    \"#.##.##.##.#\",\n    \"#..........#\",\n    \"#...G..P...#\",\n    \"#####D######\",\n]\n\nSPACES = [(\"교실\", \"C\", CLASSROOM), (\"복도\", \"H\", HALL), (\"도서관\", \"L\", LIBRARY)]\nnow = 0\n\ndef show_space(i):\n    name, letter, rows = SPACES[i]\n    print(\"===\", name, \"·\", len(rows[0]), \"x\", len(rows), \"칸 ===\")\n    for row in rows:\n        print(row)\n    display.show(letter)\n\nshow_space(now)\nwhile True:\n    if button_a.was_pressed():\n        now = (now + 1) % len(SPACES)\n        show_space(now)\n    sleep(50)"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-6. 내 공간을 보드 파일로 저장하고 다시 불러오기",
+  "code": "from microbit import *\n\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\n# 저장하기: 한 줄씩 room.txt 에 쓰기\nwith open(\"room.txt\", \"w\") as f:\n    for row in ROOM:\n        f.write(row + \"\\n\")\n\n# 불러오기: 파일을 읽어 다시 줄 목록으로\nwith open(\"room.txt\") as f:\n    loaded = f.read().split(\"\\n\")\nloaded = [row for row in loaded if row]\n\nprint(\"불러온 줄 수:\", len(loaded))\nfor row in loaded:\n    print(row)\nprint(\"처음과 같나요?\", loaded == ROOM)"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-7. 버튼으로 문까지 걸어 보기",
+  "code": "from microbit import *\nimport math\n\nCELL = 100\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\nLIGHT = {\"#\": 3, \"P\": 3, \"D\": 6, \"G\": 6, \"B\": 6, \"W\": 6}   # LED 밝기\n\ndef tile_at(x, y):\n    # 준비된 함수: 위치 (x, y) cm 가 놓인 칸의 글자\n    return cell(SC + round(x / CELL), SR - round(y / CELL))\n\ndef try_move(x, y, heading, stride):\n    # 준비된 함수: 한 걸음 가 보고, 벽 · 기둥이면 제자리\n    nx, ny = move(x, y, heading, stride)\n    if tile_at(nx, ny) in \"#P\":\n        return x, y, False\n    return nx, ny, True\n\ndef show_room(x, y):\n    # 준비된 함수: 사람 둘레 5x5 칸을 LED 에 (벽 흐리게 · 사람 밝게)\n    pc = SC + round(x / CELL)\n    pr = SR - round(y / CELL)\n    for i in range(5):\n        for j in range(5):\n            t = cell(pc + i - 2, pr + j - 2)\n            display.set_pixel(i, j, LIGHT.get(t, 0))\n    display.set_pixel(2, 2, 9)\n\nSC, SR = find(\"S\")       # 시작점 칸 = 위치 (0, 0)\nx, y, h = 0, 0, 90       # 동쪽(문 쪽)을 보고 출발\nsteps = 0\nshow_room(x, y)\n\nwhile True:\n    if button_a.was_pressed():           # 한 걸음 (1칸)\n        x, y, ok = try_move(x, y, h, CELL)\n        if ok:\n            steps += 1\n            print(steps, \"걸음 → x =\", round(x), \"y =\", round(y), \"칸:\", tile_at(x, y))\n        else:\n            print(\"쿵! 벽이라 멈춥니다\")\n        show_room(x, y)\n        if tile_at(x, y) == \"D\":\n            print(\"문에 도착!\")\n            display.show(Image.YES)\n    if button_b.was_pressed():           # 오른쪽으로 90도 돌기\n        h = (h + 90) % 360\n        print(\"방향\", h)\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "예제 7-8. 조이스틱으로 걷는 공간 속 위치 추적기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\nLIGHT = {\"#\": 3, \"P\": 3, \"D\": 6, \"G\": 6, \"B\": 6, \"W\": 6}   # LED 밝기\n\ndef tile_at(x, y):\n    # 준비된 함수: 위치 (x, y) cm 가 놓인 칸의 글자\n    return cell(SC + round(x / CELL), SR - round(y / CELL))\n\ndef try_move(x, y, heading, stride):\n    # 준비된 함수: 한 걸음 가 보고, 벽 · 기둥이면 제자리\n    nx, ny = move(x, y, heading, stride)\n    if tile_at(nx, ny) in \"#P\":\n        return x, y, False\n    return nx, ny, True\n\ndef show_room(x, y):\n    # 준비된 함수: 사람 둘레 5x5 칸을 LED 에 (벽 흐리게 · 사람 밝게)\n    pc = SC + round(x / CELL)\n    pr = SR - round(y / CELL)\n    for i in range(5):\n        for j in range(5):\n            t = cell(pc + i - 2, pr + j - 2)\n            display.set_pixel(i, j, LIGHT.get(t, 0))\n    display.set_pixel(2, 2, 9)\n\nSC, SR = find(\"S\")\nMAP_UP = 0         # 도면 위쪽을 볼 때의 나침반 값\nSTRIDE = 65        # 내 보폭 (cm, ch05 실측)\nx, y = 0, 0\nsteps = 0\nshow_room(x, y)\n\nwhile True:\n    if is_step(smooth(strength())):\n        h = (compass.heading() - MAP_UP) % 360\n        x, y, ok = try_move(x, y, h, STRIDE)\n        steps += 1\n        if not ok:\n            print(\"벽에 막힘!\")\n        show_room(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· x =\", round(x), \"y =\", round(y), tile_at(x, y))\n        if tile_at(x, y) == \"D\":\n            print(\"문에 도착!\", steps, \"걸음\")\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "응용 7-9. 복도 공간에서 걸어 보기",
+  "code": "from microbit import *\nimport math\n\nCELL = 100\nROOM = [\n    \"#########D##########\",\n    \"#S.................#\",\n    \"#....P.......P.....#\",\n    \"#.................G#\",\n    \"####################\",\n]\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\nLIGHT = {\"#\": 3, \"P\": 3, \"D\": 6, \"G\": 6, \"B\": 6, \"W\": 6}   # LED 밝기\n\ndef tile_at(x, y):\n    # 준비된 함수: 위치 (x, y) cm 가 놓인 칸의 글자\n    return cell(SC + round(x / CELL), SR - round(y / CELL))\n\ndef try_move(x, y, heading, stride):\n    # 준비된 함수: 한 걸음 가 보고, 벽 · 기둥이면 제자리\n    nx, ny = move(x, y, heading, stride)\n    if tile_at(nx, ny) in \"#P\":\n        return x, y, False\n    return nx, ny, True\n\ndef show_room(x, y):\n    # 준비된 함수: 사람 둘레 5x5 칸을 LED 에 (벽 흐리게 · 사람 밝게)\n    pc = SC + round(x / CELL)\n    pr = SR - round(y / CELL)\n    for i in range(5):\n        for j in range(5):\n            t = cell(pc + i - 2, pr + j - 2)\n            display.set_pixel(i, j, LIGHT.get(t, 0))\n    display.set_pixel(2, 2, 9)\n\nSC, SR = find(\"S\")\nx, y, h = 0, 0, 90\nsteps = 0\nshow_room(x, y)\n\nwhile True:\n    if button_a.was_pressed():\n        x, y, ok = try_move(x, y, h, CELL)\n        if ok:\n            steps += 1\n        here = tile_at(x, y)\n        print(steps, \"걸음 · 방향\", h, \"· 칸\", here)\n        show_room(x, y)\n        if here == \"G\":\n            print(\"목표 도착!\", steps, \"걸음\")\n            display.show(Image.HAPPY)\n    if button_b.was_pressed():           # 오른쪽 90도\n        h = (h + 90) % 360\n    if pin_logo.is_touched():            # 왼쪽 90도\n        h = (h + 270) % 360\n        print(\"방향\", h)\n        sleep(300)\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-1",
+  "title": "[slide] 도면을 글자로 — 문자 지도",
+  "code": "from microbit import *\n\nROOM = [\n    \"##########\",\n    \"#...G....#\",\n    \"#........#\",\n    \"#..P.....#\",\n    \"#........#\",\n    \"#........#\",\n    \"#S.......D\",\n    \"##########\",\n]\n\nfor r in range(len(ROOM)):\n    print(r, ROOM[r])",
+  "slide": 1
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-10. 다섯 값을 CSV 한 줄로",
+  "code": "from microbit import *\n\nt, steps, h, x, y = 12.5, 20, 90, 1300.4, -0.2\nprint(\"time,steps,heading,x,y\")\nline = \"{},{},{},{},{}\".format(t, steps, h, round(x), round(y))\nprint(line)\nprint(\"글자 수:\", len(line))"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-11. 저장 줄 수 비교하기",
+  "code": "from microbit import *\n\n# 60초: 걷기 20초 → 멈춤 20초 → 걷기 20초\nmoving = [1] * 20 + [0] * 20 + [1] * 20\nfor speed in [2, 3]:             # 1초에 2걸음(걷기) · 3걸음(뛰기)\n    per_step = 0\n    per_sec = 0\n    for sec in range(60):\n        per_sec += 1             # 1초마다: 매초 한 줄\n        if moving[sec]:\n            per_step += speed    # 걸음마다: 걸은 만큼 줄\n    print(\"1초에\", speed, \"걸음 → 걸음마다\", per_step, \"줄 · 1초마다\", per_sec, \"줄\")"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-12. 걸음마다 경로 저장하기 (log)",
+  "code": "from microbit import *\nimport math\nimport log\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nSTRIDE = 100      # 연습: 1걸음 = 1칸(1m)\nlog.set_labels(\"time\", \"steps\", \"heading\", \"x\", \"y\", timestamp=None)\nx, y, h = 0, 0, 0\nsteps = 0\nstart = running_time()\n\nwhile True:\n    if button_b.was_pressed():           # 오른쪽으로 90도\n        h = (h + 90) % 360\n        print(\"방향\", h)\n    if button_a.was_pressed():           # 한 걸음 = 한 줄 저장\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        t = (running_time() - start) // 100 / 10\n        log.add(time=t, steps=steps, heading=h, x=round(x), y=round(y))\n        print(\"저장:\", t, steps, h, round(x), round(y))\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-13. 1초마다 경로 저장하기 (log)",
+  "code": "from microbit import *\nimport math\nimport log\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nSTRIDE = 100\nlog.set_labels(\"time\", \"steps\", \"heading\", \"x\", \"y\", timestamp=None)\nx, y, h = 0, 0, 0\nsteps = 0\nsec = 0\nnext_save = running_time() + 1000\n\nwhile True:\n    if button_b.was_pressed():\n        h = (h + 90) % 360\n    if button_a.was_pressed():           # 걸음은 위치만 바꿈\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n    if running_time() >= next_save:      # 1초가 지나면 한 줄 저장\n        next_save += 1000\n        sec += 1\n        log.add(time=sec, steps=steps, heading=h, x=round(x), y=round(y))\n        print(\"저장:\", sec, steps, h, round(x), round(y))\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-14. path.csv 에 경로 쓰고 읽기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nroute = [(90, 3), (0, 2)]     # 동쪽 3걸음 → 북쪽 2걸음\nx, y, steps = 0, 0, 0\nwith open(\"path.csv\", \"w\") as f:\n    f.write(\"steps,heading,x,y\\n\")\n    for heading, n in route:\n        for i in range(n):\n            x, y = move(x, y, heading, 100)\n            steps += 1\n            f.write(\"{},{},{},{}\\n\".format(steps, heading, round(x), round(y)))\n\nwith open(\"path.csv\") as f:\n    print(f.read())"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "예제 7-15. 경로 기록기 (log 저장)",
+  "code": "from microbit import *\nimport math\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nCELL = 100\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\nLIGHT = {\"#\": 3, \"P\": 3, \"D\": 6, \"G\": 6, \"B\": 6, \"W\": 6}   # LED 밝기\n\ndef tile_at(x, y):\n    # 준비된 함수: 위치 (x, y) cm 가 놓인 칸의 글자\n    return cell(SC + round(x / CELL), SR - round(y / CELL))\n\ndef try_move(x, y, heading, stride):\n    # 준비된 함수: 한 걸음 가 보고, 벽 · 기둥이면 제자리\n    nx, ny = move(x, y, heading, stride)\n    if tile_at(nx, ny) in \"#P\":\n        return x, y, False\n    return nx, ny, True\n\ndef show_room(x, y):\n    # 준비된 함수: 사람 둘레 5x5 칸을 LED 에 (벽 흐리게 · 사람 밝게)\n    pc = SC + round(x / CELL)\n    pr = SR - round(y / CELL)\n    for i in range(5):\n        for j in range(5):\n            t = cell(pc + i - 2, pr + j - 2)\n            display.set_pixel(i, j, LIGHT.get(t, 0))\n    display.set_pixel(2, 2, 9)\n\nSC, SR = find(\"S\")\nNAMES = {\"D\": \"문\", \"B\": \"칠판 앞\", \"W\": \"창가\"}\nSTRIDE = 65        # 내 보폭 (cm)\nlog.set_labels(\"time\", \"steps\", \"heading\", \"x\", \"y\", timestamp=None)\n\nrecording = False\nx, y, steps = 0, 0, 0\nstart_t, start_h = 0, 0\nlast_tile = \"S\"\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed():               # 출발\n        x, y, steps = 0, 0, 0\n        start_t = running_time()\n        start_h = compass.heading()          # 처음 방향 = 도면 위쪽\n        last_tile = \"S\"\n        recording = True\n        show_room(x, y)\n        print(\"기록 시작 · 처음 방향\", start_h)\n    if button_b.was_pressed() and recording: # 도착\n        recording = False\n        display.show(Image.YES)\n        print(\"기록 끝:\", steps, \"걸음\")\n    if recording and is_step(smooth(strength())):\n        h = (compass.heading() - start_h) % 360\n        x, y, ok = try_move(x, y, h, STRIDE)\n        steps += 1\n        t = (running_time() - start_t) // 100 / 10\n        log.add(time=t, steps=steps, heading=h, x=round(x), y=round(y))\n        show_room(x, y)\n        here = tile_at(x, y)\n        if not ok:\n            print(\"벽에 막힘! (\", steps, \"걸음 )\")\n        if here != last_tile and here in NAMES:\n            print(\"지나감:\", NAMES[here], \"·\", steps, \"걸음\")\n        last_tile = here\n    if recording and pin_logo.is_touched():  # 현재 위치 표시\n        print(\"지금 위치 x =\", round(x), \"y =\", round(y), \"·\", steps, \"걸음\")\n        display.show(Image.TARGET)\n        sleep(500)\n        show_room(x, y)\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "응용 7-16. 파일로 저장하는 경로 기록기",
+  "code": "from microbit import *\nimport math\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\nSTRIDE = 65\nf = None                       # 열린 파일 (없으면 None)\nx, y, steps = 0, 0, 0\nstart_t, start_h = 0, 0\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed() and f is None:     # 출발: 파일 열기\n        x, y, steps = 0, 0, 0\n        start_t = running_time()\n        start_h = compass.heading()\n        f = open(\"path.csv\", \"w\")\n        f.write(\"time,steps,heading,x,y\\n\")\n        display.show(Image.ARROW_N)\n        print(\"기록 시작\")\n    if button_b.was_pressed() and f is not None: # 도착: 파일 닫기\n        f.close()\n        f = None\n        display.show(Image.YES)\n        print(\"기록 끝:\", steps, \"걸음 · path.csv 저장\")\n    if f is not None and is_step(smooth(strength())):\n        h = (compass.heading() - start_h) % 360\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        t = (running_time() - start_t) // 100 / 10\n        f.write(\"{},{},{},{},{}\\n\".format(t, steps, h, round(x), round(y)))\n        print(steps, \"걸음 · x =\", round(x), \"y =\", round(y))\n    sleep(20)"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "더 해 보기 7-17. path.csv 가 잘 저장됐는지 확인하기",
+  "code": "from microbit import *\n\ntry:\n    with open(\"path.csv\") as f:\n        lines = f.read().split(\"\\n\")\nexcept OSError:\n    lines = []\n\nrows = [ln for ln in lines[1:] if ln]\nprint(\"기록한 줄 수:\", len(rows))\nif rows:\n    print(\"첫 줄:\", rows[0])\n    print(\"마지막 줄:\", rows[-1])\n    last = rows[-1].split(\",\")\n    print(\"끝점 x =\", last[-2], \"y =\", last[-1])\nelse:\n    print(\"path.csv 가 없거나 비어 있습니다. 예제 7-14 나 응용 7-16 을 먼저 실행하세요.\")"
+ },
+ {
+  "sec": "ch07-2",
+  "title": "[slide] log 로 걸음마다 저장",
+  "code": "from microbit import *\nimport log\n\nlog.set_labels(\"time\", \"steps\", \"x\", timestamp=None)\nsteps = 0\nstart = running_time()\n\nwhile True:\n    if button_a.was_pressed():       # 동쪽으로 한 걸음\n        steps += 1\n        t = (running_time() - start) // 100 / 10\n        log.add(time=t, steps=steps, x=steps * 100)\n        print(\"저장:\", t, steps, steps * 100)\n    sleep(20)",
+  "slide": 1
+ },
+ {
+  "sec": "ch07-2",
+  "title": "[slide] 또는 파일로 — path.csv",
+  "code": "from microbit import *\n\nwith open(\"path.csv\", \"w\") as f:\n    f.write(\"steps,x,y\\n\")\n    for s in range(1, 4):\n        f.write(\"{},{},{}\\n\".format(s, s * 100, 0))\n\nwith open(\"path.csv\") as f:\n    print(f.read())",
+  "slide": 1
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-1. 보드에 저장된 path.csv 를 콘솔로 꺼내기",
+  "code": "from microbit import *\n\ntry:\n    with open(\"path.csv\") as f:\n        text = f.read()\n    lines = [line for line in text.split(\"\\n\") if line]\n    for line in lines:\n        print(line)\n    print(\"모두\", len(lines) - 1, \"걸음 기록\")\n    display.show(Image.YES)\nexcept OSError:\n    print(\"path.csv 가 없습니다.\")\n    print(\"ch07 의 파일 기록기(응용 7-16)로 먼저 기록하세요.\")\n    display.show(Image.NO)"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-3. 콘솔에 경로 지도 그리기",
+  "code": "from microbit import *\nimport math\n\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\nCELL = 100   # 1칸 = 100cm\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\ndef to_cell(x, y):\n    # 준비된 함수: 위치 (x, y) cm -> 지도 칸 (열, 줄)\n    return SC + round(x / CELL), SR - round(y / CELL)\n\ndef is_wall(x, y):\n    # 준비된 함수: 위치가 벽 · 기둥 칸이면 True\n    c, r = to_cell(x, y)\n    return cell(c, r) in \"#P\"\n\ndef draw_path(path):\n    # 준비된 함수: 지도 위에 경로 찍기 (* 걸음 · X 벽 통과 · E 끝점)\n    grid = [list(row) for row in ROOM]\n    for i in range(len(path)):\n        c, r = to_cell(path[i][0], path[i][1])\n        if 0 <= r < len(grid) and 0 <= c < len(grid[r]):\n            if ROOM[r][c] in \"#P\":\n                grid[r][c] = \"X\"\n            elif i == len(path) - 1:\n                grid[r][c] = \"E\"\n            elif grid[r][c] != \"S\":\n                grid[r][c] = \"*\"\n    for row in grid:\n        print(\" \".join(row))\n\nSC, SR = find(\"S\")\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\ndraw_path(EST)\nprint(\"걸음 수:\", len(EST))"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-4. LED 로 경로 재생하기",
+  "code": "from microbit import *\n\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\nCELL = 100   # 1칸 = 100cm\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\ndef to_cell(x, y):\n    # 준비된 함수: 위치 (x, y) cm -> 지도 칸 (열, 줄)\n    return SC + round(x / CELL), SR - round(y / CELL)\n\ndef is_wall(x, y):\n    # 준비된 함수: 위치가 벽 · 기둥 칸이면 True\n    c, r = to_cell(x, y)\n    return cell(c, r) in \"#P\"\n\nSC, SR = find(\"S\")\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\nLIGHT = {\"#\": 3, \"P\": 3, \"D\": 6, \"B\": 6, \"W\": 6}   # LED 밝기\n\ndef show_at(x, y):\n    # 준비된 함수: 사람 둘레 5x5 칸을 LED 에 (벽 흐리게 · 사람 밝게)\n    pc, pr = to_cell(x, y)\n    for i in range(5):\n        for j in range(5):\n            display.set_pixel(i, j, LIGHT.get(cell(pc + i - 2, pr + j - 2), 0))\n    display.set_pixel(2, 2, 9)\n\ndef replay(path, delay):\n    for i in range(len(path)):\n        x, y = path[i]\n        show_at(x, y)\n        if is_wall(x, y):\n            print(i + 1, \"걸음째: 벽 통과!\", (x, y))\n            sleep(delay)\n            display.show(Image.NO)\n        sleep(delay)\n    display.show(Image.YES)\n\nreplay(EST, 300)\nwhile True:\n    if button_a.was_pressed():       # 다시 재생\n        replay(EST, 300)\n    if button_b.was_pressed():       # 빠르게 재생\n        replay(EST, 100)\n    sleep(20)"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-5. 끝점 오차 거리 구하기",
+  "code": "from microbit import *\nimport math\n\ndef end_error(plan, est):\n    # 준비된 함수: 두 점 사이의 직선 거리 (cm)\n    dx = est[0] - plan[0]\n    dy = est[1] - plan[1]\n    return round(math.sqrt(dx * dx + dy * dy))\n\nPLAN_END = (-700, 200)     # 계획 끝점: 창가\nEST_END = (-850, 59)       # 개선 전 기록의 마지막 줄\nROUTE_LEN = 1300           # 계획 경로 길이 4 + 6 + 2 + 1 m\n\nerr = end_error(PLAN_END, EST_END)\nprint(\"끝점 오차:\", err, \"cm\")\nprint(\"걸은 길 대비:\", round(err * 100 / ROUTE_LEN), \"%\")\nif err <= 50:\n    print(\"같은 칸 안 - 아주 좋음\")\nelif err <= 100:\n    print(\"옆 칸 - 쓸 만함\")\nelse:\n    print(\"두 칸 이상 - 고칠 곳이 있음\")\ndisplay.scroll(str(err))"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-6. 벽을 뚫은 걸음 찾기",
+  "code": "from microbit import *\n\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\nCELL = 100   # 1칸 = 100cm\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\ndef to_cell(x, y):\n    # 준비된 함수: 위치 (x, y) cm -> 지도 칸 (열, 줄)\n    return SC + round(x / CELL), SR - round(y / CELL)\n\ndef is_wall(x, y):\n    # 준비된 함수: 위치가 벽 · 기둥 칸이면 True\n    c, r = to_cell(x, y)\n    return cell(c, r) in \"#P\"\n\ndef wall_steps(path):\n    # 준비된 함수: 벽 · 기둥 칸에 찍힌 걸음 번호 목록\n    out = []\n    for i in range(len(path)):\n        if is_wall(path[i][0], path[i][1]):\n            out.append(i + 1)\n    return out\n\nSC, SR = find(\"S\")\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\nbad = wall_steps(EST)\nprint(\"벽 통과 걸음:\", bad)\nprint(\"모두\", len(bad), \"걸음 /\", len(EST), \"걸음\")\nfor n in bad:\n    x, y = EST[n - 1]\n    print(n, \"걸음째\", (x, y), \"->\", to_cell(x, y), \"칸\")"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-7. 길이 비율과 방향 차이로 원인 좁히기",
+  "code": "from microbit import *\nimport math\n\ndef diagnose(plan, est):\n    # 준비된 함수: 출발점 -> 끝점 의 길이 비율과 방향 차이(°)\n    pl = math.sqrt(plan[0] ** 2 + plan[1] ** 2)\n    el = math.sqrt(est[0] ** 2 + est[1] ** 2)\n    pa = math.degrees(math.atan2(plan[0], plan[1]))\n    ea = math.degrees(math.atan2(est[0], est[1]))\n    diff = (ea - pa + 180) % 360 - 180\n    return round(el / pl, 2), round(diff)\n\ndef guess(ratio, diff):\n    # 준비된 함수: 숫자로 본 가장 의심 가는 원인\n    if ratio > 1.1:\n        return \"보폭이 너무 큼 (또는 걸음을 더 셈)\"\n    if ratio < 0.9:\n        return \"보폭이 너무 작음 (또는 걸음 놓침)\"\n    if abs(diff) > 10:\n        return \"방향 오차 (출발 방향 · 자석 간섭)\"\n    return \"큰 문제 없음\"\n\nPLAN_END = (-700, 200)\nEST_END = (-850, 59)\n\nratio, diff = diagnose(PLAN_END, EST_END)\nprint(\"길이 비율:\", ratio)\nprint(\"방향 차이:\", diff, \"도\")\nprint(\"의심 1순위:\", guess(ratio, diff))\nif abs(diff) > 10:\n    print(\"의심 2순위: 방향 오차\")"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "응용 8-8. 가상 공간 기록과 실제 보드 기록 비교하기",
+  "code": "from microbit import *\nimport math\n\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\nCELL = 100   # 1칸 = 100cm\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\ndef to_cell(x, y):\n    # 준비된 함수: 위치 (x, y) cm -> 지도 칸 (열, 줄)\n    return SC + round(x / CELL), SR - round(y / CELL)\n\ndef is_wall(x, y):\n    # 준비된 함수: 위치가 벽 · 기둥 칸이면 True\n    c, r = to_cell(x, y)\n    return cell(c, r) in \"#P\"\n\ndef draw_path(path):\n    # 준비된 함수: 지도 위에 경로 찍기 (* 걸음 · X 벽 통과 · E 끝점)\n    grid = [list(row) for row in ROOM]\n    for i in range(len(path)):\n        c, r = to_cell(path[i][0], path[i][1])\n        if 0 <= r < len(grid) and 0 <= c < len(grid[r]):\n            if ROOM[r][c] in \"#P\":\n                grid[r][c] = \"X\"\n            elif i == len(path) - 1:\n                grid[r][c] = \"E\"\n            elif grid[r][c] != \"S\":\n                grid[r][c] = \"*\"\n    for row in grid:\n        print(\" \".join(row))\n\ndef wall_steps(path):\n    # 준비된 함수: 벽 · 기둥 칸에 찍힌 걸음 번호 목록\n    out = []\n    for i in range(len(path)):\n        if is_wall(path[i][0], path[i][1]):\n            out.append(i + 1)\n    return out\n\ndef end_error(plan, est):\n    # 준비된 함수: 두 점 사이의 직선 거리 (cm)\n    dx = est[0] - plan[0]\n    dy = est[1] - plan[1]\n    return round(math.sqrt(dx * dx + dy * dy))\n\ndef diagnose(plan, est):\n    # 준비된 함수: 출발점 -> 끝점 의 길이 비율과 방향 차이(°)\n    pl = math.sqrt(plan[0] ** 2 + plan[1] ** 2)\n    el = math.sqrt(est[0] ** 2 + est[1] ** 2)\n    pa = math.degrees(math.atan2(plan[0], plan[1]))\n    ea = math.degrees(math.atan2(est[0], est[1]))\n    diff = (ea - pa + 180) % 360 - 180\n    return round(el / pl, 2), round(diff)\n\ndef guess(ratio, diff):\n    # 준비된 함수: 숫자로 본 가장 의심 가는 원인\n    if ratio > 1.1:\n        return \"보폭이 너무 큼 (또는 걸음을 더 셈)\"\n    if ratio < 0.9:\n        return \"보폭이 너무 작음 (또는 걸음 놓침)\"\n    if abs(diff) > 10:\n        return \"방향 오차 (출발 방향 · 자석 간섭)\"\n    return \"큰 문제 없음\"\n\nSC, SR = find(\"S\")\nPLAN_END = (-700, 200)\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\nBOARD = [\n    (0, 60), (0, 120), (3, 180), (3, 240), (3, 300), (4, 360),\n    (1, 420), (-59, 420), (-119, 421), (-179, 423), (-226, 386), (-274, 350),\n    (-321, 313), (-372, 280), (-422, 248), (-482, 243), (-486, 184), (-490, 124),\n    (-491, 64), (-492, 4), (-552, 1), (-612, -4),\n]\n\nfor name, path in [(\"가상 공간\", EST), (\"실제 보드\", BOARD)]:\n    ratio, diff = diagnose(PLAN_END, path[-1])\n    print(\"[\", name, \"]\", len(path), \"걸음\")\n    print(\"  끝점 오차\", end_error(PLAN_END, path[-1]), \"cm · 벽 통과\", len(wall_steps(path)))\n    print(\"  길이 비율\", ratio, \"· 방향 차이\", diff, \"->\", guess(ratio, diff))\n\nprint(\"실제 보드 기록 지도:\")\ndraw_path(BOARD)"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "예제 8-9. 같은 경로를 세 번 걸어 보기",
+  "code": "from microbit import *\nimport math\nimport random\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef end_error(plan, est):\n    # 준비된 함수: 두 점 사이의 직선 거리 (cm)\n    dx = est[0] - plan[0]\n    dy = est[1] - plan[1]\n    return round(math.sqrt(dx * dx + dy * dy))\n\nPLAN = [(0, 4), (270, 6), (180, 2), (270, 1)]   # (도면 방위, m)\nPLAN_END = (-700, 200)\nSTRIDE = 60                                     # 프로그램에 넣은 보폭\n\ndef walk_once():\n    # 같은 경로를 한 번 걷는 흉내 - 실제 보폭 · 방향이 매번 조금씩 다름\n    x, y, steps = 0, 0, 0\n    for h, m in PLAN:\n        real = random.randint(55, 65)        # 이번 구간의 실제 보폭\n        for i in range(round(m * 100 / real)):\n            if random.randint(1, 20) == 1:   # 5% 는 걸음을 놓침\n                continue\n            x, y = move(x, y, h + random.randint(-10, 10), STRIDE)\n            steps += 1\n    return round(x), round(y), steps\n\nfor k in range(3):\n    x, y, steps = walk_once()\n    print(k + 1, \"번째:\", steps, \"걸음 · 끝점\", (x, y), \"· 오차\", end_error(PLAN_END, (x, y)), \"cm\")"
+ },
+ {
+  "sec": "ch08-1",
+  "title": "[slide] 콘솔로 path.csv 꺼내기",
+  "code": "from microbit import *\n\ntry:\n    with open(\"path.csv\") as f:\n        text = f.read()\n    for line in text.split(\"\\n\"):\n        if line:\n            print(line)\nexcept OSError:\n    print(\"path.csv 가 없습니다.\")",
+  "slide": 1
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-11. 그냥 평균과 원 평균",
+  "code": "from microbit import *\nimport math\n\nsamples = [358, 2, 355, 5, 359, 1]     # 북쪽을 보고 읽은 방위각\n\nprint(\"그냥 평균:\", sum(samples) / len(samples))\n\nsx, sy = 0, 0\nfor h in samples:\n    sx += math.sin(math.radians(h))\n    sy += math.cos(math.radians(h))\nprint(\"원 평균:\", round(math.degrees(math.atan2(sx, sy))) % 360)"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-12. 방향 오프셋 재고 도면 방위 보기",
+  "code": "from microbit import *\nimport math\n\ndef heading_offset(samples=10):\n    # 준비된 함수: 도면 위쪽을 보고 여러 번 읽은 방위의 '원 평균'\n    sx, sy = 0, 0\n    for i in range(samples):\n        rad = math.radians(compass.heading())\n        sx += math.sin(rad)\n        sy += math.cos(rad)\n        sleep(50)\n    return round(math.degrees(math.atan2(sx, sy))) % 360\n\noffset = 0\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed():        # 도면 위쪽을 보고 A\n        display.show(Image.ARROW_N)\n        offset = heading_offset()\n        print(\"오프셋:\", offset, \"도 - 이제 이 방향이 도면 위쪽(0)\")\n        display.show(Image.YES)\n    if button_b.was_pressed():        # 지금 도면 방위 보기\n        h = (compass.heading() - offset) % 360\n        print(\"나침반\", compass.heading(), \"-> 도면 방위\", h)\n        display.scroll(str(h))\n    sleep(20)"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-13. 흔들리는 방향을 곧게 펴기",
+  "code": "from microbit import *\nimport math\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef keep_straight(new_h, last_h, limit=20):\n    # 준비된 함수: 바뀐 각도가 limit 보다 작으면 직진으로 보고 이전 방향 유지\n    diff = (new_h - last_h + 180) % 360 - 180\n    if abs(diff) < limit:\n        return last_h\n    return new_h\n\n# 서쪽(270)으로 10걸음, 남쪽(180)으로 3걸음 - 걸을 때 읽은 도면 방위\nHEADINGS = [262, 275, 268, 259, 281, 266, 273, 258, 277, 270, 185, 178, 172]\nSTRIDE = 60\n\nfor use in [False, True]:\n    x, y, last_h = 0, 0, 270\n    ys = []\n    for h in HEADINGS:\n        if use:\n            h = keep_straight(h, last_h)\n        last_h = h\n        x, y = move(x, y, h, STRIDE)\n        ys.append(round(y))\n    print(\"keep_straight\" if use else \"그대로      \", \"· 서쪽 구간 y:\", ys[:10])\n    print(\"   끝점:\", (round(x), round(y)), \"· 목표 (-600, -180)\")"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-14. 칠판 앞에서 위치 바로잡기",
+  "code": "from microbit import *\nimport math\n\ndef end_error(plan, est):\n    # 준비된 함수: 두 점 사이의 직선 거리 (cm)\n    dx = est[0] - plan[0]\n    dy = est[1] - plan[1]\n    return round(math.sqrt(dx * dx + dy * dy))\n\nLANDMARKS = {\"문\": (0, 0), \"칠판 앞\": (-300, 400), \"창가\": (-700, 200)}\n\ndef nearest_landmark(x, y):\n    # 준비된 함수: 지금 위치에서 가장 가까운 랜드마크 (이름, x, y)\n    best = None\n    for name in LANDMARKS:\n        lx, ly = LANDMARKS[name]\n        d = (lx - x) ** 2 + (ly - y) ** 2\n        if best is None or d < best[0]:\n            best = (d, name, lx, ly)\n    return best[1], best[2], best[3]\n\nPLAN_END = (-700, 200)\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\nTOUCH = 12                    # 12걸음째에 칠판 앞에서 로고 터치\n\nx, y = EST[TOUCH - 1]\nname, lx, ly = nearest_landmark(x, y)\ndx, dy = lx - x, ly - y       # 바로잡는 만큼\nprint(TOUCH, \"걸음째\", (x, y), \"->\", name, (lx, ly))\nprint(\"바로잡은 양:\", (dx, dy))\n\nfixed = EST[:TOUCH - 1] + [(px + dx, py + dy) for px, py in EST[TOUCH - 1:]]\nprint(\"끝점 오차 (그대로):\", end_error(PLAN_END, EST[-1]), \"cm\")\nprint(\"끝점 오차 (랜드마크):\", end_error(PLAN_END, fixed[-1]), \"cm\")"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-15. 개선 전후 숫자로 비교하기",
+  "code": "from microbit import *\nimport math\n\nROOM = [\n    \"##########\",\n    \"#...BB...#\",\n    \"#W.......#\",\n    \"#W..P....#\",\n    \"#W.......#\",\n    \"#.......SD\",\n    \"##########\",\n]\n\nCELL = 100   # 1칸 = 100cm\n\ndef find(ch):\n    # 준비된 함수: 지도에서 글자 ch 가 있는 칸 (열, 줄)\n    for r in range(len(ROOM)):\n        c = ROOM[r].find(ch)\n        if c >= 0:\n            return c, r\n    return None\n\ndef cell(c, r):\n    # 준비된 함수: (열, 줄) 칸의 글자 — 지도 밖은 벽으로 봄\n    if 0 <= r < len(ROOM) and 0 <= c < len(ROOM[r]):\n        return ROOM[r][c]\n    return \"#\"\n\ndef to_cell(x, y):\n    # 준비된 함수: 위치 (x, y) cm -> 지도 칸 (열, 줄)\n    return SC + round(x / CELL), SR - round(y / CELL)\n\ndef is_wall(x, y):\n    # 준비된 함수: 위치가 벽 · 기둥 칸이면 True\n    c, r = to_cell(x, y)\n    return cell(c, r) in \"#P\"\n\ndef draw_path(path):\n    # 준비된 함수: 지도 위에 경로 찍기 (* 걸음 · X 벽 통과 · E 끝점)\n    grid = [list(row) for row in ROOM]\n    for i in range(len(path)):\n        c, r = to_cell(path[i][0], path[i][1])\n        if 0 <= r < len(grid) and 0 <= c < len(grid[r]):\n            if ROOM[r][c] in \"#P\":\n                grid[r][c] = \"X\"\n            elif i == len(path) - 1:\n                grid[r][c] = \"E\"\n            elif grid[r][c] != \"S\":\n                grid[r][c] = \"*\"\n    for row in grid:\n        print(\" \".join(row))\n\ndef wall_steps(path):\n    # 준비된 함수: 벽 · 기둥 칸에 찍힌 걸음 번호 목록\n    out = []\n    for i in range(len(path)):\n        if is_wall(path[i][0], path[i][1]):\n            out.append(i + 1)\n    return out\n\ndef end_error(plan, est):\n    # 준비된 함수: 두 점 사이의 직선 거리 (cm)\n    dx = est[0] - plan[0]\n    dy = est[1] - plan[1]\n    return round(math.sqrt(dx * dx + dy * dy))\n\nSC, SR = find(\"S\")\nPLAN_END = (-700, 200)\nEST = [\n    (-12, 66), (-26, 132), (-33, 198), (-48, 263), (-57, 330), (-69, 396),\n    (-84, 461), (-150, 452), (-215, 436), (-281, 425), (-346, 410), (-412, 395),\n    (-478, 384), (-545, 380), (-610, 365), (-676, 352), (-742, 345), (-739, 278),\n    (-731, 211), (-720, 145), (-718, 78), (-783, 63), (-850, 59),\n]\n\nAFTER = [\n    (1, 58), (2, 116), (4, 174), (7, 232), (8, 290), (11, 348),\n    (8, 406), (-50, 406), (-108, 409), (-166, 410), (-224, 412), (-282, 410),\n    (-340, 410), (-398, 408), (-456, 408), (-514, 408), (-572, 405), (-570, 347),\n    (-569, 289), (-571, 231), (-573, 173), (-631, 171), (-689, 173),\n]\n\nbefore = end_error(PLAN_END, EST[-1])\nafter = end_error(PLAN_END, AFTER[-1])\nprint(\"끝점 오차:\", before, \"cm ->\", after, \"cm\")\nprint(\"줄어든 정도:\", round((before - after) * 100 / before), \"%\")\nprint(\"벽 통과 걸음:\", len(wall_steps(EST)), \"->\", len(wall_steps(AFTER)))\nprint(\"개선 후 지도:\")\ndraw_path(AFTER)"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "예제 8-16. 개선된 경로 기록기",
+  "code": "from microbit import *\nimport math\nimport log\n\nTHRESHOLD = 1150   # 기준선 (ch03 에서 정한 우리 모둠 값)\nMIN_GAP = 300      # 걸음 사이 최소 간격 (ms)\n\ndef strength():\n    # 준비된 함수: 흔들림 세기 (ch02)\n    x, y, z = accelerometer.get_values()\n    return int(math.sqrt(x * x + y * y + z * z))\n\nrecent = []\n\ndef smooth(value):\n    # 준비된 함수: 최근 4개 값의 평균 (ch03)\n    recent.append(value)\n    if len(recent) > 4:\n        recent.pop(0)\n    return sum(recent) // len(recent)\n\nabove = False\nlast_step = 0\n\ndef is_step(value):\n    # 준비된 함수: 걸음이면 True (ch03)\n    global above, last_step\n    if value > THRESHOLD:\n        above = True\n        return False\n    if above:\n        above = False\n        now = running_time()\n        if now - last_step >= MIN_GAP:\n            last_step = now\n            return True\n    return False\n\ndef move(x, y, heading, stride):\n    # 준비된 함수: heading 방향으로 stride 만큼 한 칸 밀기 -> 새 위치 (ch06)\n    rad = math.radians(heading)\n    return x + stride * math.sin(rad), y + stride * math.cos(rad)\n\ndef calibrate_stride(real_cm, counted_steps):\n    # 준비된 함수: 아는 거리를 걸은 걸음 수로 보폭 다시 정하기\n    return round(real_cm / counted_steps)\n\ndef heading_offset(samples=10):\n    # 준비된 함수: 도면 위쪽을 보고 여러 번 읽은 방위의 '원 평균'\n    sx, sy = 0, 0\n    for i in range(samples):\n        rad = math.radians(compass.heading())\n        sx += math.sin(rad)\n        sy += math.cos(rad)\n        sleep(50)\n    return round(math.degrees(math.atan2(sx, sy))) % 360\n\ndef keep_straight(new_h, last_h, limit=20):\n    # 준비된 함수: 바뀐 각도가 limit 보다 작으면 직진으로 보고 이전 방향 유지\n    diff = (new_h - last_h + 180) % 360 - 180\n    if abs(diff) < limit:\n        return last_h\n    return new_h\n\nLANDMARKS = {\"문\": (0, 0), \"칠판 앞\": (-300, 400), \"창가\": (-700, 200)}\n\ndef nearest_landmark(x, y):\n    # 준비된 함수: 지금 위치에서 가장 가까운 랜드마크 (이름, x, y)\n    best = None\n    for name in LANDMARKS:\n        lx, ly = LANDMARKS[name]\n        d = (lx - x) ** 2 + (ly - y) ** 2\n        if best is None or d < best[0]:\n            best = (d, name, lx, ly)\n    return best[1], best[2], best[3]\n\nSTRIDE = calibrate_stride(580, 10)   # ① 5.8m 를 10걸음 -> 내 보폭\nlog.set_labels(\"time\", \"steps\", \"heading\", \"x\", \"y\", \"fix\", timestamp=None)\n\nrecording = False\nx, y, steps = 0, 0, 0\nstart_t, offset, last_h = 0, 0, 0\ndisplay.show(\"A\")\n\nwhile True:\n    if button_a.was_pressed():               # 도면 위쪽을 보고 출발\n        display.show(Image.ARROW_N)\n        offset = heading_offset()            # ② 출발 방향 재기\n        x, y, steps, last_h = 0, 0, 0, 0\n        start_t = running_time()\n        recording = True\n        display.clear()\n        print(\"기록 시작 · 오프셋\", offset, \"· 보폭\", STRIDE)\n    if button_b.was_pressed() and recording: # 도착\n        recording = False\n        display.show(Image.YES)\n        print(\"기록 끝:\", steps, \"걸음\")\n    if recording and is_step(smooth(strength())):\n        h = (compass.heading() - offset) % 360\n        h = keep_straight(h, last_h)         # ③ 직진 흔들림 줄이기\n        last_h = h\n        x, y = move(x, y, h, STRIDE)\n        steps += 1\n        t = (running_time() - start_t) // 100 / 10\n        log.add(time=t, steps=steps, heading=h, x=round(x), y=round(y), fix=0)\n        display.show(steps % 10)\n    if recording and pin_logo.is_touched():  # ④ 랜드마크에서 바로잡기\n        name, lx, ly = nearest_landmark(x, y)\n        print(name, \"에서 바로잡기:\", (round(x), round(y)), \"->\", (lx, ly))\n        x, y = lx, ly\n        t = (running_time() - start_t) // 100 / 10\n        log.add(time=t, steps=steps, heading=last_h, x=x, y=y, fix=1)\n        display.show(Image.TARGET)\n        sleep(500)\n    sleep(20)"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "더 해 보기 8-17. 발표용 결과 카드 출력하기",
+  "code": "from microbit import *\n\nNAME = \"실내 경로 추적기\"\nROUTE_LEN = 1300                          # 계획 경로 길이 (cm)\nFIXES = [\"calibrate_stride\", \"heading_offset\", \"keep_straight\"]\nBEFORE = {\"error\": 206, \"walls\": 4}\nAFTER = {\"error\": 29, \"walls\": 0}\n\nbetter = round((BEFORE[\"error\"] - AFTER[\"error\"]) * 100 / BEFORE[\"error\"])\nprint(\"===== 발표용 결과 카드 =====\")\nprint(\"프로젝트:\", NAME)\nprint(\"적용한 개선:\", \", \".join(FIXES))\nprint(\"끝점 오차:\", BEFORE[\"error\"], \"cm ->\", AFTER[\"error\"], \"cm (\", better, \"% 줄어듦 )\")\nprint(\"벽 통과 걸음:\", BEFORE[\"walls\"], \"->\", AFTER[\"walls\"])\nprint(\"걸은 길 대비 오차:\", round(AFTER[\"error\"] * 100 / ROUTE_LEN), \"%\")\ndisplay.scroll(str(better) + \"%\")"
+ },
+ {
+  "sec": "ch08-2",
+  "title": "[slide] ② 방향 — 그냥 평균의 함정",
+  "code": "from microbit import *\nimport math\n\nsamples = [358, 2, 355, 5, 359, 1]\nprint(\"그냥 평균:\", sum(samples) / len(samples))\n\nsx, sy = 0, 0\nfor h in samples:\n    sx += math.sin(math.radians(h))\n    sy += math.cos(math.radians(h))\nprint(\"원 평균:\", round(math.degrees(math.atan2(sx, sy))) % 360)",
+  "slide": 1
+ },
+ {
+  "sec": "ch08-2",
+  "title": "[slide] ③ 직진 흔들림 줄이기",
+  "code": "from microbit import *\n\ndef keep_straight(new_h, last_h, limit=20):\n    diff = (new_h - last_h + 180) % 360 - 180\n    if abs(diff) < limit:\n        return last_h\n    return new_h\n\nlast_h = 270\nfor h in [262, 275, 268, 259, 185, 178]:\n    last_h = keep_straight(h, last_h)\n    print(h, \"->\", last_h)",
+  "slide": 1
+ }
+]

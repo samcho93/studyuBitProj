@@ -1,0 +1,25 @@
+const puppeteer = require('puppeteer-core');
+(async () => {
+  const browser = await puppeteer.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: 'new', args: ['--window-size=1600,1000'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1600, height: 1000 });
+  const errs = [];
+  page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
+  page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.type() + ': ' + m.text()); });
+  const sec = process.argv[2] || 'ch03-2';
+  const which = +(process.argv[3] || 0);
+  await page.goto('http://localhost:8765/index.html?role=student#' + sec, { waitUntil: 'networkidle2' });
+  await page.waitForSelector('.bk-open', { timeout: 10000 });
+  const n = await page.$$eval('.bk-open', (a) => a.length);
+  console.log('buttons', n);
+  const btns = await page.$$('.bk-open');
+  await btns[which].click();
+  await page.waitForFunction(() => { const r = document.querySelector('.bk-report'); return r && /블록 \d+개|오류|못했/.test(r.textContent); }, { timeout: 120000 });
+  console.log('REPORT:', await page.$eval('.bk-report', (e) => e.innerText));
+  await new Promise((r) => setTimeout(r, 500));
+  await page.screenshot({ path: 'D:/Work/Web/studyuBitProj/.tmp/shot1.png' });
+  const out = await page.evaluate(() => ({ py: MbBlocks.genPy().code, ts: MbBlocks.genTs().code }));
+  console.log('=== PY ===\n' + out.py + '\n=== TS ===\n' + out.ts);
+  console.log(errs.join('\n'));
+  await browser.close();
+})().catch((e) => { console.error(e); process.exit(1); });
