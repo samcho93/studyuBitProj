@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마이크로비트 프로젝트</title>
+  <meta name="description" content="마이크로비트 프로젝트">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
+
+  <!-- 글꼴 -->
+  <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+
+  <!-- 코드 편집기 (CodeMirror 5) -->
+  <link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/runmode/runmode.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+  <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <link rel="stylesheet" href="css/sim.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div id="app" class="layout">
+    <!-- ========== 왼쪽: 목차 ========== -->
+    <aside id="nav" class="pane nav">
+      <div class="brand">
+        <a class="brand-logo" href="#home" title="처음 화면">⏱️</a>
+        <div class="brand-text">
+          <div class="brand-title">마이크로비트 프로젝트</div>
+          <div class="brand-sub" id="brandSub">SamStudy</div>
+        </div>
+        <button id="themeBtn" class="icon-btn" title="라이트/다크 전환" aria-label="테마 전환">◐</button>
+        <button id="navCloseBtn" class="icon-btn nav-close" title="메뉴 접기" aria-label="메뉴 접기">⟨</button>
+      </div>
+      <div class="role-switch" role="group" aria-label="보기 대상">
+        <button data-role="student" title="학생용: 문서 형태의 강좌 + 실습">🎓 학생용</button>
+        <button data-role="teacher" title="교사용: 슬라이드 + 교사 노트 + 정답 · 타이머">🧑‍🏫 교사용</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>학습 진도</span><span id="progressText">0 / 0</span></div>
+        <div class="progress"><div id="progressBar" class="progress-fill"></div></div>
+      </div>
+      <input id="navSearch" class="nav-search" type="search" placeholder="검색 (예: display, 버튼, 가속도)">
+      <nav id="navTree" class="nav-tree" aria-label="강좌 목차"></nav>
+      <div class="nav-foot">
+        <button id="serverBtn" class="server-badge" title="파이썬 실행 환경 정보">
+          <span class="dot"></span><span id="serverText">파이썬 준비 전</span>
+        </button>
+      </div>
+    </aside>
+    <div class="gutter" data-resize="nav" title="드래그하여 너비 조절"></div>
+
+    <!-- ========== 가운데: 강좌 내용 + 코드 편집기 ========== -->
+    <main id="center" class="pane center">
+      <div class="topbar">
+        <button id="navOpenBtn" class="icon-btn nav-open" title="메뉴 펼치기" aria-label="메뉴 펼치기">☰</button>
+        <div id="crumb" class="crumb"></div>
+        <span class="spacer"></span>
+        <div class="view-switch" role="group" aria-label="보기 방식">
+          <button data-view="doc" title="문서 보기">📄 문서</button>
+          <button data-view="slides" title="슬라이드 보기">🖼️ 슬라이드</button>
+        </div>
+        <button id="prevBtn" class="btn ghost small" title="이전 교시">◀</button>
+        <button id="nextBtn" class="btn ghost small" title="다음 교시">▶</button>
+      </div>
+
+      <!-- 문서 보기 -->
+      <div id="docView" class="doc-view">
+        <div id="content" class="content" tabindex="-1"></div>
+        <div class="hgutter" data-resize="editor" title="드래그하여 높이 조절"></div>
+        <section id="editorPane" class="editor-pane">
+          <div class="editor-bar">
+            <span class="editor-title">🐍 main.py <span id="editorLabel" class="muted"></span></span>
+            <span class="spacer"></span>
+            <button id="foldBtn" class="btn ghost small" title="편집기 접기/펼치기">▾ 접기</button>
+            <button id="fontDownBtn" class="btn ghost small" title="글자 작게">A−</button>
+            <button id="fontUpBtn" class="btn ghost small" title="글자 크게">A+</button>
+            <button id="saveBtn" class="btn ghost small" title="main.py 파일로 저장">💾</button>
+            <button id="resetBtn" class="btn ghost small" title="불러온 원래 코드로 되돌리기">↺ 초기화</button>
+            <button id="copyBtn" class="btn ghost small" title="코드 복사">⧉ 복사</button>
+            <button id="runBtn" class="btn primary" title="실행 (Ctrl+Enter)">▶ 실행</button>
+          </div>
+          <div id="editorHost" class="editor-host"></div>
+        </section>
+      </div>
+
+      <!-- 슬라이드 보기 -->
+      <div id="slideView" class="slide-view hidden">
+        <div id="deckBars" class="deck-bars">
+        <!-- 첫째 줄: 이동과 보기 -->
+        <div class="deck-bar">
+          <button id="sFirst" class="btn ghost small" title="첫 슬라이드로 (Home)">⏮<span class="lbl">처음</span></button>
+          <button id="sPrev" class="btn ghost small" title="이전 슬라이드 (← , PageUp)">◀</button>
+          <span id="sCount" class="s-count">1 / 1</span>
+          <button id="sNext" class="btn ghost small" title="다음 슬라이드 (→ , Space, PageDown)">▶</button>
+          <input id="sSlider" class="s-slider" type="range" min="1" max="1" value="1" step="1"
+                 title="끌어서 원하는 쪽으로 바로 이동" aria-label="슬라이드 쪽 이동">
+          <span id="sTitle" class="s-slide-title"></span>
+          <span class="spacer"></span>
+          <span class="teacher-only timer" id="timerBox">
+            <button id="timerBtn" class="timer-main" title="수업 타이머 — 눌러서 시작 / 일시정지 (T)"><span id="timerIcon">⏱</span> <span id="timerText">00:00</span></button>
+            <button id="timerReset" class="icon-btn small" title="타이머 초기화">↺</button>
+          </span>
+          <button id="sPresenter" class="btn ghost small teacher-only" title="노트 · 다음 슬라이드 · 타이머가 보이는 별도 창을 다른 모니터에 띄웁니다">🗒<span class="lbl">발표자 창</span></button>
+          <button id="sGrid" class="btn ghost small" title="전체 슬라이드 목록 (G)">▦<span class="lbl">목록</span></button>
+          <button id="sDoc" class="btn ghost small" title="스크롤 문서 보기로 전환">📄<span class="lbl">문서</span></button>
+          <button id="sFull" class="btn primary small" title="전체 화면 발표 (F)">⛶<span class="lbl">전체 화면</span></button>
+          <div class="deck-progress"><i id="deckProgress"></i></div>
+        </div>
+
+        <!-- 둘째 줄: 판서 도구 (교사용 전용) -->
+        <div id="inkBar" class="ink-bar teacher-only">
+          <span class="ink-label">✏️<span class="lbl">판서</span></span>
+          <span class="ink-group" role="group" aria-label="판서 도구">
+            <button class="ink-btn" data-ink-tool="pen" title="펜 — 슬라이드 가운데를 끌어서 그립니다">🖊<span class="lbl">펜</span></button>
+            <button class="ink-btn" data-ink-tool="marker" title="형광펜 — 반투명하고 굵게 칠합니다">🖍<span class="lbl">형광펜</span></button>
+            <button class="ink-btn" data-ink-tool="eraser" title="지우개 — 스친 획을 통째로 지웁니다">🧽<span class="lbl">지우개</span></button>
+            <button class="ink-btn" data-ink-tool="pointer" title="지시봉 — 그리지 않고 가리키기만 합니다">👆<span class="lbl">지시봉</span></button>
+          </span>
+          <span class="ink-sep"></span>
+          <span class="ink-group" role="group" aria-label="판서 색">
+            <button class="ink-color" data-ink-color="#e53935" style="--c:#e53935" title="빨강"></button>
+            <button class="ink-color" data-ink-color="#1e63e9" style="--c:#1e63e9" title="파랑"></button>
+            <button class="ink-color" data-ink-color="#1b9e4b" style="--c:#1b9e4b" title="초록"></button>
+            <button class="ink-color" data-ink-color="#ffc400" style="--c:#ffc400" title="노랑"></button>
+            <button class="ink-color" data-ink-color="#111111" style="--c:#111111" title="검정"></button>
+            <button class="ink-color" data-ink-color="#ffffff" style="--c:#ffffff" title="흰색"></button>
+          </span>
+          <span class="ink-sep"></span>
+          <span class="ink-group" role="group" aria-label="판서 굵기">
+            <button class="ink-width" data-ink-width="3" title="가늘게"><i style="--d:5px"></i></button>
+            <button class="ink-width" data-ink-width="6" title="보통"><i style="--d:9px"></i></button>
+            <button class="ink-width" data-ink-width="12" title="굵게"><i style="--d:14px"></i></button>
+          </span>
+          <span class="ink-sep"></span>
+          <button id="inkUndo" class="ink-btn" title="마지막 획 되돌리기 (Ctrl+Z)">↶<span class="lbl">되돌리기</span></button>
+          <button id="inkClear" class="ink-btn" title="이 슬라이드의 판서를 지웁니다">🗑<span class="lbl">이 장 지우기</span></button>
+          <button id="inkClearAll" class="ink-btn" title="현재 강의의 판서를 모두 지웁니다">🗑<span class="lbl">모두</span></button>
+        </div>
+        </div>
+
+        <div id="deckWrap" class="deck-wrap">
+          <div id="stageHost" class="stage-host">
+            <div id="stageFit" class="stage-fit">
+              <div id="stage" class="stage">
+                <div id="stageSlide" class="stage-slide"></div>
+                <canvas id="inkCanvas" class="ink-canvas" width="2560" height="1440"></canvas>
+              </div>
+              <div class="edge-band prev" data-edge="prev"><span>‹</span></div>
+              <div class="edge-band next" data-edge="next"><span>›</span></div>
+              <div id="blackout" class="blackout hidden"></div>
+            </div>
+          </div>
+          <div id="fsConsoleSlot" class="fs-console-slot"></div>
+          <div class="fs-controls">
+            <button data-fs="prev" title="이전 (←)">◀</button>
+            <span id="fsCount">1 / 1</span>
+            <button data-fs="next" title="다음 (→)">▶</button>
+            <button data-fs="grid" title="목록 (G)">▦</button>
+            <button data-fs="console" title="결과 창 (R)">▣ 결과</button>
+            <button data-fs="black" title="화면 가리기 (B)">◼</button>
+            <button data-fs="exit" title="전체 화면 종료 (Esc)">✕</button>
+          </div>
+          <div id="gridOverlay" class="grid-overlay hidden"></div>
+          <div id="lightbox" class="lightbox hidden">
+            <div class="lb-head"><b id="lbTitle">크게 보기</b><span class="spacer"></span><button id="lbClose" class="btn small ghost" title="닫기 (Esc)">✕ 닫기</button></div>
+            <div id="lbBody" class="lb-body"></div>
+          </div>
+        </div>
+        <div id="notesPane" class="notes-pane teacher-only"></div>
+      </div>
+    </main>
+    <div class="gutter" data-resize="out" title="드래그하여 너비 조절"></div>
+
+    <!-- ========== 오른쪽: 시뮬레이터 + 콘솔 ========== -->
+    <aside id="output" class="pane output">
+      <div class="sim-head">
+        <span class="sim-title">📟 micro:bit V2</span>
+        <span id="targetChip" class="target-chip" title="실행 대상">시뮬레이터</span>
+        <span class="spacer"></span>
+        <button id="runSimBtn" class="btn small primary" title="편집기의 코드를 실행 (Ctrl+Enter)">▶</button>
+        <button id="stopSimBtn" class="btn small danger" title="정지 (Ctrl+C)">■</button>
+        <button id="resetSimBtn" class="btn small ghost" title="보드 리셋 (화면 · 핀 초기화)">↺</button>
+        <button id="zoomSimBtn" class="btn small ghost" title="보드를 크게 보기 (발표 중에도 열립니다)">⤢ 크게 보기</button>
+        <button id="connectBtn" class="btn small ghost" title="실제 micro:bit 를 USB 로 연결 (Chrome · Edge)">🔌 보드</button>
+      </div>
+      <div id="simBoard" class="sim-board"></div>
+      <div id="simTabs" class="sim-tabs">
+        <button data-tab="sensor" class="active">🧭 센서</button>
+        <button data-tab="pin">🔌 핀</button>
+        <button data-tab="part">🧩 부품</button>
+        <button data-tab="radio">📡 무선</button>
+        <button data-tab="file">💾 파일</button>
+        <button data-tab="log">📊 로그</button>
+      </div>
+      <div id="simPanel" class="sim-panel"></div>
+      <div class="hgutter" data-resize="console" title="드래그하여 높이 조절"></div>
+
+      <div id="consolePanel" class="console-panel">
+        <div class="console-head">
+          <span class="console-dots"><i></i><i></i><i></i></span>
+          <span class="console-title">콘솔 · 파이썬 셸 <span id="consoleMain" class="muted"></span></span>
+          <span class="spacer"></span>
+          <span id="runState" class="run-state idle">대기</span>
+        </div>
+        <div class="console-tools">
+          <button id="stopBtn" class="btn small danger" disabled title="실행 중지 (Ctrl+C)">■ 중지</button>
+          <button id="clearBtn" class="btn small ghost" title="콘솔 지우기">⌫ 지우기</button>
+          <button id="helpBtn" class="btn small ghost" title="셸에서 쓸 수 있는 명령 보기">? 도움말</button>
+          <span class="spacer"></span>
+          <button id="cFontDown" class="btn small ghost" title="글자 작게">A−</button>
+          <button id="cFontUp" class="btn small ghost" title="글자 크게">A+</button>
+          <button id="consoleHideBtn" class="btn small ghost fs-only" title="패널 닫기 (R)">✕</button>
+        </div>
+        <div id="mbConsole" class="console" tabindex="0">
+          <div class="console-welcome">
+            <div class="cw-icon">&gt;_</div>
+            <p><b>▶ 실행</b>을 누르면 <code>print()</code> 출력과 오류가 여기에 표시되고, 위쪽 보드가 실제 micro:bit 처럼 움직입니다.</p>
+            <p class="muted">아래 <code>&gt;&gt;&gt;</code> 칸은 <b>파이썬 셸</b>입니다. 한 줄씩 입력해 바로 확인해 보세요.
+              <br>예: <code>display.show(Image.HEART)</code> · <code>button_a.is_pressed()</code></p>
+          </div>
+        </div>
+        <form id="shellForm" class="shell-form" autocomplete="off">
+          <span class="prompt" id="shellPrompt">&gt;&gt;&gt;</span>
+          <input id="shellInput" type="text" placeholder="파이썬 한 줄을 입력하고 Enter — 예: display.show(Image.HEART)" spellcheck="false">
+        </form>
+        <div class="console-status"><span id="statusLeft">준비</span><span class="spacer"></span><span id="statusRight"></span></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 모달 -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head"><b id="modalTitle"></b><span class="spacer"></span><button id="modalClose" class="icon-btn" aria-label="닫기">✕</button></div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/course.js"></script>
+  <script src="js/fig.js"></script>
+  <script src="js/highlight.js"></script>
+  <script src="js/pylib.js"></script>
+  <script src="js/pylib_mb.js"></script>
+  <script src="js/sim.js"></script>
+  <script src="js/runtime.js"></script>
+  <script src="js/serial.js"></script>
+  <script src="js/simview.js"></script>
+  <script src="js/console.js"></script>
+  <script src="js/ink.js"></script>
+  <script src="js/slides.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+</html>

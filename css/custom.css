@@ -1,0 +1,5 @@
+/* 강좌별 추가 스타일 — lectureBuilder 가 엔진을 갱신해도 이 파일은 덮어쓰지 않습니다.
+ * 색 변수(css/style.css): --accent --accent2 --bg --pane --card --fg --muted --line --ok --warn --danger --more
+ * 다크 모드: :root[data-theme="dark"] { ... }   슬라이드 무대: .stage { --s-accent: ...; }
+ * 시뮬레이터: css/sim.css (.sim-board · .sim-panel · .mb-*)
+ */

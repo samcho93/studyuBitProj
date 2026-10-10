@@ -1,0 +1,5 @@
+# Cloudflare Pages — 정적 사이트, 빌드 단계 없음.
+#   npx wrangler pages deploy . --project-name studyubitproj
+name = "studyubitproj"
+pages_build_output_dir = "."
+compatibility_date = "2026-10-10"

@@ -1,0 +1,12 @@
+/* 강좌 색상 — lectureBuilder 디자인 설정으로 생성 (재생성 시 덮어씀) */
+:root {
+  --accent: #be123c; --accent-soft: #f7e3e8;
+  --accent2: #a16207; --accent2-soft: #f2e9dc;
+}
+:root[data-theme="dark"] {
+  --accent: #d56580; --accent-soft: #361422;
+  --accent2: #bd9151; --accent2-soft: #2f2517;
+}
+/* 슬라이드 무대 강조색 */
+.stage { --s-accent: #be123c; --s-accent2: #a16207; }
+:root[data-theme="dark"] .stage { --s-accent: #d56580; --s-accent2: #bd9151; }

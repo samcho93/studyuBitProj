@@ -1,0 +1,79 @@
+{
+  "id": "studyuBitProj",
+  "title": "마이크로비트 프로젝트",
+  "subtitle": "",
+  "icon": "⏱️",
+  "repoName": "studyuBitProj",
+  "language": "python",
+  "languageOther": "",
+  "kind": "course",
+  "design": {
+    "template": "classic",
+    "preset": "rose",
+    "accent": "#be123c",
+    "accent2": "#a16207",
+    "theme": "light",
+    "brand": "SamStudy",
+    "importedFrom": "studyMpython"
+  },
+  "roles": {
+    "student": true,
+    "teacher": true,
+    "teacherPass": "samcho93",
+    "showSolutionToStudent": true
+  },
+  "practice": {
+    "enabled": true,
+    "runtime": "auto"
+  },
+  "engine": {
+    "mode": "profile",
+    "profile": "hw-lab",
+    "cloneFrom": ""
+  },
+  "content": {
+    "audience": "초중고",
+    "level": "입문",
+    "chapters": 8,
+    "sectionMinutes": 50,
+    "sectionsPerChapter": 2,
+    "description": "1. 러닝붐을 반영한 러닝데이터 취득 및 시각화.\n- 케이던스, 보폭, 케이던스를 위한 메트로놈 비트음 출력 등.\n- 저장 데이털를 웹을 통해 시각화.\n- 단계별 개발 방향을 제시하고 발생할 수 있는 문제 등을 미리 토론해 볼 수 있는 형태의 강의.\n\n2. 실내 이동 경로 추적\n- 마이크로비트의 가속도센서, 지자계센서 등을 활용한 실내 이동 경로 추적.\n- 이동 경로 저장 후 웹을 통한 시각화\n- 단계별 개발 방향을 제시하고 발생할 수 있는 문제 등을 미리 토론해 볼 수 있는 형태의 강의.\n\n3. 초중고생을 위한 난이도 구분한 강의 - 이론적 내용은 단순하게 표현하고, \n\n4. 난이도가 높은 알고리즘은 함수화 해서 간단한 설명으로 갈음.\n\n5. 수업 시간 전에 \"생각하기\" 문제를 두어 수업 시간에 수행할 내용에 대해 미리 생각할 수 있는 시간을 갖는다.\n",
+    "outline": "",
+    "references": "",
+    "tone": "존댓말, 초보자도 이해할 수 있게 그림·예제 중심",
+    "certName": "",
+    "toolName": ""
+  },
+  "problems": {
+    "quiz": false,
+    "practice": false,
+    "chapterTest": false,
+    "mockExam": false,
+    "perSection": 3,
+    "mockCount": 20,
+    "mockSets": 1,
+    "types": [
+      "choice"
+    ]
+  },
+  "repo": {
+    "parentDir": "D:\\Work\\Web",
+    "owner": "samcho93",
+    "visibility": "public",
+    "createGithub": true
+  },
+  "deploy": {
+    "cloudflare": true,
+    "project": "studyubitproj",
+    "branch": "main",
+    "ciWorkflow": false
+  },
+  "claude": {
+    "model": "opus",
+    "permissionMode": "bypassPermissions",
+    "maxBudgetUsd": "",
+    "extraInstructions": "- 마이크로비트 시뮬레이터 내장하고, 움직임(걷기, 뛰기, 방향 전환 등)의 동작을 시뮬레이션 할 수 있도록 추가. 가상의 사람이 움직임을 줄 수 있는 조이스틱을 추가.\n- 실제 마이크로비트를 연결하여 프로그램을 업로드할 수 있고, 연결된 마이크로비트에서 저장된 데이터를 가져와서 프로젝트에서 측정하고자하는 데이터(케이던스, 보폭, 걸음수 등)을 시각화. \n- 2번 프로젝트의 가상의 공간을 설정하거나 가상의 공간을 만들 수 있는 2차원 공간 설계가 가능하도록 추가하여. 이동경로 추적에 활용."
+  },
+  "createdAt": "2026-10-10T04:05:49.349Z",
+  "updatedAt": "2026-10-10T04:05:49.349Z"
+}

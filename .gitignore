@@ -1,0 +1,16 @@
+# 원본 강의자료 PPT (저작권 보호 자료)
+lecture/
+
+# 에디터 · OS
+.vscode/
+.idea/
+.claude/
+__pycache__/
+*.pyc
+Thumbs.db
+.DS_Store
+node_modules/
+
+# Claude Code project notes (keep local only)
+# lectureBuilder
+.wrangler/

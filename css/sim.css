@@ -1,0 +1,170 @@
+/* ===================================================================
+   오른쪽 결과 창 — micro:bit 시뮬레이터
+   =================================================================== */
+:root { --console-h: 240px; }
+
+.pane.output { display: flex; flex-direction: column; overflow: hidden; border-left: 1px solid var(--line); }
+
+/* ---------------------------------------------------------------- 머리말 */
+.sim-head {
+  display: flex; align-items: center; gap: 6px; padding: 8px 10px;
+  background: var(--card2); border-bottom: 1px solid var(--line); flex: none;
+}
+.sim-title { font-weight: 800; font-size: 13.5px; white-space: nowrap; }
+.target-chip {
+  font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 20px; cursor: pointer;
+  background: var(--accent-soft); color: var(--accent); border: 1px solid transparent;
+}
+.target-chip:hover { border-color: var(--accent); }
+.target-chip.board { background: var(--ok-soft); color: var(--ok); }
+
+/* ---------------------------------------------------------------- 보드 그림 */
+.sim-board { flex: none; padding: 8px 10px 4px; background: var(--card2); border-bottom: 1px solid var(--line); }
+.mb-svg { width: 100%; max-height: 290px; display: block; }
+.mb-body { fill: #0e6b64; stroke: #0a4f4a; stroke-width: 2; }
+:root[data-theme="dark"] .mb-body { fill: #0c5a55; stroke: #073f3b; }
+/* 꺼진 LED → 켜진 LED 순서로 두어야 합니다. 특정도가 같으므로 나중에 쓴 규칙이 이깁니다. */
+.mb-screen rect.mb-led { fill: #3a1512; transition: opacity .06s linear; }
+.mb-screen.active rect.mb-led { fill: #451915; }
+.mb-screen rect.mb-led.on,
+.mb-screen.active rect.mb-led.on { fill: #ff2d1a; filter: url(#mbGlow); }
+
+.mb-btn rect { fill: #101418; stroke: #000; stroke-width: 1.5; }
+.mb-btn circle { fill: #2b3138; }
+.mb-btn text { fill: #cfe9e6; font: 700 20px var(--sans); }
+.mb-btn { cursor: pointer; }
+.mb-btn:hover circle { fill: #3d454e; }
+.mb-btn.on circle { fill: #ffd166; }
+
+.mb-logo { cursor: pointer; }
+.mb-logo circle { fill: #d4a017; }
+.mb-logo-bar { fill: #d4a017; opacity: .45; }
+.mb-logo:hover circle { fill: #ffd166; }
+.mb-logo.on circle, .mb-logo.on .mb-logo-bar { fill: #ffe08a; opacity: 1; }
+
+/* 엣지 커넥터: 보드 하단 가장자리에 박힌 금도금 패드 */
+.mb-edge .mb-pad rect { fill: #c9a227; }
+.mb-edge .mb-pad.big { cursor: pointer; }
+.mb-edge .mb-pad.big rect { fill: #e2b727; }
+.mb-edge .mb-pad.big:hover rect { fill: #ffd85e; }
+.mb-edge .mb-pad.big.on rect { fill: #fff0b0; }
+.mb-edge .mb-hole { fill: #0e6b64; stroke: #b08f18; stroke-width: 1.4; pointer-events: none; }
+:root[data-theme="dark"] .mb-edge .mb-hole { fill: #0c5a55; }
+.mb-edge-label text { fill: #d9f0ed; font: 700 13px var(--sans); pointer-events: none; }
+
+.mb-ic circle { fill: #11171c; stroke: #0a1013; }
+.mb-ic text { font-size: 13px; fill: #9fd8d3; }
+.mb-ic.on circle { fill: #1f6f4a; }
+
+.mb-parts { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 2px 4px; }
+.mini-part {
+  display: inline-flex; align-items: center; gap: 3px; font-size: 13px; padding: 1px 7px;
+  border: 1px solid var(--line); border-radius: 20px; background: var(--card);
+}
+.mini-part i { font-style: normal; font-size: 10.5px; color: var(--muted); font-weight: 700; }
+.mini-part.live { border-color: var(--ok); box-shadow: 0 0 0 2px var(--ok-soft); }
+
+/* ---------------------------------------------------------------- 탭 */
+.sim-tabs { display: flex; gap: 2px; padding: 5px 8px 0; background: var(--card2); border-bottom: 1px solid var(--line); flex: none; overflow-x: auto; }
+.sim-tabs button {
+  border: 1px solid transparent; border-bottom: none; background: transparent; color: var(--muted);
+  padding: 5px 9px; border-radius: 8px 8px 0 0; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.sim-tabs button:hover { color: var(--fg); background: var(--card); }
+.sim-tabs button.active { background: var(--pane); color: var(--accent); border-color: var(--line); margin-bottom: -1px; }
+
+.sim-panel { flex: 1 1 auto; overflow: auto; padding: 10px 12px; min-height: 60px; font-size: 13px; }
+.sim-sec { margin-bottom: 14px; }
+.sim-sec > b { display: block; font-size: 13px; margin-bottom: 6px; }
+.sim-hint { font-size: 11.8px; color: var(--muted); line-height: 1.55; margin: 4px 0 6px; }
+.sim-hint code { font-size: 11.5px; }
+.sim-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+.sim-row .sim-lab { flex: 0 0 auto; min-width: 74px; font-size: 12px; color: var(--muted); }
+.sim-row input[type=range] { flex: 1; min-width: 60px; accent-color: var(--accent); }
+.sim-row input[type=text] { flex: 1; min-width: 0; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--fg); font-family: var(--mono); font-size: 12.5px; }
+.sim-row select { padding: 4px 7px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--fg); font-size: 12.5px; }
+.sim-row output { flex: 0 0 auto; min-width: 46px; text-align: right; font-family: var(--mono); font-size: 12.5px; font-weight: 700; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.btn.tiny { padding: 3px 8px; font-size: 11.5px; border-radius: 7px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 8px; }
+
+/* 기울기 패드 */
+.tiltbox { display: flex; gap: 10px; align-items: center; }
+.tiltpad {
+  position: relative; width: 120px; height: 120px; flex: none; border-radius: 14px; cursor: crosshair; touch-action: none;
+  background: radial-gradient(circle at 50% 50%, var(--accent-soft), var(--card2)); border: 1px solid var(--line);
+}
+.tiltpad::before, .tiltpad::after { content: ''; position: absolute; background: var(--line); }
+.tiltpad::before { left: 50%; top: 6px; bottom: 6px; width: 1px; }
+.tiltpad::after { top: 50%; left: 6px; right: 6px; height: 1px; }
+.tiltpad i { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--accent); box-shadow: 0 2px 6px rgba(0, 0, 0, .3); }
+.tiltpad span { position: absolute; left: 6px; right: 6px; bottom: 5px; font-size: 9.5px; color: var(--muted); text-align: center; }
+.tiltvals { display: grid; gap: 4px; font-family: var(--mono); font-size: 12.5px; }
+.tiltvals b { color: var(--accent); }
+.tiltvals .muted { font-family: var(--sans); font-size: 11px; }
+
+/* 나침반 */
+.compassbox { display: flex; gap: 12px; align-items: center; }
+.compassbox > div { flex: 1; }
+.compass { width: 96px; height: 96px; flex: none; }
+.compass circle { fill: var(--card2); stroke: var(--line); stroke-width: 2; }
+.compass text { font: 700 11px var(--sans); fill: var(--muted); }
+.compass polygon { fill: var(--danger); }
+.compass polygon.tail { fill: var(--muted); opacity: .5; }
+
+/* 핀 표 */
+.pin-table { font-size: 12px; }
+.pin-table th, .pin-table td { padding: 3px 6px; }
+.pin-table tr.dim { opacity: .55; }
+.pin-table td.v { font-family: var(--mono); font-weight: 700; }
+.pin-table .pin-a { font-size: 9px; background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 0 3px; margin-left: 3px; vertical-align: super; }
+.pin-table .ovr { white-space: nowrap; }
+.pin-table button.ov {
+  border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 5px;
+  font-size: 10.5px; padding: 1px 5px; cursor: pointer; margin-right: 2px;
+}
+.pin-table button.ov.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* 부품 */
+.parts-list { display: grid; gap: 8px; }
+.part-card { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 7px 9px; }
+.part-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12.5px; }
+.part-head .pi { font-size: 15px; }
+.part-head .pf { font-size: 11px; color: var(--muted); display: inline-flex; align-items: center; gap: 3px; }
+.part-head select { padding: 2px 5px; border: 1px solid var(--line); border-radius: 6px; background: var(--card2); color: var(--fg); font-size: 11.5px; }
+.part-body { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.part-view { flex: 1; min-width: 0; color: var(--fg); }
+.part-view svg { width: 100%; max-height: 62px; }
+.part-ctl { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; }
+.part-ctl input[type=range] { width: 90px; accent-color: var(--accent); }
+.part-ctl output { font-family: var(--mono); font-size: 11.5px; }
+@keyframes mbspin { to { transform: rotate(360deg); } }
+
+/* 무선 · 로그 · 파일 */
+.radio-log { max-height: 150px; overflow: auto; font-family: var(--mono); font-size: 11.5px; display: grid; gap: 2px; }
+.radio-log .t { color: var(--muted); margin-right: 6px; }
+.log-table { font-size: 11.5px; }
+.log-table th, .log-table td { padding: 2px 6px; font-family: var(--mono); }
+.sim-panel .file-row { font-size: 12px; }
+.sim-panel .term { max-height: 180px; overflow: auto; background: var(--term-bg); color: var(--term-fg); padding: 8px 10px; border-radius: 8px; font-size: 11.5px; white-space: pre-wrap; }
+
+/* ---------------------------------------------------------------- 콘솔 (아래) */
+#consolePanel { flex: none; height: var(--console-h); min-height: 110px; }
+.shell-form { display: flex; align-items: center; gap: 6px; padding: 7px 10px; border-top: 1px solid #262c36; background: #12171e; }
+.shell-form .prompt { color: #4cc983; font-family: var(--mono); font-size: 14px; font-weight: 700; min-width: 26px; }
+.shell-form input {
+  flex: 1; min-width: 0; background: #0b0f14; border: 1px solid #30363d; border-radius: 6px;
+  padding: 6px 9px; color: #7ee787; font-family: var(--mono); font-size: 13.5px; outline: none;
+}
+.shell-form input:focus { border-color: #4cc983; box-shadow: 0 0 0 2px rgba(76, 201, 131, .2); }
+.console .i .p { color: #ff7b72; font-weight: 700; }
+.console-panel.running .shell-form input { opacity: .55; }
+
+/* 슬라이드 전체 화면에서 결과 패널을 옮겨 놓을 때 */
+.fs-console-slot .pane.output { height: 100%; }
+
+/* 좁은 화면 */
+@media (max-width: 1100px) {
+  .mb-svg { max-height: 220px; }
+  .sim-tabs button { padding: 5px 7px; font-size: 11.5px; }
+}
