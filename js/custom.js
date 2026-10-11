@@ -2729,3 +2729,367 @@ def to_json(src):
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* ── 가속도 실시간 그래프 (ch02 · ch03 · ch04 · ch05) ─────────────────────
+ * 가속도 x · y · z 와 세기 √(x²+y²+z²) 를 실시간 선 그래프로 그리고, 보여 줄 선을 골라 켭니다.
+ * 값 받는 곳: 시뮬레이터(코드 없이 바로 읽기) 또는 콘솔 출력 — 실행 중인 프로그램(실제 보드 포함)이
+ *   print(x, y, z) 처럼 숫자 3개를 한 줄에 찍으면 그 줄을 읽습니다.
+ * 필터: 튀는 값 처리(앞 값으로 바꾸기 · 중앙값) → 이동 평균(smooth) 순서로 다듬고,
+ *   다듬은 세기로 걸음(기준선 · MIN_GAP) → 케이던스(튀는 값 상한) → 보폭 → 거리를 계산합니다.
+ * 열기: 위쪽 막대의 [📉 가속도 그래프] 메뉴, 또는 본문의 <div class="ag-launch"></div> 자리 버튼.
+ */
+(function () {
+  'use strict';
+
+  const CH = [
+    { key: 'x', label: 'x', color: '--accent', def: '#2a6fdb' },
+    { key: 'y', label: 'y', color: '--ok', def: '#2a2' },
+    { key: 'z', label: 'z', color: '--warn', def: '#d90' },
+    { key: 'm', label: '세기 √(x²+y²+z²)', color: '--danger', def: '#d33' }
+  ];
+  const KEEP_MS = 60000;           // 그래프용으로 최근 60초만 보관
+  const opt = {
+    show: { x: true, y: true, z: true, m: true },
+    raw: true,                     // 다듬기 전 값도 흐리게
+    win: 10,                       // 보이는 시간 폭 (초)
+    src: 'auto',                   // auto | sim | console
+    spike: 'hold',                 // none | hold | median
+    jump: 700,                     // 한 번에 이만큼 넘게 바뀌면 튀는 값
+    avg: 4,                        // 이동 평균 개수 (1 = 끄기)
+    noise: false,                  // 연습용 튀는 값 섞기
+    threshold: 1150, minGap: 300,  // 걸음 검출 (ch03 · ch04)
+    limit: 220,                    // 케이던스 상한 (ch05 응용 5-17)
+    walkStride: 65, runStride: 90, runCad: 140   // 보폭 (cm, ch05)
+  };
+  let win = null, timer = null, raf = 0, paused = false;
+  let data = [];                   // { t, raw:[x,y,z,m], f:[x,y,z,m], step }
+  let consoleAt = 0, lineBuf = '', srcNow = '';
+  let flt, det;
+
+  function resetFilter() {
+    flt = { prev: [null, null, null, null], held: [0, 0, 0, 0], hist: [[], [], [], []], avg: [[], [], [], []], fixed: flt ? flt.fixed : 0 };
+  }
+  function resetCalc() {
+    flt = null;
+    resetFilter();
+    det = {
+      f: { above: false, last: -1e9, steps: 0, times: [] },
+      r: { above: false, last: -1e9, steps: 0, times: [] },
+      cad: 0, cadFixed: 0, dist: 0, stride: 0
+    };
+  }
+  resetCalc();
+
+  /* ── 필터 ── */
+  const median3 = (a) => a.slice().sort((p, q) => p - q)[a.length >> 1];
+  function filterOne(i, v) {
+    // ① 튀는 값 처리
+    if (opt.spike === 'hold') {
+      const p = flt.prev[i];
+      // 앞 값과 너무 많이 다르면 바로 앞 값으로 바꾸기 (3번 이어지면 진짜 변화로 봄)
+      if (p != null && Math.abs(v - p) > opt.jump && flt.held[i] < 2) { flt.held[i]++; flt.fixed++; v = p; }
+      else flt.held[i] = 0;
+    } else if (opt.spike === 'median') {
+      const h = flt.hist[i];
+      h.push(v); if (h.length > 3) h.shift();
+      const md = median3(h);
+      if (md !== v) flt.fixed++;
+      v = md;                                         // 최근 3개 중 가운데 값
+    }
+    flt.prev[i] = v;
+    // ② 이동 평균 (smooth)
+    const a = flt.avg[i];
+    a.push(v); while (a.length > Math.max(1, opt.avg)) a.shift();
+    return Math.round(a.reduce((s, q) => s + q, 0) / a.length);
+  }
+
+  // 걸음 검출 = ch03 is_step() 과 같은 규칙: 기준선 위로 갔다가 내려오고, 앞 걸음과 MIN_GAP 이상 떨어짐
+  function stepOf(d, value, t) {
+    if (value > opt.threshold) { d.above = true; return false; }
+    if (!d.above) return false;
+    d.above = false;
+    if (t - d.last < opt.minGap) return false;
+    d.last = t; d.steps++;
+    d.times.push(t); if (d.times.length > 6) d.times.shift();
+    return true;
+  }
+  // 케이던스 = ch04 cadence_from(): 최근 걸음 시각들의 평균 간격 → 1분 걸음 수
+  function cadenceFrom(times) {
+    if (times.length < 2) return 0;
+    const gap = (times[times.length - 1] - times[0]) / (times.length - 1);
+    return gap > 0 ? Math.round(60000 / gap) : 0;
+  }
+
+  function push(xyz, t) {
+    if (paused) return;
+    if (opt.noise && Math.random() < 0.03) {          // 연습용: 가끔 한 축이 크게 튐
+      const k = Math.floor(Math.random() * 3);
+      xyz = xyz.slice(); xyz[k] += (Math.random() < 0.5 ? -1 : 1) * (1500 + Math.random() * 1000);
+    }
+    const raw = xyz.concat([Math.round(Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]))]);
+    // 세기도 같은 필터로 다듬는다 (예제의 smooth(strength()) 와 같음)
+    const f = raw.map((v, i) => filterOne(i, v));
+    const step = stepOf(det.f, f[3], t);
+    stepOf(det.r, raw[3], t);                         // 비교용: 필터 없이 센 걸음
+    if (step) {
+      let c = cadenceFrom(det.f.times);
+      if (c > opt.limit) { c = det.cad; det.cadFixed++; }   // 튀는 케이던스 → 바로 앞 값 유지 (응용 5-17)
+      det.cad = c;
+      det.stride = det.cad >= opt.runCad ? opt.runStride : opt.walkStride;
+      det.dist += det.stride / 100;
+    }
+    if (det.cad && t - det.f.last > 2000) det.cad = 0;  // 2초 동안 걸음이 없으면 0
+    data.push({ t, raw, f, step });
+    while (data.length && t - data[0].t > KEEP_MS) data.shift();
+  }
+
+  /* ── 값 받기 ── */
+  function sampleSim() {
+    const now = performance.now(), fresh = now - consoleAt < 600;
+    const useConsole = opt.src === 'console' || (opt.src === 'auto' && fresh);
+    srcNow = useConsole ? (fresh ? '콘솔 출력' : '콘솔 출력 기다리는 중…') : '시뮬레이터';
+    if (useConsole || !window.app || !app.sim) return;
+    push(app.sim.accelValues(), now);
+  }
+  // 콘솔에 찍히는 줄에서 숫자 3개(x y z)를 읽는다 — 실제 보드 · 시뮬레이터 프로그램 모두
+  function hookConsole() {
+    const c = window.app && app.console;
+    if (!c || c._agHooked) return;
+    c._agHooked = true;
+    const orig = c.write.bind(c);
+    c.write = function (cls, text) {
+      if (win && cls === 'o' && opt.src !== 'sim') {
+        lineBuf += String(text);
+        const lines = lineBuf.split(/\r?\n/);
+        lineBuf = lines.pop().slice(-200);
+        const now = performance.now();
+        lines.forEach((l) => {
+          const n = l.match(/-?\d+(\.\d+)?/g);
+          if (!n || n.length < 3 || /[가-힣]/.test(l)) return;
+          consoleAt = now;
+          push(n.slice(0, 3).map(Number), now);
+        });
+      }
+      return orig(cls, text);
+    };
+  }
+
+  /* ── 그리기 ── */
+  function colors() {
+    const css = getComputedStyle(document.documentElement);
+    const v = (n, d) => css.getPropertyValue(n).trim() || d;
+    return { line: v('--line', '#ddd'), muted: v('--muted', '#888'), ch: CH.map((c) => v(c.color, c.def)) };
+  }
+  const fmtN = (v) => (Math.abs(v) >= 100 ? String(Math.round(v)) : String(Math.round(v * 10) / 10));
+
+  function draw() {
+    raf = 0;
+    if (!win) return;
+    const cv = win.querySelector('#agCv'), g = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1, Wc = cv.clientWidth, Hc = cv.clientHeight;
+    if (cv.width !== Math.round(Wc * dpr) || cv.height !== Math.round(Hc * dpr)) { cv.width = Math.round(Wc * dpr); cv.height = Math.round(Hc * dpr); }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, Wc, Hc);
+    const col = colors(), P = { l: 52, r: 10, t: 14, b: 24 };
+    const tEnd = data.length ? data[data.length - 1].t : performance.now(), tStart = tEnd - opt.win * 1000;
+    const vis = data.filter((d) => d.t >= tStart);
+    const keys = [0, 1, 2, 3].filter((i) => opt.show[CH[i].key]);
+    let lo = Infinity, hi = -Infinity;
+    vis.forEach((d) => keys.forEach((i) => {
+      const a = d.f[i], b = opt.raw ? d.raw[i] : a;
+      lo = Math.min(lo, a, b); hi = Math.max(hi, a, b);
+    }));
+    if (opt.show.m) { lo = Math.min(lo, opt.threshold); hi = Math.max(hi, opt.threshold); }
+    if (!isFinite(lo)) { lo = -1100; hi = 1100; }
+    if (hi - lo < 400) { const c = (hi + lo) / 2; lo = c - 200; hi = c + 200; }
+    const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    const X = (t) => P.l + (t - tStart) / (opt.win * 1000) * (Wc - P.l - P.r);
+    const Y = (v) => P.t + (hi - v) / (hi - lo) * (Hc - P.t - P.b);
+    // 눈금
+    const rough = (hi - lo) / 5, p10 = Math.pow(10, Math.floor(Math.log10(rough)));
+    const tick = [1, 2, 5, 10].map((m) => m * p10).find((s) => s >= rough);
+    g.font = '11px sans-serif'; g.lineWidth = 1;
+    for (let v = Math.ceil(lo / tick) * tick; v <= hi; v += tick) {
+      g.strokeStyle = col.line; g.beginPath(); g.moveTo(P.l, Y(v)); g.lineTo(Wc - P.r, Y(v)); g.stroke();
+      g.fillStyle = col.muted; g.textAlign = 'right'; g.fillText(fmtN(v), P.l - 6, Y(v) + 4);
+    }
+    g.textAlign = 'center';
+    for (let s = 0; s <= opt.win; s += opt.win > 10 ? 5 : 1) g.fillText((s - opt.win) + '초', X(tStart + s * 1000), Hc - 6);
+    // 기준선
+    if (opt.show.m) {
+      g.strokeStyle = col.ch[3]; g.setLineDash([6, 4]); g.beginPath(); g.moveTo(P.l, Y(opt.threshold)); g.lineTo(Wc - P.r, Y(opt.threshold)); g.stroke(); g.setLineDash([]);
+      g.fillStyle = col.ch[3]; g.textAlign = 'left'; g.fillText('기준선 ' + opt.threshold, P.l + 4, Y(opt.threshold) - 4);
+    }
+    // 선 (흐린 선 = 다듬기 전, 굵은 선 = 필터 적용)
+    const line = (i, which, alpha, w) => {
+      g.globalAlpha = alpha; g.strokeStyle = col.ch[i]; g.lineWidth = w; g.beginPath();
+      vis.forEach((d, n) => (n ? g.lineTo(X(d.t), Y(d[which][i])) : g.moveTo(X(d.t), Y(d[which][i]))));
+      g.stroke(); g.globalAlpha = 1;
+    };
+    if (opt.raw) keys.forEach((i) => line(i, 'raw', 0.28, 1));
+    keys.forEach((i) => line(i, 'f', 1, 2));
+    // 걸음 표시 ▼ (필터 적용한 세기로 센 걸음)
+    g.fillStyle = col.ch[3];
+    vis.forEach((d) => { if (d.step) { const x = X(d.t); g.beginPath(); g.moveTo(x, P.t); g.lineTo(x - 5, P.t - 9); g.lineTo(x + 5, P.t - 9); g.fill(); } });
+    // 숫자 카드
+    const last = data[data.length - 1];
+    const set = (id, v) => { const el = win.querySelector(id); if (el) el.textContent = v; };
+    set('#agSteps', det.f.steps);
+    set('#agRawSteps', det.r.steps);
+    set('#agCad', det.cad);
+    set('#agCadFix', det.cadFixed);
+    set('#agStride', det.stride || '-');
+    set('#agDist', (Math.round(det.dist * 10) / 10).toFixed(1));
+    set('#agFix', flt.fixed);
+    set('#agSrc', paused ? '멈춤' : srcNow);
+    CH.forEach((c, i) => set('#agV' + c.key, last ? last.f[i] : '-'));
+    if (!paused) raf = requestAnimationFrame(draw);
+  }
+
+  /* ── 창 ── */
+  const numInput = (k, min, max, stepv, w) =>
+    `<input type="number" data-o="${k}" value="${opt[k]}" min="${min}" max="${max}" step="${stepv || 1}" style="width:${w || 64}px">`;
+  function build() {
+    win = document.createElement('div');
+    win.className = 'ag-win';
+    win.innerHTML = `
+      <div class="ag-head" id="agDrag"><b>📉 가속도 실시간 그래프</b><span class="ag-src">값: <b id="agSrc">-</b></span><span class="spacer"></span>
+        <button class="btn tiny" id="agPause">⏸ 멈춤</button><button class="btn tiny ghost" id="agReset" title="그래프 · 걸음 수 지우기">↺ 지우기</button>
+        <button class="btn tiny ghost" id="agCsv" title="최근 60초 값을 CSV 로 저장">⤓ CSV</button><button class="btn tiny ghost" id="agClose" title="닫기">✕</button></div>
+      <div class="ag-row">
+        ${CH.map((c) => `<label class="ag-chk" style="--c:var(${c.color})"><input type="checkbox" data-show="${c.key}" ${opt.show[c.key] ? 'checked' : ''}><i></i>${c.label} <b id="agV${c.key}">-</b></label>`).join('')}
+      </div>
+      <div class="ag-row">
+        <label class="ag-chk"><input type="checkbox" data-o="raw">다듬기 전 값도 흐리게 보기</label>
+        <label>시간 폭 <select data-o="win"><option value="5">5초</option><option value="10">10초</option><option value="20">20초</option><option value="30">30초</option></select></label>
+        <label>값 받는 곳 <select data-o="src"><option value="auto">자동</option><option value="sim">시뮬레이터</option><option value="console">콘솔 출력 (실제 보드)</option></select></label>
+      </div>
+      <canvas id="agCv" class="ag-cv"></canvas>
+      <div class="ag-cards">
+        <div class="ag-card"><span>걸음 수</span><b id="agSteps">0</b><small>필터 없이 <em id="agRawSteps">0</em></small></div>
+        <div class="ag-card"><span>케이던스 (걸음/분)</span><b id="agCad">0</b><small>튀는 값 고침 <em id="agCadFix">0</em></small></div>
+        <div class="ag-card"><span>보폭 (cm)</span><b id="agStride">-</b><small>케이던스 ${opt.runCad} 이상 = 달리기</small></div>
+        <div class="ag-card"><span>거리 (m)</span><b id="agDist">0.0</b><small>걸음마다 보폭을 더함</small></div>
+        <div class="ag-card"><span>고친 센서 값</span><b id="agFix">0</b><small>① 튀는 값 처리 횟수</small></div>
+      </div>
+      <details class="ag-flt" open><summary>필터 · 계산 설정 <span class="muted">(예제와 같은 방법)</span></summary>
+        <div class="ag-row">
+          <label>① 튀는 값 처리 <select data-o="spike"><option value="none">안 함</option><option value="hold">바로 앞 값으로 바꾸기</option><option value="median">중앙값 (최근 3개)</option></select></label>
+          <label title="앞 값과 이만큼 넘게 차이 나면 튀는 값으로 봅니다 (바로 앞 값으로 바꾸기)">튀는 기준 ${numInput('jump', 100, 4000, 50)}</label>
+          <label title="1 이면 다듬지 않습니다 (예제의 smooth() 는 4)">② 이동 평균 smooth() 개수 ${numInput('avg', 1, 20, 1, 50)}</label>
+          <label class="ag-chk"><input type="checkbox" data-o="noise">연습용 튀는 값 섞기</label>
+        </div>
+        <div class="ag-row">
+          <label>③ 기준선 THRESHOLD ${numInput('threshold', 900, 3000, 10)}</label>
+          <label>MIN_GAP ${numInput('minGap', 0, 1500, 10, 60)} ms</label>
+          <label title="이보다 큰 케이던스는 바로 앞 값을 그대로 씁니다 (응용 5-17)">④ 케이던스 상한 LIMIT ${numInput('limit', 100, 400, 5, 56)}</label>
+          <label>⑤ 보폭 걷기 ${numInput('walkStride', 20, 200, 1, 50)} · 달리기 ${numInput('runStride', 20, 250, 1, 50)} cm</label>
+        </div>
+        <p class="ag-note">센서 값 → ① 튀는 값 처리 → ② 이동 평균 → 다듬은 세기로 ③ 걸음 검출 → ④ 케이던스 → ⑤ 보폭 · 거리.
+          실제 보드는 <code>print(x, y, z)</code> 처럼 한 줄에 숫자 3개를 찍는 프로그램을 실행하면 콘솔 출력에서 값을 읽습니다.</p>
+      </details>`;
+    document.body.appendChild(win);
+    syncInputs();
+
+    win.addEventListener('change', (e) => {
+      const el = e.target;
+      if (el.dataset.show) { opt.show[el.dataset.show] = el.checked; if (paused) draw(); return; }
+      const k = el.dataset.o;
+      if (!k) return;
+      if (el.type === 'checkbox') opt[k] = el.checked;
+      else if (el.type === 'number') { const v = Number(el.value); if (isFinite(v)) opt[k] = v; }
+      else opt[k] = /^\d+$/.test(el.value) ? Number(el.value) : el.value;
+      if (k === 'spike' || k === 'avg') resetFilter();
+      if (paused) draw();
+    });
+    win.querySelector('#agClose').onclick = close;
+    win.querySelector('#agPause').onclick = () => {
+      paused = !paused;
+      win.querySelector('#agPause').textContent = paused ? '▶ 이어서' : '⏸ 멈춤';
+      if (!paused && !raf) raf = requestAnimationFrame(draw); else draw();
+    };
+    win.querySelector('#agReset').onclick = () => { data = []; resetCalc(); if (paused) draw(); };
+    win.querySelector('#agCsv').onclick = saveCsv;
+    // 머리줄을 끌어 창 옮기기 (오른쪽 조이스틱을 가리지 않게)
+    const head = win.querySelector('#agDrag');
+    head.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      const b = win.getBoundingClientRect(), dx = e.clientX - b.left, dy = e.clientY - b.top;
+      head.setPointerCapture(e.pointerId);
+      const mv = (ev) => {
+        win.style.left = Math.max(0, Math.min(window.innerWidth - 80, ev.clientX - dx)) + 'px';
+        win.style.top = Math.max(0, Math.min(window.innerHeight - 40, ev.clientY - dy)) + 'px';
+      };
+      const upf = () => { head.removeEventListener('pointermove', mv); head.removeEventListener('pointerup', upf); };
+      head.addEventListener('pointermove', mv); head.addEventListener('pointerup', upf);
+    });
+  }
+  // 입력란을 opt 값에 맞춘다
+  function syncInputs() {
+    Object.keys(opt).forEach((k) => {
+      const el = win.querySelector(`[data-o="${k}"]`);
+      if (el) { if (el.type === 'checkbox') el.checked = !!opt[k]; else el.value = String(opt[k]); }
+    });
+    CH.forEach((c) => { const el = win.querySelector(`[data-show="${c.key}"]`); if (el) el.checked = !!opt.show[c.key]; });
+  }
+
+  function saveCsv() {
+    if (!data.length) { if (window.app && app.toast) app.toast('저장할 값이 없습니다.'); return; }
+    const t0 = data[0].t;
+    const rows = ['time_ms,x,y,z,strength,x_f,y_f,z_f,strength_f,step'];
+    data.forEach((d) => rows.push([Math.round(d.t - t0)].concat(d.raw, d.f, [d.step ? 1 : 0]).join(',')));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.join('\n') + '\n'], { type: 'text/csv' }));
+    a.download = 'accel_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.csv';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  // preset: 본문 버튼에서 넘겨 주는 설정 (예: { spike: 'none', avg: 1 })
+  function open(preset) {
+    if (preset && typeof preset === 'object') {
+      const { show, ...rest } = preset;
+      Object.assign(opt, rest);
+      if (show) Object.assign(opt.show, show);
+      resetFilter();
+    }
+    if (!win) build(); else syncInputs();
+    hookConsole();
+    paused = false;
+    win.querySelector('#agPause').textContent = '⏸ 멈춤';
+    if (!timer) timer = setInterval(sampleSim, 20);   // 1초에 50번
+    if (!raf) raf = requestAnimationFrame(draw);
+  }
+  function close() {
+    clearInterval(timer); timer = null;
+    cancelAnimationFrame(raf); raf = 0;
+    if (win) win.remove();
+    win = null;
+  }
+  window.AccelGraph = { open, close };
+
+  // 위쪽 막대 메뉴 [📉 가속도 그래프]
+  function addMenu() {
+    const bar = document.querySelector('#center .topbar');
+    if (!bar || bar.querySelector('.ag-menu')) return;
+    const b = document.createElement('button');
+    b.className = 'btn ghost small ag-menu';
+    b.title = '가속도 x · y · z · 세기를 실시간 그래프로 보고, 필터를 적용해 걸음 수 · 케이던스 · 보폭 · 거리 재기';
+    b.textContent = '📉 가속도 그래프';
+    b.onclick = () => open();
+    bar.insertBefore(b, bar.querySelector('.view-switch'));
+  }
+  // 본문의 <div class="ag-launch" data-preset='{"spike":"none","avg":1}'></div> 자리에 여는 버튼 넣기
+  function fillLaunchers() {
+    document.querySelectorAll('.ag-launch:not(.ready)').forEach((el) => {
+      el.classList.add('ready');
+      let preset = null;
+      try { preset = el.dataset.preset ? JSON.parse(el.dataset.preset) : null; } catch (e) { preset = null; }
+      el.innerHTML = '<button class="btn primary">📉 가속도 실시간 그래프 열기</button>';
+      el.querySelector('button').onclick = () => open(preset);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addMenu); else addMenu();
+  document.addEventListener('lb:render', () => { addMenu(); setTimeout(fillLaunchers, 0); });
+  setTimeout(fillLaunchers, 0);
+})();
