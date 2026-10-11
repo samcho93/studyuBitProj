@@ -2735,6 +2735,7 @@ def to_json(src):
  * 값 받는 곳: 시뮬레이터(코드 없이 바로 읽기) 또는 콘솔 출력 — 실행 중인 프로그램(실제 보드 포함)이
  *   print(x, y, z) 처럼 숫자 3개를 한 줄에 찍으면 그 줄을 읽습니다.
  * 필터: 튀는 값 처리(앞 값으로 바꾸기 · 중앙값) → 이동 평균(smooth) 순서로 다듬고,
+ *   이동 평균은 “최근 N개 값의 평균” 또는 “최근 N ms 시간 폭 안 값의 평균” 중에서 고릅니다.
  *   다듬은 세기로 걸음(기준선 · MIN_GAP) → 케이던스(튀는 값 상한) → 보폭 → 거리를 계산합니다.
  * 열기: 위쪽 막대의 [📉 가속도 그래프] 메뉴, 또는 본문의 <div class="ag-launch"></div> 자리 버튼.
  */
@@ -2755,7 +2756,9 @@ def to_json(src):
     src: 'auto',                   // auto | sim | console
     spike: 'hold',                 // none | hold | median
     jump: 700,                     // 한 번에 이만큼 넘게 바뀌면 튀는 값
+    avgMode: 'count',              // 이동 평균 방식: count = 최근 개수 | time = 시간 폭
     avg: 4,                        // 이동 평균 개수 (1 = 끄기)
+    avgMs: 100,                    // 이동 평균 시간 폭 (ms, 0 = 끄기)
     noise: false,                  // 연습용 튀는 값 섞기
     threshold: 1150, minGap: 300,  // 걸음 검출 (ch03 · ch04)
     limit: 220,                    // 케이던스 상한 (ch05 응용 5-17)
@@ -2782,7 +2785,7 @@ def to_json(src):
 
   /* ── 필터 ── */
   const median3 = (a) => a.slice().sort((p, q) => p - q)[a.length >> 1];
-  function filterOne(i, v) {
+  function filterOne(i, v, t) {
     // ① 튀는 값 처리
     if (opt.spike === 'hold') {
       const p = flt.prev[i];
@@ -2797,10 +2800,12 @@ def to_json(src):
       v = md;                                         // 최근 3개 중 가운데 값
     }
     flt.prev[i] = v;
-    // ② 이동 평균 (smooth)
+    // ② 이동 평균 (smooth) — 최근 개수 또는 최근 시간 폭 안의 값들을 평균
     const a = flt.avg[i];
-    a.push(v); while (a.length > Math.max(1, opt.avg)) a.shift();
-    return Math.round(a.reduce((s, q) => s + q, 0) / a.length);
+    a.push({ t, v });
+    if (opt.avgMode === 'time') while (a.length > 1 && t - a[0].t > Math.max(0, opt.avgMs)) a.shift();
+    else while (a.length > Math.max(1, opt.avg)) a.shift();
+    return Math.round(a.reduce((s, q) => s + q.v, 0) / a.length);
   }
 
   // 걸음 검출 = ch03 is_step() 과 같은 규칙: 기준선 위로 갔다가 내려오고, 앞 걸음과 MIN_GAP 이상 떨어짐
@@ -2828,7 +2833,7 @@ def to_json(src):
     }
     const raw = xyz.concat([Math.round(Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]))]);
     // 세기도 같은 필터로 다듬는다 (예제의 smooth(strength()) 와 같음)
-    const f = raw.map((v, i) => filterOne(i, v));
+    const f = raw.map((v, i) => filterOne(i, v, t));
     const step = stepOf(det.f, f[3], t);
     stepOf(det.r, raw[3], t);                         // 비교용: 필터 없이 센 걸음
     if (step) {
@@ -2976,7 +2981,9 @@ def to_json(src):
         <div class="ag-row">
           <label>① 튀는 값 처리 <select data-o="spike"><option value="none">안 함</option><option value="hold">바로 앞 값으로 바꾸기</option><option value="median">중앙값 (최근 3개)</option></select></label>
           <label title="앞 값과 이만큼 넘게 차이 나면 튀는 값으로 봅니다 (바로 앞 값으로 바꾸기)">튀는 기준 ${numInput('jump', 100, 4000, 50)}</label>
-          <label title="1 이면 다듬지 않습니다 (예제의 smooth() 는 4)">② 이동 평균 smooth() 개수 ${numInput('avg', 1, 20, 1, 50)}</label>
+          <label title="최근 몇 개의 값으로 평균 낼지, 최근 몇 ms 동안의 값으로 평균 낼지 고릅니다">② 이동 평균 <select data-o="avgMode"><option value="count">최근 개수</option><option value="time">시간 폭</option></select></label>
+          <label class="ag-avg-count" title="1 이면 다듬지 않습니다 (예제의 smooth() 는 4)">smooth() 개수 ${numInput('avg', 1, 20, 1, 50)}</label>
+          <label class="ag-avg-time" title="0 이면 다듬지 않습니다. 1초에 50번 읽으면 100 ms ≈ 최근 5개">시간 폭 ${numInput('avgMs', 0, 2000, 20, 60)} ms</label>
           <label class="ag-chk"><input type="checkbox" data-o="noise">연습용 튀는 값 섞기</label>
         </div>
         <div class="ag-row">
@@ -2986,6 +2993,7 @@ def to_json(src):
           <label>⑤ 보폭 걷기 ${numInput('walkStride', 20, 200, 1, 50)} · 달리기 ${numInput('runStride', 20, 250, 1, 50)} cm</label>
         </div>
         <p class="ag-note">센서 값 → ① 튀는 값 처리 → ② 이동 평균 → 다듬은 세기로 ③ 걸음 검출 → ④ 케이던스 → ⑤ 보폭 · 거리.
+          이동 평균의 “최근 개수”는 값이 들어오는 빠르기에 따라 다듬는 시간이 달라지고, “시간 폭”은 빠르기와 상관없이 같은 시간만큼 다듬습니다.
           실제 보드는 <code>print(x, y, z)</code> 처럼 한 줄에 숫자 3개를 찍는 프로그램을 실행하면 콘솔 출력에서 값을 읽습니다.</p>
       </details>`;
     document.body.appendChild(win);
@@ -2999,7 +3007,8 @@ def to_json(src):
       if (el.type === 'checkbox') opt[k] = el.checked;
       else if (el.type === 'number') { const v = Number(el.value); if (isFinite(v)) opt[k] = v; }
       else opt[k] = /^\d+$/.test(el.value) ? Number(el.value) : el.value;
-      if (k === 'spike' || k === 'avg') resetFilter();
+      if (k === 'spike' || k === 'avg' || k === 'avgMode' || k === 'avgMs') resetFilter();
+      if (k === 'avgMode') showAvgInputs();
       if (paused) draw();
     });
     win.querySelector('#agClose').onclick = close;
@@ -3031,6 +3040,13 @@ def to_json(src):
       if (el) { if (el.type === 'checkbox') el.checked = !!opt[k]; else el.value = String(opt[k]); }
     });
     CH.forEach((c) => { const el = win.querySelector(`[data-show="${c.key}"]`); if (el) el.checked = !!opt.show[c.key]; });
+    showAvgInputs();
+  }
+  // 이동 평균 방식에 맞는 입력란만 보이기
+  function showAvgInputs() {
+    const time = opt.avgMode === 'time';
+    win.querySelector('.ag-avg-count').style.display = time ? 'none' : '';
+    win.querySelector('.ag-avg-time').style.display = time ? '' : 'none';
   }
 
   function saveCsv() {
@@ -3045,7 +3061,7 @@ def to_json(src):
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
-  // preset: 본문 버튼에서 넘겨 주는 설정 (예: { spike: 'none', avg: 1 })
+  // preset: 본문 버튼에서 넘겨 주는 설정 (예: { spike: 'none', avg: 1 } · { avgMode: 'time', avgMs: 200 })
   function open(preset) {
     if (preset && typeof preset === 'object') {
       const { show, ...rest } = preset;
